@@ -1,6 +1,5 @@
 <script>
-  export let title = "Dashboard";
-  export let subtitle = "Welcome back!";
+  let { title = "Dashboard", subtitle = "Welcome back!" } = $props();
 </script>
 
 <div class="flex flex-col gap-2 px-4 py-6">

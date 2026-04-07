@@ -8,17 +8,35 @@
     import LoaderIcon from "@lucide/svelte/icons/loader";
 
     import { userStore } from "$lib/stores/user.store.js";
+    import { companyStore } from "$lib/stores/company.store.js";
+    import { authStore } from "$lib/stores/auth.store.js";
 
     let { user } = $props();
 
     let open = $state(false);
     let loading = $state(false);
     let error = $state(null);
+    let companiesLoading = $state(false);
 
     let formData = $state({
         name: "",
         email: "",
         role: "",
+        companyId: "",
+    });
+
+    // Get auth state to check if super user
+    let authState = $state({ user: null });
+    authStore.subscribe((state) => {
+        authState = state;
+    });
+
+    let isSuperUser = $derived(authState.user?.role === 'SUPER_USER');
+
+    // Get companies for dropdown
+    let companies = $state([]);
+    companyStore.subscribe((state) => {
+        companies = state.data || [];
     });
 
     const roles = [
@@ -27,15 +45,28 @@
         { value: "SUPER_USER", label: "Super User" },
     ];
 
-    function initForm() {
+    async function initForm() {
         if (user) {
             formData = {
                 name: user.name || "",
                 email: user.email || "",
                 role: user.role || "USER",
+                companyId: user.companyId || "",
             };
         }
         error = null;
+
+        // Fetch companies if super user
+        if (isSuperUser && companies.length === 0) {
+            companiesLoading = true;
+            try {
+                await companyStore.fetchAll({ perPage: 100 });
+            } catch (err) {
+                console.error('Failed to fetch companies:', err);
+            } finally {
+                companiesLoading = false;
+            }
+        }
     }
 
     async function handleSubmit(e) {
@@ -121,6 +152,32 @@
                     </Select.Content>
                 </Select.Root>
             </div>
+
+            {#if isSuperUser}
+                <div class="space-y-2">
+                    <Label for="edit-company">Company</Label>
+                    <Select.Root type="single" bind:value={formData.companyId}>
+                        <Select.Trigger class="w-full" disabled={companiesLoading}>
+                            {#if companiesLoading}
+                                Loading companies...
+                            {:else}
+                                {companies.find((c) => c.id === formData.companyId)?.name ||
+                                    "Select company"}
+                            {/if}
+                        </Select.Trigger>
+                        <Select.Content>
+                            {#each companies as company}
+                                <Select.Item value={company.id}>
+                                    {company.name}
+                                </Select.Item>
+                            {/each}
+                        </Select.Content>
+                    </Select.Root>
+                    <p class="text-xs text-muted-foreground">
+                        Only Super User can change company
+                    </p>
+                </div>
+            {/if}
 
             <Dialog.Footer>
                 <Button

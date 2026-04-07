@@ -11,55 +11,31 @@
     import EyeIcon from "@lucide/svelte/icons/eye";
     import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
     import LoaderIcon from "@lucide/svelte/icons/loader";
+    import BuildingIcon from "@lucide/svelte/icons/building";
 
     // Import store
     import { userStore } from "$lib/stores/user.store.js";
+    import { companyStore } from "$lib/stores/company.store.js";
     import UserCreateDialog from "$lib/components/dashboard/user-create-dialog.svelte";
     import UserEditDialog from "$lib/components/dashboard/user-edit-dialog.svelte";
 
-    // Fallback dummy data (used when API fails or for development)
-    const fallbackUsers = [
-        {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            name: "John Doe",
-            email: "john.doe@example.com",
-            role: "ADMIN",
-            profileImage: null,
-            createdAt: "2024-01-15T10:00:00Z",
-        },
-        {
-            id: "660e8400-e29b-41d4-a716-446655440001",
-            name: "Jane Smith",
-            email: "jane.smith@example.com",
-            role: "USER",
-            profileImage: null,
-            createdAt: "2024-02-20T10:00:00Z",
-        },
-        {
-            id: "770e8400-e29b-41d4-a716-446655440002",
-            name: "Bob Johnson",
-            email: "bob.johnson@example.com",
-            role: "USER",
-            profileImage: null,
-            createdAt: "2024-03-10T10:00:00Z",
-        },
-        {
-            id: "880e8400-e29b-41d4-a716-446655440003",
-            name: "Alice Williams",
-            email: "alice.williams@example.com",
-            role: "SUPER_USER",
-            profileImage: null,
-            createdAt: "2024-04-05T10:00:00Z",
-        },
-    ];
-
     // Reactive state from store
     let storeState = $state({ data: [], loading: false, error: null });
+    let companyState = $state({ data: [], selected: null });
 
     // Subscribe to store
     userStore.subscribe((state) => {
         storeState = state;
     });
+
+    companyStore.subscribe((state) => {
+        companyState = state;
+    });
+
+    // Create company ID to name mapping
+    let companyMap = $derived(
+        Object.fromEntries(companyState.data.map(c => [c.id, c.name]))
+    );
 
     // Check if error is forbidden
     let isForbidden = $derived(
@@ -68,23 +44,20 @@
             storeState.error?.toLowerCase().includes("access denied"),
     );
 
-    // Use API data if available, otherwise use fallback
-    let users = $derived(
-        storeState.data.length > 0
-            ? storeState.data
-            : isForbidden
-              ? []
-              : fallbackUsers,
-    );
+    // Use API data only
+    let users = $derived(storeState.data);
     let loading = $derived(storeState.loading);
     let error = $derived(storeState.error);
 
     // Fetch data on mount
     onMount(async () => {
         try {
-            await userStore.fetchAll();
+            await Promise.all([
+                userStore.fetchAll(),
+                companyStore.fetchAll({ perPage: 100 })
+            ]);
         } catch (err) {
-            console.log("Error fetching users:", err.message);
+            console.error("Failed to fetch data:", err.message);
         }
     });
 
@@ -157,7 +130,7 @@
             >
                 <p class="text-sm font-medium">Error: {error}</p>
                 <p class="text-xs mt-1">
-                    Using fallback data. Click refresh to retry.
+                    Click refresh to retry.
                 </p>
             </div>
         {/if}
@@ -214,11 +187,6 @@
                     >
                     <Card.Description>
                         A list of all users in your system
-                        {#if storeState.data.length === 0 && !loading && !error}
-                            <span class="text-yellow-600"
-                                >(Showing demo data)</span
-                            >
-                        {/if}
                     </Card.Description>
                 </div>
                 <div class="flex gap-2">
@@ -248,18 +216,17 @@
                         >
                     </div>
                 {:else}
-                    <Table.Root>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.Head>Name</Table.Head>
-                                <Table.Head>Email</Table.Head>
-                                <Table.Head>Role</Table.Head>
-                                <Table.Head>Created At</Table.Head>
-                                <Table.Head class="text-right"
-                                    >Actions</Table.Head
-                                >
-                            </Table.Row>
-                        </Table.Header>
+                        <Table.Root>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.Head>Name</Table.Head>
+                                    <Table.Head>Email</Table.Head>
+                                    <Table.Head>Role</Table.Head>
+                                    <Table.Head>Company</Table.Head>
+                                    <Table.Head>Created At</Table.Head>
+                                    <Table.Head class="text-right">Actions</Table.Head>
+                                </Table.Row>
+                            </Table.Header>
                         <Table.Body>
                             {#each users as user (user.id)}
                                 <Table.Row>
@@ -286,6 +253,12 @@
                                         >
                                             {user.role}
                                         </span>
+                                    </Table.Cell>
+                                    <Table.Cell class="text-muted-foreground">
+                                        <div class="flex items-center gap-1.5">
+                                            <BuildingIcon class="h-3.5 w-3.5 text-muted-foreground" />
+                                            <span>{companyMap[user.companyId] || 'N/A'}</span>
+                                        </div>
                                     </Table.Cell>
                                     <Table.Cell class="text-muted-foreground"
                                         >{formatDate(

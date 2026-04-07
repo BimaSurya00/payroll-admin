@@ -19,46 +19,6 @@
     import ScheduleCreateDialog from "$lib/components/dashboard/schedule-create-dialog.svelte";
     import ScheduleEditDialog from "$lib/components/dashboard/schedule-edit-dialog.svelte";
 
-    // Fallback dummy data
-    const fallbackSchedules = [
-        {
-            id: "880e8400-e29b-41d4-a716-446655440003",
-            name: "Morning Shift",
-            timeIn: "08:00",
-            timeOut: "16:00",
-            allowedLateMinutes: 10,
-            allowedRadiusMeters: 100,
-            description: "Early morning shift for regular employees",
-        },
-        {
-            id: "880e8400-e29b-41d4-a716-446655440004",
-            name: "Afternoon Shift",
-            timeIn: "14:00",
-            timeOut: "22:00",
-            allowedLateMinutes: 15,
-            allowedRadiusMeters: 100,
-            description: "Afternoon to evening shift",
-        },
-        {
-            id: "880e8400-e29b-41d4-a716-446655440005",
-            name: "Night Shift",
-            timeIn: "22:00",
-            timeOut: "06:00",
-            allowedLateMinutes: 10,
-            allowedRadiusMeters: 150,
-            description: "Overnight shift with extended radius",
-        },
-        {
-            id: "880e8400-e29b-41d4-a716-446655440006",
-            name: "Flexible Hours",
-            timeIn: "09:00",
-            timeOut: "17:00",
-            allowedLateMinutes: 30,
-            allowedRadiusMeters: 200,
-            description: "Flexible working hours for remote team",
-        },
-    ];
-
     // Reactive state from store
     let storeState = $state({ data: [], loading: false, error: null });
 
@@ -74,14 +34,8 @@
             storeState.error?.toLowerCase().includes("access denied"),
     );
 
-    // Use API data if available, otherwise use fallback
-    let schedules = $derived(
-        storeState.data.length > 0
-            ? storeState.data
-            : isForbidden
-              ? []
-              : fallbackSchedules,
-    );
+    // Use API data only
+    let schedules = $derived(storeState.data);
     let loading = $derived(storeState.loading);
     let error = $derived(storeState.error);
 
@@ -90,7 +44,7 @@
         try {
             await scheduleStore.fetchAll();
         } catch (err) {
-            console.log("Error fetching schedules:", err.message);
+            console.error("Failed to fetch schedule data:", err.message);
         }
     });
 
@@ -175,7 +129,7 @@
             >
                 <p class="text-sm font-medium">Error: {error}</p>
                 <p class="text-xs mt-1">
-                    Using fallback data. Click refresh to retry.
+                    Click refresh to retry.
                 </p>
             </div>
         {/if}
@@ -223,7 +177,7 @@
                 <p class="text-sm text-muted-foreground">
                     Configure shift times and attendance rules
                     {#if storeState.data.length === 0 && !loading && !error}
-                        <span class="text-yellow-600">(Showing demo data)</span>
+
                     {/if}
                 </p>
             </div>

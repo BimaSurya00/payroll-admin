@@ -206,6 +206,105 @@ function createUserStore() {
         },
 
         /**
+         * Upload profile image
+         * @param {string} id - User UUID
+         * @param {File} file - Image file
+         */
+        uploadProfileImage: async (id, file) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await userService.uploadProfileImage(id, file);
+
+                // Update current user if uploading own profile
+                update((state) => ({
+                    ...state,
+                    currentUser: state.currentUser?.id === id
+                        ? { ...state.currentUser, profileImage: response.data.imageUrl }
+                        : state.currentUser,
+                    selected: state.selected?.id === id
+                        ? { ...state.selected, profileImage: response.data.imageUrl }
+                        : state.selected,
+                    loading: false,
+                }));
+
+                return response.data;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to upload profile image',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
+         * Update profile image
+         * @param {string} id - User UUID
+         * @param {File} file - Image file
+         */
+        updateProfileImage: async (id, file) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await userService.updateProfileImage(id, file);
+
+                // Update current user if updating own profile
+                update((state) => ({
+                    ...state,
+                    currentUser: state.currentUser?.id === id
+                        ? { ...state.currentUser, profileImage: response.data.imageUrl }
+                        : state.currentUser,
+                    selected: state.selected?.id === id
+                        ? { ...state.selected, profileImage: response.data.imageUrl }
+                        : state.selected,
+                    loading: false,
+                }));
+
+                return response.data;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to update profile image',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
+         * Delete profile image
+         * @param {string} id - User UUID
+         */
+        deleteProfileImage: async (id) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                await userService.deleteProfileImage(id);
+
+                // Update current user if deleting own profile
+                update((state) => ({
+                    ...state,
+                    currentUser: state.currentUser?.id === id
+                        ? { ...state.currentUser, profileImage: null }
+                        : state.currentUser,
+                    selected: state.selected?.id === id
+                        ? { ...state.selected, profileImage: null }
+                        : state.selected,
+                    loading: false,
+                }));
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to delete profile image',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
          * Clear selected user
          */
         clearSelected: () => {

@@ -52,6 +52,23 @@ export const employeeService = {
     },
 
     /**
+     * Get own employee profile
+     * @returns {Promise} Response with own employee data
+     */
+    getMyProfile: () => {
+        return apiClient.get('/employees/me');
+    },
+
+    /**
+     * Update own employee profile
+     * @param {Object} data - Updated profile data (phone, address)
+     * @returns {Promise} Response with updated employee data
+     */
+    updateMyProfile: (data) => {
+        return apiClient.patch('/employees/me', data);
+    },
+
+    /**
      * Search employees by name or email
      * @param {string} query - Search query
      * @returns {Promise} Response with matching employees

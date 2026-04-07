@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // API Base URL - sesuaikan dengan backend kamu
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://192.168.10.141:8080/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://192.168.100.114:8080/api/v1';
 
 // Create axios instance dengan default config
 const apiClient = axios.create({
@@ -82,9 +82,11 @@ apiClient.interceptors.response.use(
             isRefreshing = true;
 
             const refreshToken = typeof window !== 'undefined' ? localStorage.getItem('refreshToken') : null;
+            const userData = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+            const userId = userData ? JSON.parse(userData).id : null;
 
-            if (!refreshToken) {
-                // No refresh token, redirect to login
+            if (!refreshToken || !userId) {
+                // No refresh token or userId, redirect to login
                 isRefreshing = false;
                 if (typeof window !== 'undefined') {
                     localStorage.removeItem('token');
@@ -94,7 +96,7 @@ apiClient.interceptors.response.use(
                 }
                 return Promise.reject({
                     status,
-                    message: 'No refresh token available',
+                    message: 'No refresh token or user data available',
                     data: error.response?.data,
                 });
             }
@@ -103,6 +105,7 @@ apiClient.interceptors.response.use(
                 // Call refresh endpoint directly (avoid interceptors)
                 const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
                     refreshToken,
+                    userId,
                 });
 
                 const { accessToken, refreshToken: newRefreshToken } = response.data?.data || response.data;
@@ -154,6 +157,10 @@ apiClient.interceptors.response.use(
             case 404:
                 // Not found
                 console.error('Resource not found:', message);
+                break;
+            case 405:
+                // Method Not Allowed - endpoint not implemented or wrong HTTP method
+                console.error('Method Not Allowed:', message);
                 break;
             case 500:
                 // Server error

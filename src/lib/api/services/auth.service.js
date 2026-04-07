@@ -27,10 +27,11 @@ export const authService = {
     /**
      * Refresh access token
      * @param {string} refreshToken - Refresh token
+     * @param {string} userId - User ID (required by backend)
      * @returns {Promise} Response with new tokens
      */
-    refresh: (refreshToken) => {
-        return apiClient.post('/auth/refresh', { refreshToken });
+    refresh: (refreshToken, userId) => {
+        return apiClient.post('/auth/refresh', { refreshToken, userId });
     },
 
     /**
@@ -48,5 +49,15 @@ export const authService = {
      */
     logoutAll: () => {
         return apiClient.post('/auth/logout-all');
+    },
+
+    /**
+     * Change password
+     * @param {Object} data - Password data
+     *   { oldPassword, newPassword }
+     * @returns {Promise} Response confirmation
+     */
+    changePassword: (data) => {
+        return apiClient.put('/auth/change-password', data);
     },
 };

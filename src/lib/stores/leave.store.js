@@ -30,7 +30,7 @@ function createLeaveStore() {
          * Fetch leave balances for current user
          * @param {number} year - Year to fetch balances for
          */
-        fetchBalances: async (year) => {
+        fetchBalances: async (year, isAdmin = false) => {
             update((state) => ({ ...state, loading: true, error: null }));
 
             try {
@@ -44,6 +44,42 @@ function createLeaveStore() {
 
                 return response;
             } catch (error) {
+                // Handle "Employee record not found" - common for admin users without employee profile
+                if (error.message?.includes('Employee record not found')) {
+                    update((state) => ({
+                        ...state,
+                        balances: [], // Empty balances for admin without employee profile
+                        error: isAdmin ? null : error.message, // Don't show error for admin
+                        loading: false,
+                    }));
+                    // Don't throw error for this case - it's expected for admin users
+                    return { data: { balances: [] } };
+                }
+
+                // Handle 405 Method Not Allowed - endpoint not implemented
+                if (error.status === 405 || error.message?.includes('Method Not Allowed')) {
+                    console.warn('Leave balances endpoint not available (405). Backend may not be implemented yet.');
+                    update((state) => ({
+                        ...state,
+                        balances: [],
+                        error: isAdmin ? null : 'Leave service temporarily unavailable',
+                        loading: false,
+                    }));
+                    return { data: { balances: [] } };
+                }
+
+                // Handle 500 Server Error
+                if (error.status === 500) {
+                    console.warn('Server error when fetching leave balances.');
+                    update((state) => ({
+                        ...state,
+                        balances: [],
+                        error: isAdmin ? null : 'Leave service temporarily unavailable',
+                        loading: false,
+                    }));
+                    return { data: { balances: [] } };
+                }
+                
                 update((state) => ({
                     ...state,
                     error: error.message || 'Failed to fetch leave balances',
@@ -54,7 +90,7 @@ function createLeaveStore() {
         },
 
         /**
-         * Fetch leave types
+         * Fetch active leave types
          */
         fetchLeaveTypes: async () => {
             try {
@@ -68,6 +104,116 @@ function createLeaveStore() {
                 return response;
             } catch (error) {
                 console.error('Failed to fetch leave types:', error);
+            }
+        },
+
+        /**
+         * Fetch all leave types including inactive (Admin/Super User only)
+         */
+        fetchAllLeaveTypes: async () => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await leaveService.getAllLeaveTypes();
+
+                update((state) => ({
+                    ...state,
+                    leaveTypes: response.data || response || [],
+                    loading: false,
+                }));
+
+                return response;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to fetch leave types',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
+         * Create new leave type (Admin/Super User only)
+         * @param {Object} data - Leave type data
+         */
+        createLeaveType: async (data) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await leaveService.createLeaveType(data);
+                const newLeaveType = response.data || response;
+
+                update((state) => ({
+                    ...state,
+                    leaveTypes: [newLeaveType, ...state.leaveTypes],
+                    loading: false,
+                }));
+
+                return response;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to create leave type',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
+         * Update leave type (Admin/Super User only)
+         * @param {string} id - Leave type ID
+         * @param {Object} data - Updated data
+         */
+        updateLeaveType: async (id, data) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await leaveService.updateLeaveType(id, data);
+                const updatedLeaveType = response.data || response;
+
+                update((state) => ({
+                    ...state,
+                    leaveTypes: state.leaveTypes.map((type) =>
+                        type.id === id ? updatedLeaveType : type
+                    ),
+                    loading: false,
+                }));
+
+                return response;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to update leave type',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
+         * Delete leave type (Admin/Super User only)
+         * @param {string} id - Leave type ID
+         */
+        deleteLeaveType: async (id) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                await leaveService.deleteLeaveType(id);
+
+                update((state) => ({
+                    ...state,
+                    leaveTypes: state.leaveTypes.filter((type) => type.id !== id),
+                    loading: false,
+                }));
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to delete leave type',
+                    loading: false,
+                }));
+                throw error;
             }
         },
 
@@ -94,6 +240,41 @@ function createLeaveStore() {
 
                 return response;
             } catch (error) {
+                // Handle 405 Method Not Allowed - endpoint not implemented
+                if (error.status === 405 || error.message?.includes('Method Not Allowed')) {
+                    console.warn('My leave requests endpoint not available (405). Backend may not be implemented yet.');
+                    update((state) => ({
+                        ...state,
+                        requests: [],
+                        error: null,
+                        loading: false,
+                    }));
+                    return { data: [], pagination: { total: 0 } };
+                }
+
+                // Handle employee not found error
+                if (error.message?.includes('Employee record not found')) {
+                    update((state) => ({
+                        ...state,
+                        requests: [],
+                        error: 'Employee record not found. Please contact HR to set up your employee profile.',
+                        loading: false,
+                    }));
+                    return { data: [], pagination: { total: 0 } };
+                }
+
+                // Handle 500 Server Error - backend routing issue
+                if (error.status === 500) {
+                    console.warn('Server error when fetching leave requests. Backend routing may be misconfigured.');
+                    update((state) => ({
+                        ...state,
+                        requests: [],
+                        error: null, // Don't show error to user
+                        loading: false,
+                    }));
+                    return { data: [], pagination: { total: 0 } };
+                }
+
                 update((state) => ({
                     ...state,
                     error: error.message || 'Failed to fetch leave requests',
@@ -126,6 +307,30 @@ function createLeaveStore() {
 
                 return response;
             } catch (error) {
+                // Handle 405 Method Not Allowed - endpoint not implemented or different method required
+                if (error.status === 405 || error.message?.includes('Method Not Allowed')) {
+                    console.warn('Leave requests endpoint not available (405). Admin may need to use different endpoint or backend not implemented yet.');
+                    update((state) => ({
+                        ...state,
+                        requests: [], // Empty list when endpoint not available
+                        error: null, // Don't show error to user, just empty state
+                        loading: false,
+                    }));
+                    return { data: [], pagination: { total: 0 } };
+                }
+                
+                // Handle 500 Server Error - backend routing issue
+                if (error.status === 500) {
+                    console.warn('Server error when fetching leave requests. Backend routing may be misconfigured.');
+                    update((state) => ({
+                        ...state,
+                        requests: [],
+                        error: null, // Don't show error to user
+                        loading: false,
+                    }));
+                    return { data: [], pagination: { total: 0 } };
+                }
+                
                 update((state) => ({
                     ...state,
                     error: error.message || 'Failed to fetch leave requests',
@@ -152,6 +357,30 @@ function createLeaveStore() {
 
                 return response;
             } catch (error) {
+                // Handle 405 Method Not Allowed - endpoint not implemented
+                if (error.status === 405 || error.message?.includes('Method Not Allowed')) {
+                    console.warn('Pending requests endpoint not available (405). Backend may not be implemented yet.');
+                    update((state) => ({
+                        ...state,
+                        pending: [],
+                        error: null,
+                        loading: false,
+                    }));
+                    return { data: [] };
+                }
+
+                // Handle 500 Server Error - backend routing issue
+                if (error.status === 500 || error.message?.includes('Failed to get')) {
+                    console.warn('Server error when fetching pending requests. Backend routing may be misconfigured.');
+                    update((state) => ({
+                        ...state,
+                        pending: [],
+                        error: null,
+                        loading: false,
+                    }));
+                    return { data: [] };
+                }
+
                 update((state) => ({
                     ...state,
                     error: error.message || 'Failed to fetch pending requests',

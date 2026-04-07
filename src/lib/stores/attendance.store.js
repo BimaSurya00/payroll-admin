@@ -176,6 +176,111 @@ function createAttendanceStore() {
         },
 
         /**
+         * Get monthly attendance report
+         * @param {Object} params - Query parameters (month, year, employee_id)
+         */
+        getMonthlyReport: async (params = {}) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await attendanceService.getMonthlyReport(params);
+
+                update((state) => ({
+                    ...state,
+                    loading: false,
+                }));
+
+                return response;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to fetch monthly report',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
+         * Get my monthly attendance summary
+         * @param {Object} params - Query parameters (month, year)
+         */
+        getMyMonthlySummary: async (params = {}) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await attendanceService.getMyMonthlySummary(params);
+
+                update((state) => ({
+                    ...state,
+                    loading: false,
+                }));
+
+                return response;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to fetch monthly summary',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
+         * Create attendance correction request
+         * @param {Object} data - Correction data
+         */
+        createCorrection: async (data) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await attendanceService.createCorrection(data);
+
+                update((state) => ({
+                    ...state,
+                    loading: false,
+                }));
+
+                return response.data;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to create correction',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
+         * Update attendance correction
+         * @param {string} id - Correction ID
+         * @param {Object} data - Updated correction data
+         */
+        updateCorrection: async (id, data) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await attendanceService.updateCorrection(id, data);
+
+                update((state) => ({
+                    ...state,
+                    loading: false,
+                }));
+
+                return response.data;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to update correction',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
          * Clear error
          */
         clearError: () => {

@@ -13,32 +13,7 @@
     import { authStore } from "$lib/stores/auth.store.js";
     import OvertimeRequestDialog from "$lib/components/dashboard/overtime-request-dialog.svelte";
     import OvertimeApprovalDialog from "$lib/components/dashboard/overtime-approval-dialog.svelte";
-
-    // Fallback dummy data
-    const fallbackRequests = [
-        {
-            id: "1",
-            employeeName: "John Doe",
-            overtimeDate: "2026-01-31",
-            startTime: "18:00",
-            endTime: "21:00",
-            totalHours: 3,
-            reason: "Finishing urgent project deadline",
-            status: "PENDING",
-            overtimePolicy: { name: "Weekday", rateMultiplier: 1.5 },
-        },
-        {
-            id: "2",
-            employeeName: "Jane Smith",
-            overtimeDate: "2026-01-30",
-            startTime: "18:00",
-            endTime: "20:00",
-            totalHours: 2,
-            reason: "Client meeting preparation",
-            status: "APPROVED",
-            overtimePolicy: { name: "Weekday", rateMultiplier: 1.5 },
-        },
-    ];
+    import OvertimeCalculateDialog from "$lib/components/dashboard/overtime-calculate-dialog.svelte";
 
     // Reactive state from store
     let storeState = $state({
@@ -64,10 +39,8 @@
             authState.user?.role === "SUPER_USER",
     );
 
-    // Use API data if available, otherwise use fallback
-    let requests = $derived(
-        storeState.requests.length > 0 ? storeState.requests : fallbackRequests,
-    );
+    // Use API data only
+    let requests = $derived(storeState.requests);
     let pending = $derived(storeState.pending || []);
     let loading = $derived(storeState.loading);
     let error = $derived(storeState.error);
@@ -83,7 +56,7 @@
                 await overtimeStore.fetchMyRequests();
             }
         } catch (err) {
-            console.log("Using fallback data:", err.message);
+            console.error("Failed to fetch overtime data:", err.message);
         }
     });
 
@@ -171,7 +144,7 @@
         >
             <p class="text-sm font-medium">Error: {error}</p>
             <p class="text-xs mt-1">
-                Using fallback data. Click refresh to retry.
+                Click refresh to retry.
             </p>
         </div>
     {/if}
@@ -289,9 +262,6 @@
                     {isAdmin
                         ? "Daftar semua pengajuan lembur karyawan"
                         : "Riwayat pengajuan lembur Anda"}
-                    {#if storeState.requests.length === 0 && !loading}
-                        <span class="text-yellow-600">(Showing demo data)</span>
-                    {/if}
                 </Card.Description>
             </div>
             <div class="flex gap-2">
@@ -307,6 +277,9 @@
                     {/if}
                     Refresh
                 </Button>
+                {#if isAdmin}
+                    <OvertimeCalculateDialog />
+                {/if}
                 <OvertimeRequestDialog />
             </div>
         </Card.Header>

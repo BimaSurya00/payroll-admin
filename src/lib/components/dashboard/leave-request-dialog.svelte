@@ -79,7 +79,7 @@
         if (!isOpen) resetForm();
     }}
 >
-    <Dialog.Trigger>
+    <Dialog.Trigger asChild>
         <Button>
             <PlusIcon class="h-4 w-4 mr-2" />
             Ajukan Cuti

@@ -55,4 +55,43 @@ export const attendanceService = {
 
         return apiClient.get('/attendance/all', { params: { ...queryParams, ...rest } });
     },
+
+    /**
+     * Get monthly attendance report (Admin/Super User only)
+     * @param {Object} params - Query parameters (month, year, employee_id)
+     * @returns {Promise} Response with monthly report
+     */
+    getMonthlyReport: (params = {}) => {
+        return apiClient.get('/attendance/report/monthly', { params });
+    },
+
+    /**
+     * Get my monthly attendance summary
+     * @param {Object} params - Query parameters (month, year)
+     * @returns {Promise} Response with own monthly summary
+     */
+    getMyMonthlySummary: (params = {}) => {
+        return apiClient.get('/attendance/report/my', { params });
+    },
+
+    /**
+     * Create attendance correction request (Admin/Super User only)
+     * @param {Object} data - Correction data
+     *   { attendanceId, correctClockIn, correctClockOut, reason }
+     * @returns {Promise} Response with correction request
+     */
+    createCorrection: (data) => {
+        return apiClient.post('/attendance/correction', data);
+    },
+
+    /**
+     * Update attendance correction (Admin/Super User only)
+     * @param {string} id - Correction record ID
+     * @param {Object} data - Updated correction data
+     *   { status, adminNote }
+     * @returns {Promise} Response with updated correction
+     */
+    updateCorrection: (id, data) => {
+        return apiClient.patch(`/attendance/${id}/correction`, data);
+    },
 };

@@ -1,7 +1,11 @@
 <script>
+    export const ssr = false;
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import DashboardHeader from "$lib/components/dashboard/dashboard-header.svelte";
+    import EmptyState from "$lib/components/shared/empty-state.svelte";
+    import Alert from "$lib/components/shared/alert.svelte";
+    import LoadingTable from "$lib/components/shared/loading-table.svelte";
     import * as Table from "$lib/components/ui/table/index.js";
     import * as Card from "$lib/components/ui/card/index.js";
     import { Button } from "$lib/components/ui/button/index.js";
@@ -9,93 +13,39 @@
     import TrashIcon from "@lucide/svelte/icons/trash";
     import EyeIcon from "@lucide/svelte/icons/eye";
     import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
-    import LoaderIcon from "@lucide/svelte/icons/loader";
+    import UsersIcon from "@lucide/svelte/icons/users";
+    import DollarSignIcon from "@lucide/svelte/icons/dollar-sign";
+    import UserPlusIcon from "@lucide/svelte/icons/user-plus";
+    import CalendarIcon from "@lucide/svelte/icons/calendar";
 
-    // Import store
     import { employeeStore } from "$lib/stores/employee.store.js";
     import EmployeeCreateDialog from "$lib/components/dashboard/employee-create-dialog.svelte";
     import EmployeeEditDialog from "$lib/components/dashboard/employee-edit-dialog.svelte";
+    import { formatCurrency, formatDate } from "$lib/utils/format.js";
+    import { getStatusColor } from "$lib/utils/colors.js";
 
-    // Fallback dummy data (used when API fails or for development)
-    const fallbackEmployees = [
-        {
-            id: "aaa54c52-b033-4517-9c70-7c4106ac0c07",
-            userName: "John Doe",
-            userEmail: "john.doe@example.com",
-            position: "Software Engineer",
-            phoneNumber: "+628123456789",
-            salaryBase: 15000000,
-            joinDate: "2024-01-15",
-        },
-        {
-            id: "bbb65d63-c144-4628-ad81-8d5217bd1e18",
-            userName: "Jane Smith",
-            userEmail: "jane.smith@example.com",
-            position: "Product Manager",
-            phoneNumber: "+628234567890",
-            salaryBase: 18000000,
-            joinDate: "2023-06-20",
-        },
-        {
-            id: "ccc76e74-d255-5739-be92-9e6328ce2f29",
-            userName: "Bob Johnson",
-            userEmail: "bob.johnson@example.com",
-            position: "UI/UX Designer",
-            phoneNumber: "+628345678901",
-            salaryBase: 12000000,
-            joinDate: "2024-03-10",
-        },
-        {
-            id: "ddd87f85-e366-6840-cf03-0f7439df3g30",
-            userName: "Alice Williams",
-            userEmail: "alice.williams@example.com",
-            position: "HR Manager",
-            phoneNumber: "+628456789012",
-            salaryBase: 16000000,
-            joinDate: "2022-11-05",
-        },
-        {
-            id: "eee98g96-f477-7951-dg14-1g8540eg4h41",
-            userName: "Charlie Brown",
-            userEmail: "charlie.brown@example.com",
-            position: "DevOps Engineer",
-            phoneNumber: "+628567890123",
-            salaryBase: 17000000,
-            joinDate: "2024-05-12",
-        },
-    ];
-
-    // Reactive state from store
     let storeState = $state({ data: [], loading: false, error: null });
 
-    // Subscribe to store
     employeeStore.subscribe((state) => {
         storeState = state;
     });
 
-    // Use API data if available, otherwise use fallback
-    let employees = $derived(
-        storeState.data.length > 0 ? storeState.data : fallbackEmployees,
-    );
+    let employees = $derived(storeState.data);
     let loading = $derived(storeState.loading);
     let error = $derived(storeState.error);
 
-    // Fetch data on mount
     onMount(async () => {
         try {
             await employeeStore.fetchAll();
         } catch (err) {
-            // If API fails, fallback data will be used
-            console.log("Using fallback data:", err.message);
+            console.error("Failed to fetch employees:", err.message);
         }
     });
 
-    // Refresh function
     async function handleRefresh() {
         await employeeStore.fetchAll();
     }
 
-    // Delete function
     async function handleDelete(id) {
         if (confirm("Are you sure you want to delete this employee?")) {
             try {
@@ -106,47 +56,14 @@
         }
     }
 
-    function formatCurrency(amount) {
-        return new Intl.NumberFormat("id-ID", {
-            style: "currency",
-            currency: "IDR",
-            minimumFractionDigits: 0,
-        }).format(amount);
-    }
-
-    function formatDate(dateString) {
-        return new Date(dateString).toLocaleDateString("id-ID", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-        });
-    }
-
-    function getPositionColor(position) {
-        const colors = {
-            "Software Engineer":
-                "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-            "Product Manager":
-                "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
-            "UI/UX Designer":
-                "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300",
-            "HR Manager":
-                "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-            "DevOps Engineer":
-                "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
-        };
-        return (
-            colors[position] ||
-            "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
-        );
-    }
-
-    // Calculate stats
     let totalSalary = $derived(
-        employees.reduce((sum, emp) => sum + (emp.salaryBase || 0), 0),
+        employees.reduce((sum, emp) => sum + (emp.salaryBase || 0), 0)
     );
     let avgSalary = $derived(
-        employees.length > 0 ? totalSalary / employees.length : 0,
+        employees.length > 0 ? totalSalary / employees.length : 0
+    );
+    let newThisYear = $derived(
+        employees.filter((e) => new Date(e.joinDate).getFullYear() >= 2024).length
     );
 </script>
 
@@ -159,144 +76,135 @@
     subtitle="Manage all employees in the system"
 />
 
-<div class="flex flex-1 flex-col gap-4 p-4 pt-0">
-    <!-- Error Alert -->
+<div class="flex flex-1 flex-col gap-6 p-4 pt-0">
     {#if error}
-        <div
-            class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
-        >
-            <p class="text-sm font-medium">Error: {error}</p>
-            <p class="text-xs mt-1">
-                Using fallback data. Click refresh to retry.
-            </p>
-        </div>
+        <Alert 
+            variant="error" 
+            message={error}
+            dismissible
+            onDismiss={() => employeeStore.clearError?.()}
+        />
     {/if}
 
     <!-- Stats Cards -->
-    <div class="grid auto-rows-min gap-4 md:grid-cols-4">
-        <div class="rounded-lg border bg-card p-4 shadow-sm">
-            <p class="text-sm font-medium text-muted-foreground">
-                Total Employees
-            </p>
-            <p class="text-2xl font-bold mt-1">{employees.length}</p>
-        </div>
-        <div class="rounded-lg border bg-card p-4 shadow-sm">
-            <p class="text-sm font-medium text-muted-foreground">
-                Total Salary Budget
-            </p>
-            <p class="text-2xl font-bold mt-1 text-blue-600">
-                {formatCurrency(totalSalary)}
-            </p>
-        </div>
-        <div class="rounded-lg border bg-card p-4 shadow-sm">
-            <p class="text-sm font-medium text-muted-foreground">
-                Average Salary
-            </p>
-            <p class="text-2xl font-bold mt-1 text-green-600">
-                {formatCurrency(avgSalary)}
-            </p>
-        </div>
-        <div class="rounded-lg border bg-card p-4 shadow-sm">
-            <p class="text-sm font-medium text-muted-foreground">
-                New This Year
-            </p>
-            <p class="text-2xl font-bold mt-1 text-purple-600">
-                {employees.filter(
-                    (e) => new Date(e.joinDate).getFullYear() >= 2024,
-                ).length}
-            </p>
-        </div>
+    <div class="grid gap-4 md:grid-cols-4">
+        <Card.Root>
+            <Card.Content class="p-6">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+                        <UsersIcon class="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-muted-foreground">Total Employees</p>
+                        <p class="text-2xl font-bold">{employees.length}</p>
+                    </div>
+                </div>
+            </Card.Content>
+        </Card.Root>
+
+        <Card.Root>
+            <Card.Content class="p-6">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+                        <DollarSignIcon class="h-5 w-5 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-muted-foreground">Total Salary</p>
+                        <p class="text-xl font-bold text-green-600">{formatCurrency(totalSalary)}</p>
+                    </div>
+                </div>
+            </Card.Content>
+        </Card.Root>
+
+        <Card.Root>
+            <Card.Content class="p-6">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
+                        <DollarSignIcon class="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-muted-foreground">Average Salary</p>
+                        <p class="text-xl font-bold text-purple-600">{formatCurrency(avgSalary)}</p>
+                    </div>
+                </div>
+            </Card.Content>
+        </Card.Root>
+
+        <Card.Root>
+            <Card.Content class="p-6">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">
+                        <UserPlusIcon class="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-muted-foreground">New This Year</p>
+                        <p class="text-2xl font-bold text-amber-600">{newThisYear}</p>
+                    </div>
+                </div>
+            </Card.Content>
+        </Card.Root>
     </div>
 
-    <!-- Employee Table Card -->
+    <!-- Employee Table -->
     <Card.Root class="flex-1">
-        <Card.Header
-            class="flex flex-row items-center justify-between space-y-0 pb-4"
-        >
+        <Card.Header class="flex flex-row items-center justify-between">
             <div>
-                <Card.Title class="text-xl font-semibold"
-                    >Employee List</Card.Title
-                >
-                <Card.Description>
-                    A list of all employees in your organization
-                    {#if storeState.data.length === 0 && !loading}
-                        <span class="text-yellow-600">(Showing demo data)</span>
-                    {/if}
-                </Card.Description>
+                <Card.Title>Employee List</Card.Title>
+                <Card.Description>Manage your team members</Card.Description>
             </div>
             <div class="flex gap-2">
-                <Button
-                    variant="outline"
-                    onclick={handleRefresh}
-                    disabled={loading}
-                >
-                    {#if loading}
-                        <LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
-                    {:else}
-                        <RefreshCwIcon class="h-4 w-4 mr-2" />
-                    {/if}
-                    Refresh
+                <Button variant="outline" size="icon" onclick={handleRefresh} disabled={loading}>
+                    <RefreshCwIcon class="h-4 w-4 {loading ? 'animate-spin' : ''}" />
                 </Button>
                 <EmployeeCreateDialog />
             </div>
         </Card.Header>
         <Card.Content>
-            {#if loading && storeState.data.length === 0}
-                <div class="flex items-center justify-center py-8">
-                    <LoaderIcon
-                        class="h-8 w-8 animate-spin text-muted-foreground"
-                    />
-                    <span class="ml-2 text-muted-foreground"
-                        >Loading employees...</span
-                    >
-                </div>
+            {#if loading}
+                <LoadingTable rows={5} />
+            {:else if employees.length === 0}
+                <EmptyState
+                    icon={UsersIcon}
+                    title="No employees found"
+                    description="Add your first employee to get started with employee management."
+                    actionLabel="Add Employee"
+                />
             {:else}
                 <Table.Root>
                     <Table.Header>
                         <Table.Row>
-                            <Table.Head>Name</Table.Head>
+                            <Table.Head class="w-[200px]">Name</Table.Head>
                             <Table.Head>Email</Table.Head>
                             <Table.Head>Position</Table.Head>
                             <Table.Head>Phone</Table.Head>
-                            <Table.Head>Salary</Table.Head>
-                            <Table.Head>Join Date</Table.Head>
-                            <Table.Head class="text-right">Actions</Table.Head>
+                            <Table.Head class="w-[120px]">Salary</Table.Head>
+                            <Table.Head class="w-[120px]">Join Date</Table.Head>
+                            <Table.Head class="w-[120px] text-right">Actions</Table.Head>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
                         {#each employees as employee (employee.id)}
-                            <Table.Row>
+                            <Table.Row class="group">
                                 <Table.Cell>
                                     <div class="flex items-center gap-3">
-                                        <div
-                                            class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-medium"
-                                        >
-                                            {(
-                                                employee.userName ||
-                                                employee.name ||
-                                                "?"
-                                            ).charAt(0)}
+                                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary font-medium text-sm">
+                                            {(employee.userName || employee.name || "?").charAt(0)}
                                         </div>
-                                        <span class="font-medium"
-                                            >{employee.userName ||
-                                                employee.name}</span
-                                        >
+                                        <div>
+                                            <p class="font-medium">{employee.userName || employee.name}</p>
+                                        </div>
                                     </div>
                                 </Table.Cell>
                                 <Table.Cell class="text-muted-foreground">
-                                    {employee.userEmail || employee.email}
+                                    {employee.userEmail || employee.email || '-'}
                                 </Table.Cell>
                                 <Table.Cell>
-                                    <span
-                                        class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {getPositionColor(
-                                            employee.position,
-                                        )}"
-                                    >
+                                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium {getStatusColor('position', employee.position)}">
                                         {employee.position}
                                     </span>
                                 </Table.Cell>
                                 <Table.Cell class="text-muted-foreground">
-                                    {employee.phoneNumber}
+                                    {employee.phoneNumber || '-'}
                                 </Table.Cell>
                                 <Table.Cell class="font-medium">
                                     {formatCurrency(employee.salaryBase)}
@@ -305,17 +213,12 @@
                                     {formatDate(employee.joinDate)}
                                 </Table.Cell>
                                 <Table.Cell class="text-right">
-                                    <div
-                                        class="flex items-center justify-end gap-2"
-                                    >
+                                    <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <Button
                                             variant="ghost"
                                             size="icon"
                                             class="h-8 w-8"
-                                            onclick={() =>
-                                                goto(
-                                                    `/dashboard/employee/${employee.id}`,
-                                                )}
+                                            onclick={() => goto(`/dashboard/employee/${employee.id}`)}
                                         >
                                             <EyeIcon class="h-4 w-4" />
                                             <span class="sr-only">View</span>
@@ -324,9 +227,8 @@
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            class="h-8 w-8 text-destructive"
-                                            onclick={() =>
-                                                handleDelete(employee.id)}
+                                            class="h-8 w-8 text-destructive hover:text-destructive"
+                                            onclick={() => handleDelete(employee.id)}
                                         >
                                             <TrashIcon class="h-4 w-4" />
                                             <span class="sr-only">Delete</span>

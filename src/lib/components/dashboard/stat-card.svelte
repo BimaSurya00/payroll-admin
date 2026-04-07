@@ -1,7 +1,5 @@
 <script>
-  export let title = "Title";
-  export let value = "0";
-  export let change = "+0%";
+  let { title = "Title", value = "0", change = "+0%" } = $props();
 </script>
 
 <div class="rounded-lg border bg-card p-6 shadow-sm">

@@ -164,17 +164,44 @@ function createAuthStore() {
         },
 
         /**
+         * Change password
+         * @param {string} oldPassword - Current password
+         * @param {string} newPassword - New password
+         */
+        changePassword: async (oldPassword, newPassword) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await authService.changePassword({
+                    oldPassword,
+                    newPassword,
+                });
+
+                update((state) => ({ ...state, loading: false, error: null }));
+
+                return response.data;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to change password',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
          * Refresh access token
          */
         refreshAccessToken: async () => {
             const currentState = get({ subscribe });
 
-            if (!currentState.refreshToken) {
-                throw new Error('No refresh token available');
+            if (!currentState.refreshToken || !currentState.user?.id) {
+                throw new Error('No refresh token or user ID available');
             }
 
             try {
-                const response = await authService.refresh(currentState.refreshToken);
+                const response = await authService.refresh(currentState.refreshToken, currentState.user.id);
                 const { accessToken, refreshToken } = response.data;
 
                 saveToStorage(currentState.user, accessToken, refreshToken);

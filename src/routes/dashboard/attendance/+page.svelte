@@ -1,5 +1,6 @@
 <script>
     import { onMount } from "svelte";
+    import { goto } from "$app/navigation";
     import DashboardHeader from "$lib/components/dashboard/dashboard-header.svelte";
     import ErrorForbidden from "$lib/components/error-forbidden.svelte";
     import * as Table from "$lib/components/ui/table/index.js";
@@ -11,57 +12,32 @@
     import FilterIcon from "@lucide/svelte/icons/filter";
     import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
     import LoaderIcon from "@lucide/svelte/icons/loader";
+    import EditIcon from "@lucide/svelte/icons/edit";
 
     // Import store
     import { attendanceStore } from "$lib/stores/attendance.store.js";
-
-    // Fallback dummy data
-    const fallbackAttendances = [
-        {
-            id: "990e8400-e29b-41d4-a716-446655440005",
-            employeeName: "John Doe",
-            date: "2026-01-31",
-            clockInTime: "08:07",
-            clockOutTime: "17:05",
-            status: "PRESENT",
-            notes: "",
-        },
-        {
-            id: "990e8400-e29b-41d4-a716-446655440006",
-            employeeName: "Jane Smith",
-            date: "2026-01-31",
-            clockInTime: "08:25",
-            clockOutTime: "17:30",
-            status: "LATE",
-            notes: "Traffic jam",
-        },
-        {
-            id: "990e8400-e29b-41d4-a716-446655440007",
-            employeeName: "Bob Johnson",
-            date: "2026-01-31",
-            clockInTime: null,
-            clockOutTime: null,
-            status: "ABSENT",
-            notes: "Sick leave",
-        },
-        {
-            id: "990e8400-e29b-41d4-a716-446655440008",
-            employeeName: "Alice Williams",
-            date: "2026-01-31",
-            clockInTime: "07:55",
-            clockOutTime: "16:00",
-            status: "PRESENT",
-            notes: "",
-        },
-    ];
+    import { authStore } from "$lib/stores/auth.store.js";
+    import AttendanceCorrectionDialog from "$lib/components/dashboard/attendance-correction-dialog.svelte";
 
     // Reactive state from store
     let storeState = $state({ data: [], loading: false, error: null });
+    let authState = $state({ user: null });
+    let showCorrectionDialog = $state(false);
+    let selectedAttendance = $state(null);
 
-    // Subscribe to store
+    // Subscribe to stores
     attendanceStore.subscribe((state) => {
         storeState = state;
     });
+
+    authStore.subscribe((state) => {
+        authState = state;
+    });
+
+    // Check if user is admin
+    let isAdmin = $derived(
+        authState.user?.role === 'ADMIN' || authState.user?.role === 'SUPER_USER'
+    );
 
     // Check if error is forbidden
     let isForbidden = $derived(
@@ -70,14 +46,8 @@
             storeState.error?.toLowerCase().includes("access denied"),
     );
 
-    // Use API data if available, otherwise use fallback
-    let attendances = $derived(
-        storeState.data.length > 0
-            ? storeState.data
-            : isForbidden
-              ? []
-              : fallbackAttendances,
-    );
+    // Use API data only
+    let attendances = $derived(storeState.data);
     let loading = $derived(storeState.loading);
     let error = $derived(storeState.error);
 
@@ -86,11 +56,11 @@
         try {
             await attendanceStore.fetchAll();
         } catch (err) {
-            console.log("Using fallback data:", err.message);
+            console.error("Failed to fetch attendance data:", err.message);
         }
     });
 
-    // Refresh function
+    // Refresh functionx
     async function handleRefresh() {
         await attendanceStore.fetchAll();
     }
@@ -179,7 +149,7 @@
             >
                 <p class="text-sm font-medium">Error: {error}</p>
                 <p class="text-xs mt-1">
-                    Using fallback data. Click refresh to retry.
+                    Click refresh to retry.
                 </p>
             </div>
         {/if}
@@ -215,10 +185,12 @@
                     <FilterIcon class="h-4 w-4 mr-2" />
                     Filter
                 </Button>
-                <Button variant="outline" size="sm">
-                    <DownloadIcon class="h-4 w-4 mr-2" />
-                    Export
-                </Button>
+                <a href="/dashboard/attendance/reports">
+                    <Button variant="outline" size="sm">
+                        <CalendarIcon class="h-4 w-4 mr-2" />
+                        Monthly Reports
+                    </Button>
+                </a>
             </div>
         </div>
 
@@ -324,6 +296,9 @@
                                 <Table.Head>Clock Out</Table.Head>
                                 <Table.Head>Status</Table.Head>
                                 <Table.Head>Notes</Table.Head>
+                                {#if isAdmin}
+                                    <Table.Head class="text-right">Actions</Table.Head>
+                                {/if}
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
@@ -405,6 +380,21 @@
                                     >
                                         {attendance.notes || "-"}
                                     </Table.Cell>
+                                    {#if isAdmin}
+                                        <Table.Cell class="text-right">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onclick={() => {
+                                                    selectedAttendance = attendance;
+                                                    showCorrectionDialog = true;
+                                                }}
+                                            >
+                                                <EditIcon class="h-4 w-4 mr-1" />
+                                                Correct
+                                            </Button>
+                                        </Table.Cell>
+                                    {/if}
                                 </Table.Row>
                             {/each}
                         </Table.Body>
@@ -414,3 +404,9 @@
         </Card.Root>
     {/if}
 </div>
+
+<!-- Attendance Correction Dialog -->
+<AttendanceCorrectionDialog
+    bind:open={showCorrectionDialog}
+    attendance={selectedAttendance}
+/>

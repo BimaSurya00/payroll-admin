@@ -169,6 +169,59 @@ function createEmployeeStore() {
         },
 
         /**
+         * Get own employee profile
+         */
+        getMyProfile: async () => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await employeeService.getMyProfile();
+
+                update((state) => ({
+                    ...state,
+                    selected: response.data,
+                    loading: false,
+                }));
+
+                return response.data;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to fetch profile',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
+         * Update own employee profile
+         * @param {Object} data - Profile data to update
+         */
+        updateMyProfile: async (data) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await employeeService.updateMyProfile(data);
+
+                update((state) => ({
+                    ...state,
+                    selected: response.data,
+                    loading: false,
+                }));
+
+                return response.data;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to update profile',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
          * Select an employee
          * @param {Object} employee - Employee to select
          */

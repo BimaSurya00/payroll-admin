@@ -8,16 +8,34 @@
     import LoaderIcon from "@lucide/svelte/icons/loader";
 
     import { userStore } from "$lib/stores/user.store.js";
+    import { authStore } from "$lib/stores/auth.store.js";
+    import { companyStore } from "$lib/stores/company.store.js";
 
     let open = $state(false);
     let loading = $state(false);
     let error = $state(null);
+    let companiesLoading = $state(false);
 
     let formData = $state({
         name: "",
         email: "",
         password: "",
         role: "USER",
+        companyId: "",
+    });
+
+    // Get current user from auth store
+    let currentUser = $state(null);
+    let isSuperUser = $state(false);
+    let companies = $state([]);
+
+    authStore.subscribe((state) => {
+        currentUser = state.user;
+        isSuperUser = state.user?.role === "SUPER_USER";
+    });
+
+    companyStore.subscribe((state) => {
+        companies = state.data;
     });
 
     const roles = [
@@ -26,12 +44,27 @@
         { value: "SUPER_USER", label: "Super User" },
     ];
 
+    // Fetch companies when dialog opens for super user
+    async function fetchCompanies() {
+        if (isSuperUser && companies.length === 0) {
+            companiesLoading = true;
+            try {
+                await companyStore.fetchAll({ perPage: 100 });
+            } catch (err) {
+                console.error("Failed to fetch companies:", err);
+            } finally {
+                companiesLoading = false;
+            }
+        }
+    }
+
     function resetForm() {
         formData = {
             name: "",
             email: "",
             password: "",
             role: "USER",
+            companyId: "",
         };
         error = null;
     }
@@ -42,7 +75,13 @@
         error = null;
 
         try {
-            await userStore.create(formData);
+            // Prepare data - only include companyId if super user selected one
+            const data = { ...formData };
+            if (!isSuperUser || !data.companyId) {
+                delete data.companyId;
+            }
+
+            await userStore.create(data);
             open = false;
             resetForm();
         } catch (err) {
@@ -56,6 +95,7 @@
 <Dialog.Root
     bind:open
     onOpenChange={(isOpen) => {
+        if (isOpen) fetchCompanies();
         if (!isOpen) resetForm();
     }}
 >
@@ -132,6 +172,39 @@
                     </Select.Content>
                 </Select.Root>
             </div>
+
+            <!-- Company Selection - Only for Super User -->
+            {#if isSuperUser}
+                <div class="space-y-2">
+                    <Label for="company">Company (Optional)</Label>
+                    <Select.Root
+                        type="single"
+                        bind:value={formData.companyId}
+                        disabled={companiesLoading}
+                    >
+                        <Select.Trigger class="w-full">
+                            {#if companiesLoading}
+                                Loading companies...
+                            {:else}
+                                {companies.find(
+                                    (c) => c.id === formData.companyId,
+                                )?.name || "Select company (optional)"}
+                            {/if}
+                        </Select.Trigger>
+                        <Select.Content>
+                            <Select.Item value="">Default (Current Company)</Select.Item>
+                            {#each companies as company}
+                                <Select.Item value={company.id}
+                                    >{company.name}</Select.Item
+                                >
+                            {/each}
+                        </Select.Content>
+                    </Select.Root>
+                    <p class="text-xs text-muted-foreground">
+                        Leave empty to use your current company
+                    </p>
+                </div>
+            {/if}
 
             <Dialog.Footer>
                 <Button

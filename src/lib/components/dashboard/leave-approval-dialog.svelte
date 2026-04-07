@@ -55,7 +55,7 @@
 <div class="flex gap-2">
     <!-- Approve Button -->
     <Dialog.Root bind:open={openApprove}>
-        <Dialog.Trigger>
+        <Dialog.Trigger asChild>
             <Button variant="ghost" size="icon" class="h-8 w-8 text-green-600">
                 <CheckIcon class="h-4 w-4" />
                 <span class="sr-only">Approve</span>
@@ -135,7 +135,7 @@
 
     <!-- Reject Button -->
     <Dialog.Root bind:open={openReject}>
-        <Dialog.Trigger>
+        <Dialog.Trigger asChild>
             <Button variant="ghost" size="icon" class="h-8 w-8 text-red-600">
                 <XIcon class="h-4 w-4" />
                 <span class="sr-only">Reject</span>

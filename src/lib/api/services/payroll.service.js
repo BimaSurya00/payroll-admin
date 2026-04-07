@@ -35,6 +35,24 @@ export const payrollService = {
     },
 
     /**
+     * Get my payrolls (current user's own payrolls)
+     * @param {Object} params - Query parameters (page, perPage)
+     * @returns {Promise} Response with own payrolls data and pagination
+     */
+    getMyPayrolls: (params = {}) => {
+        return apiClient.get('/payrolls/my', { params: buildPaginationParams(params) });
+    },
+
+    /**
+     * Get my payroll by ID (current user's own payroll)
+     * @param {string} id - Payroll UUID
+     * @returns {Promise} Response with own payroll data including items
+     */
+    getMyPayrollById: (id) => {
+        return apiClient.get(`/payrolls/my/${id}`);
+    },
+
+    /**
      * Update payroll status
      * @param {string} id - Payroll UUID
      * @param {string} status - New status (DRAFT, APPROVED, PAID)

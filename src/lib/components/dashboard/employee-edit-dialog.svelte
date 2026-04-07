@@ -9,6 +9,7 @@
 
     import { employeeStore } from "$lib/stores/employee.store.js";
     import { scheduleStore } from "$lib/stores/schedule.store.js";
+    import { departmentStore } from "$lib/stores/department.store.js";
     import { onMount } from "svelte";
 
     let { employee } = $props();
@@ -17,35 +18,51 @@
     let loading = $state(false);
     let error = $state(null);
     let schedules = $state([]);
+    let departments = $state([]);
 
     let formData = $state({
+        position: "",
         phoneNumber: "",
         address: "",
         salaryBase: "",
         scheduleId: "",
+        departmentId: "",
         bankName: "",
         bankAccountNumber: "",
         bankAccountHolder: "",
+        employmentStatus: "",
+        jobLevel: "",
+        gender: "",
     });
 
     scheduleStore.subscribe((state) => {
         schedules = state.data || [];
     });
 
+    departmentStore.subscribe((state) => {
+        departments = state.data || [];
+    });
+
     onMount(async () => {
         await scheduleStore.fetchAll();
+        await departmentStore.fetchAll();
     });
 
     function initForm() {
         if (employee) {
             formData = {
+                position: employee.position || "",
                 phoneNumber: employee.phoneNumber || employee.phone || "",
                 address: employee.address || "",
                 salaryBase: employee.salaryBase?.toString() || "",
                 scheduleId: employee.scheduleId || employee.schedule?.id || "",
+                departmentId: employee.departmentId || employee.department?.id || "",
                 bankName: employee.bankName || "",
                 bankAccountNumber: employee.bankAccountNumber || "",
                 bankAccountHolder: employee.bankAccountHolder || "",
+                employmentStatus: employee.employmentStatus || "PERMANENT",
+                jobLevel: employee.jobLevel || "STAFF",
+                gender: employee.gender || "",
             };
         }
         error = null;
@@ -58,16 +75,31 @@
 
         try {
             const payload = {
-                ...formData,
-                salaryBase: parseInt(formData.salaryBase, 10),
+                position: formData.position || undefined,
+                phoneNumber: formData.phoneNumber || undefined,
+                address: formData.address || undefined,
+                salaryBase: formData.salaryBase ? parseFloat(formData.salaryBase) : undefined,
+                scheduleId: formData.scheduleId || undefined,
+                departmentId: formData.departmentId || undefined,
+                bankName: formData.bankName || undefined,
+                bankAccountNumber: formData.bankAccountNumber || undefined,
+                bankAccountHolder: formData.bankAccountHolder || undefined,
+                employmentStatus: formData.employmentStatus || undefined,
+                jobLevel: formData.jobLevel || undefined,
+                gender: formData.gender || undefined,
             };
+
+            // Remove undefined values
+            const cleanPayload = Object.fromEntries(
+                Object.entries(payload).filter(([_, v]) => v !== undefined)
+            );
 
             // DEBUG: Log request payload untuk tim backend
             console.log("=== EMPLOYEE UPDATE DEBUG ===");
             console.log("Employee ID:", employee.id);
-            console.log("REQUEST Payload:", JSON.stringify(payload, null, 2));
+            console.log("REQUEST Payload:", JSON.stringify(cleanPayload, null, 2));
 
-            const result = await employeeStore.update(employee.id, payload);
+            const result = await employeeStore.update(employee.id, cleanPayload);
 
             // DEBUG: Log response
             console.log("RESPONSE:", JSON.stringify(result, null, 2));
@@ -114,71 +146,154 @@
                 </div>
             {/if}
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-2">
-                    <Label for="edit-phone">Phone</Label>
-                    <Input
-                        id="edit-phone"
-                        type="tel"
-                        placeholder="628123456789"
-                        bind:value={formData.phoneNumber}
-                        required
-                    />
+            <!-- Employment Details Section -->
+            <div class="border-b pb-4">
+                <h4 class="text-sm font-medium mb-3 text-muted-foreground">Employment Details</h4>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <Label for="edit-position">Position</Label>
+                        <Input
+                            id="edit-position"
+                            type="text"
+                            placeholder="e.g. Software Engineer"
+                            bind:value={formData.position}
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="edit-employmentStatus">Employment Status</Label>
+                        <Select.Root type="single" bind:value={formData.employmentStatus}>
+                            <Select.Trigger class="w-full">
+                                {formData.employmentStatus || "Select status"}
+                            </Select.Trigger>
+                            <Select.Content>
+                                <Select.Item value="PERMANENT">Permanent</Select.Item>
+                                <Select.Item value="CONTRACT">Contract</Select.Item>
+                                <Select.Item value="PROBATION">Probation</Select.Item>
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
                 </div>
 
-                <div class="space-y-2">
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="space-y-2">
+                        <Label for="edit-jobLevel">Job Level</Label>
+                        <Select.Root type="single" bind:value={formData.jobLevel}>
+                            <Select.Trigger class="w-full">
+                                {formData.jobLevel || "Select level"}
+                            </Select.Trigger>
+                            <Select.Content>
+                                <Select.Item value="CEO">CEO</Select.Item>
+                                <Select.Item value="MANAGER">Manager</Select.Item>
+                                <Select.Item value="SUPERVISOR">Supervisor</Select.Item>
+                                <Select.Item value="STAFF">Staff</Select.Item>
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="edit-departmentId">Department</Label>
+                        <Select.Root type="single" bind:value={formData.departmentId}>
+                            <Select.Trigger class="w-full">
+                                {departments.find((d) => d.id === formData.departmentId)
+                                    ?.name || "Select department"}
+                            </Select.Trigger>
+                            <Select.Content>
+                                <Select.Item value="">No Department</Select.Item>
+                                {#each departments as dept}
+                                    <Select.Item value={dept.id}>{dept.name}</Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="space-y-2">
+                        <Label for="edit-scheduleId">Work Schedule</Label>
+                        <Select.Root type="single" bind:value={formData.scheduleId}>
+                            <Select.Trigger class="w-full">
+                                {#if formData.scheduleId}
+                                    {@const selected = schedules.find(
+                                        (s) => s.id === formData.scheduleId,
+                                    )}
+                                    {selected
+                                        ? `${selected.name} (${selected.timeIn} - ${selected.timeOut}${selected.allowedLateMinutes ? `, Late: ${selected.allowedLateMinutes}min` : ''})`
+                                        : "Select schedule"}
+                                {:else}
+                                    No Schedule
+                                {/if}
+                            </Select.Trigger>
+                            <Select.Content>
+                                <Select.Item value="">No Schedule</Select.Item>
+                                {#each schedules as schedule}
+                                    <Select.Item value={schedule.id}>
+                                        {schedule.name} ({schedule.timeIn} - {schedule.timeOut}
+                                        {schedule.allowedLateMinutes ? `, Late: ${schedule.allowedLateMinutes}min` : ''})
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Information Section -->
+            <div class="border-b pb-4">
+                <h4 class="text-sm font-medium mb-3 text-muted-foreground">Personal Information</h4>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <Label for="edit-gender">Gender</Label>
+                        <Select.Root type="single" bind:value={formData.gender}>
+                            <Select.Trigger class="w-full">
+                                {formData.gender || "Select gender"}
+                            </Select.Trigger>
+                            <Select.Content>
+                                <Select.Item value="MALE">Male</Select.Item>
+                                <Select.Item value="FEMALE">Female</Select.Item>
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="edit-phone">Phone</Label>
+                        <Input
+                            id="edit-phone"
+                            type="tel"
+                            placeholder="628123456789"
+                            bind:value={formData.phoneNumber}
+                        />
+                    </div>
+                </div>
+
+                <div class="space-y-2 mt-4">
+                    <Label for="edit-address">Address</Label>
+                    <Input
+                        id="edit-address"
+                        type="text"
+                        placeholder="Jl. Sudirman No. 1"
+                        bind:value={formData.address}
+                    />
+                </div>
+            </div>
+
+            <!-- Compensation & Bank Information -->
+            <div>
+                <h4 class="text-sm font-medium mb-3 text-muted-foreground">Compensation & Bank Information</h4>
+                
+                <div class="space-y-2 mb-4">
                     <Label for="edit-salaryBase">Base Salary</Label>
                     <Input
                         id="edit-salaryBase"
                         type="number"
                         placeholder="15000000"
                         bind:value={formData.salaryBase}
-                        required
                         min="1"
                     />
                 </div>
-            </div>
 
-            <div class="space-y-2">
-                <Label for="edit-address">Address</Label>
-                <Input
-                    id="edit-address"
-                    type="text"
-                    placeholder="Jl. Sudirman No. 1"
-                    bind:value={formData.address}
-                    required
-                />
-            </div>
-
-            <div class="space-y-2">
-                <Label for="edit-scheduleId">Jadwal Kerja</Label>
-                <Select.Root type="single" bind:value={formData.scheduleId}>
-                    <Select.Trigger class="w-full">
-                        {#if formData.scheduleId}
-                            {@const selected = schedules.find(
-                                (s) => s.id === formData.scheduleId,
-                            )}
-                            {selected
-                                ? `${selected.name} (${selected.timeIn} - ${selected.timeOut}${selected.allowedLateMinutes ? `, Late: ${selected.allowedLateMinutes}min` : ''})`
-                                : "Select schedule"}
-                        {:else}
-                            No Schedule
-                        {/if}
-                    </Select.Trigger>
-                    <Select.Content>
-                        <Select.Item value="">No Schedule</Select.Item>
-                        {#each schedules as schedule}
-                            <Select.Item value={schedule.id}>
-                                {schedule.name} ({schedule.timeIn} - {schedule.timeOut}
-                                {schedule.allowedLateMinutes ? `, Late: ${schedule.allowedLateMinutes}min` : ''})
-                            </Select.Item>
-                        {/each}
-                    </Select.Content>
-                </Select.Root>
-            </div>
-
-            <div class="border-t pt-4">
-                <h4 class="text-sm font-medium mb-3">Bank Information</h4>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-2">
                         <Label for="edit-bankName">Bank Name</Label>
@@ -187,7 +302,6 @@
                             type="text"
                             placeholder="BCA"
                             bind:value={formData.bankName}
-                            required
                         />
                     </div>
 

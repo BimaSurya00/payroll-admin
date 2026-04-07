@@ -104,4 +104,50 @@ export const leaveService = {
     getLeaveTypes: () => {
         return apiClient.get('/leave/types');
     },
+
+    /**
+     * Get all leave types including inactive (Admin/Super User only)
+     * @returns {Promise} Response with all leave types
+     */
+    getAllLeaveTypes: () => {
+        return apiClient.get('/leave/types/all');
+    },
+
+    /**
+     * Get leave type by ID (Admin/Super User only)
+     * @param {string} id - Leave type ID
+     * @returns {Promise} Response with leave type data
+     */
+    getLeaveTypeById: (id) => {
+        return apiClient.get(`/leave/types/${id}`);
+    },
+
+    /**
+     * Create new leave type (Admin/Super User only)
+     * @param {Object} data - Leave type data
+     *   { name, code, description, defaultDays, isPaid, isActive, color }
+     * @returns {Promise} Response with created leave type
+     */
+    createLeaveType: (data) => {
+        return apiClient.post('/leave/types', data);
+    },
+
+    /**
+     * Update leave type (Admin/Super User only)
+     * @param {string} id - Leave type ID
+     * @param {Object} data - Updated leave type data
+     * @returns {Promise} Response with updated leave type
+     */
+    updateLeaveType: (id, data) => {
+        return apiClient.put(`/leave/types/${id}`, data);
+    },
+
+    /**
+     * Delete leave type (Admin/Super User only)
+     * @param {string} id - Leave type ID
+     * @returns {Promise} Response confirmation
+     */
+    deleteLeaveType: (id) => {
+        return apiClient.delete(`/leave/types/${id}`);
+    },
 };

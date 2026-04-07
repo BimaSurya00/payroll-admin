@@ -1,22 +1,41 @@
 <script>
   import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
   import AppSidebar from "$lib/components/app-sidebar.svelte";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import { Separator } from "$lib/components/ui/separator/index.js";
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+  import { ROUTE_NAMES, getRouteLabel } from "$lib/utils/constants.js";
+  import { authStore } from "$lib/stores/auth.store.js";
 
-  // Map route segments to readable names
-  const routeNames = {
-    dashboard: "Dashboard",
-    user: "User Management",
-    employee: "Employee Management",
-    schedule: "Schedule Management",
-    attendance: "Attendance",
-    payroll: "Payroll",
-    settings: "Settings",
-    profile: "Profile",
-    analytics: "Analytics",
-  };
+  // SUPER_USER only routes - these should not be accessible by ADMIN
+  const superUserOnlyRoutes = [
+    '/dashboard/company',
+    '/dashboard/schedule',
+    '/dashboard/user',
+    '/dashboard/audit',
+  ];
+
+  // Check if current path is a SUPER_USER only route
+  function isSuperUserOnlyRoute(pathname) {
+    return superUserOnlyRoutes.some(route => pathname.startsWith(route));
+  }
+
+  // Subscribe to auth store
+  let authState = $state({ user: null });
+  authStore.subscribe((state) => {
+    authState = state;
+  });
+
+  // Check if user is SUPER_USER
+  let isSuperUser = $derived(authState.user?.role === 'SUPER_USER');
+
+  // Redirect if ADMIN tries to access SUPER_USER only routes
+  $effect(() => {
+    if (!isSuperUser && isSuperUserOnlyRoute($page.url.pathname)) {
+      goto('/dashboard');
+    }
+  });
 
   // Generate breadcrumb items from current path
   function getBreadcrumbs(pathname) {
@@ -28,9 +47,12 @@
       const segment = segments[i];
       currentPath += "/" + segment;
 
-      const name =
-        routeNames[segment] ||
-        segment.charAt(0).toUpperCase() + segment.slice(1);
+      // Skip UUID-like segments (detail pages)
+      if (segment.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+        continue;
+      }
+
+      const name = getRouteLabel(segment);
       const isLast = i === segments.length - 1;
 
       breadcrumbs.push({

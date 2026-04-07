@@ -279,6 +279,35 @@ function createOvertimeStore() {
         },
 
         /**
+         * Calculate overtime pay for an employee
+         * @param {string} employeeId - Employee ID
+         * @param {string} startDate - Start date (YYYY-MM-DD)
+         * @param {string} endDate - End date (YYYY-MM-DD)
+         * @returns {Promise} Response with calculation data
+         */
+        calculatePay: async (employeeId, startDate, endDate) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await overtimeService.calculatePay(employeeId, startDate, endDate);
+
+                update((state) => ({
+                    ...state,
+                    loading: false,
+                }));
+
+                return response.data || response;
+            } catch (error) {
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to calculate overtime pay',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
          * Select an overtime request
          */
         select: (request) => {

@@ -8,53 +8,71 @@
     import LoaderIcon from "@lucide/svelte/icons/loader";
 
     import { employeeStore } from "$lib/stores/employee.store.js";
-    import { userStore } from "$lib/stores/user.store.js";
     import { scheduleStore } from "$lib/stores/schedule.store.js";
+    import { departmentStore } from "$lib/stores/department.store.js";
     import { onMount } from "svelte";
 
     let open = $state(false);
     let loading = $state(false);
     let error = $state(null);
 
-    let users = $state([]);
     let schedules = $state([]);
+    let departments = $state([]);
 
     let formData = $state({
-        userId: "",
+        // User Account Fields
+        name: "",
+        email: "",
+        password: "",
+        // Employee Details
+        position: "",
         phoneNumber: "",
         address: "",
         salaryBase: "",
         joinDate: "",
         scheduleId: "",
+        departmentId: "",
         bankName: "",
         bankAccountNumber: "",
         bankAccountHolder: "",
-    });
-
-    userStore.subscribe((state) => {
-        users = state.data || [];
+        employmentStatus: "PERMANENT",
+        jobLevel: "STAFF",
+        gender: "",
     });
 
     scheduleStore.subscribe((state) => {
         schedules = state.data || [];
     });
 
+    departmentStore.subscribe((state) => {
+        departments = state.data || [];
+    });
+
     onMount(async () => {
-        await userStore.fetchAll();
         await scheduleStore.fetchAll();
+        await departmentStore.fetchAll();
     });
 
     function resetForm() {
         formData = {
-            userId: "",
+            // User Account Fields
+            name: "",
+            email: "",
+            password: "",
+            // Employee Details
+            position: "",
             phoneNumber: "",
             address: "",
             salaryBase: "",
             joinDate: "",
             scheduleId: "",
+            departmentId: "",
             bankName: "",
             bankAccountNumber: "",
             bankAccountHolder: "",
+            employmentStatus: "PERMANENT",
+            jobLevel: "STAFF",
+            gender: "",
         };
         error = null;
     }
@@ -96,7 +114,7 @@
         <Dialog.Header>
             <Dialog.Title>Create New Employee</Dialog.Title>
             <Dialog.Description>
-                Add a new employee. User must exist first.
+                Add a new employee. This will automatically create a user account.
             </Dialog.Description>
         </Dialog.Header>
 
@@ -109,64 +127,193 @@
                 </div>
             {/if}
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-2">
-                    <Label for="userId">User</Label>
-                    <Select.Root type="single" bind:value={formData.userId}>
-                        <Select.Trigger class="w-full">
-                            {users.find((u) => u.id === formData.userId)
-                                ?.name || "Select user"}
-                        </Select.Trigger>
-                        <Select.Content>
-                            {#each users as user}
-                                <Select.Item value={user.id}
-                                    >{user.name} ({user.email})</Select.Item
-                                >
-                            {/each}
-                        </Select.Content>
-                    </Select.Root>
+            <!-- User Account Section -->
+            <div class="border-b pb-4">
+                <h4 class="text-sm font-medium mb-3 text-muted-foreground">User Account</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <Label for="name">Full Name *</Label>
+                        <Input
+                            id="name"
+                            type="text"
+                            placeholder="John Doe"
+                            bind:value={formData.name}
+                            required
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="email">Email *</Label>
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="john@company.com"
+                            bind:value={formData.email}
+                            required
+                        />
+                    </div>
                 </div>
 
-                <div class="space-y-2">
-                    <Label for="scheduleId">Jadwal Kerja</Label>
-                    <Select.Root type="single" bind:value={formData.scheduleId}>
-                        <Select.Trigger class="w-full">
-                            {#if formData.scheduleId}
-                                {@const selected = schedules.find(
-                                    (s) => s.id === formData.scheduleId,
-                                )}
-                                {selected
-                                    ? `${selected.name} (${selected.timeIn} - ${selected.timeOut})`
-                                    : "Select schedule"}
-                            {:else}
-                                Select schedule
-                            {/if}
-                        </Select.Trigger>
-                        <Select.Content>
-                            {#each schedules as schedule}
-                                <Select.Item value={schedule.id}>
-                                    {schedule.name} ({schedule.timeIn} - {schedule.timeOut})
-                                </Select.Item>
-                            {/each}
-                        </Select.Content>
-                    </Select.Root>
+                <div class="space-y-2 mt-4">
+                    <Label for="password">Password *</Label>
+                    <Input
+                        id="password"
+                        type="password"
+                        placeholder="Min 6 characters"
+                        bind:value={formData.password}
+                        required
+                        minlength="6"
+                    />
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-2">
-                    <Label for="phoneNumber">Phone</Label>
-                    <Input
-                        id="phoneNumber"
-                        type="tel"
-                        placeholder="628123456789"
-                        bind:value={formData.phoneNumber}
-                        required
-                    />
+            <!-- Employment Details Section -->
+            <div class="border-b pb-4">
+                <h4 class="text-sm font-medium mb-3 text-muted-foreground">Employment Details</h4>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <Label for="position">Position *</Label>
+                        <Input
+                            id="position"
+                            type="text"
+                            placeholder="e.g. Software Engineer"
+                            bind:value={formData.position}
+                            required
+                        />
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="employmentStatus">Employment Status *</Label>
+                        <Select.Root type="single" bind:value={formData.employmentStatus}>
+                            <Select.Trigger class="w-full">
+                                {formData.employmentStatus || "Select status"}
+                            </Select.Trigger>
+                            <Select.Content>
+                                <Select.Item value="PERMANENT">Permanent</Select.Item>
+                                <Select.Item value="CONTRACT">Contract</Select.Item>
+                                <Select.Item value="PROBATION">Probation</Select.Item>
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
                 </div>
 
-                <div class="space-y-2">
-                    <Label for="salaryBase">Base Salary</Label>
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="space-y-2">
+                        <Label for="jobLevel">Job Level *</Label>
+                        <Select.Root type="single" bind:value={formData.jobLevel}>
+                            <Select.Trigger class="w-full">
+                                {formData.jobLevel || "Select level"}
+                            </Select.Trigger>
+                            <Select.Content>
+                                <Select.Item value="CEO">CEO</Select.Item>
+                                <Select.Item value="MANAGER">Manager</Select.Item>
+                                <Select.Item value="SUPERVISOR">Supervisor</Select.Item>
+                                <Select.Item value="STAFF">Staff</Select.Item>
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="departmentId">Department</Label>
+                        <Select.Root type="single" bind:value={formData.departmentId}>
+                            <Select.Trigger class="w-full">
+                                {departments.find((d) => d.id === formData.departmentId)
+                                    ?.name || "Select department"}
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each departments as dept}
+                                    <Select.Item value={dept.id}>{dept.name}</Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="space-y-2">
+                        <Label for="scheduleId">Work Schedule</Label>
+                        <Select.Root type="single" bind:value={formData.scheduleId}>
+                            <Select.Trigger class="w-full">
+                                {#if formData.scheduleId}
+                                    {@const selected = schedules.find(
+                                        (s) => s.id === formData.scheduleId,
+                                    )}
+                                    {selected
+                                        ? `${selected.name} (${selected.timeIn} - ${selected.timeOut})`
+                                        : "Select schedule"}
+                                {:else}
+                                    Select schedule
+                                {/if}
+                            </Select.Trigger>
+                            <Select.Content>
+                                {#each schedules as schedule}
+                                    <Select.Item value={schedule.id}>
+                                        {schedule.name} ({schedule.timeIn} - {schedule.timeOut})
+                                    </Select.Item>
+                                {/each}
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="joinDate">Join Date *</Label>
+                        <Input
+                            id="joinDate"
+                            type="date"
+                            bind:value={formData.joinDate}
+                            required
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Information Section -->
+            <div class="border-b pb-4">
+                <h4 class="text-sm font-medium mb-3 text-muted-foreground">Personal Information</h4>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <Label for="gender">Gender *</Label>
+                        <Select.Root type="single" bind:value={formData.gender}>
+                            <Select.Trigger class="w-full">
+                                {formData.gender || "Select gender"}
+                            </Select.Trigger>
+                            <Select.Content>
+                                <Select.Item value="MALE">Male</Select.Item>
+                                <Select.Item value="FEMALE">Female</Select.Item>
+                            </Select.Content>
+                        </Select.Root>
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="phoneNumber">Phone Number</Label>
+                        <Input
+                            id="phoneNumber"
+                            type="tel"
+                            placeholder="628123456789"
+                            bind:value={formData.phoneNumber}
+                        />
+                    </div>
+                </div>
+
+                <div class="space-y-2 mt-4">
+                    <Label for="address">Address</Label>
+                    <Input
+                        id="address"
+                        type="text"
+                        placeholder="Jl. Sudirman No. 1"
+                        bind:value={formData.address}
+                    />
+                </div>
+            </div>
+
+            <!-- Compensation & Bank Information -->
+            <div>
+                <h4 class="text-sm font-medium mb-3 text-muted-foreground">Compensation & Bank Information</h4>
+                
+                <div class="space-y-2 mb-4">
+                    <Label for="salaryBase">Base Salary *</Label>
                     <Input
                         id="salaryBase"
                         type="number"
@@ -176,31 +323,7 @@
                         min="1"
                     />
                 </div>
-            </div>
 
-            <div class="space-y-2">
-                <Label for="address">Address</Label>
-                <Input
-                    id="address"
-                    type="text"
-                    placeholder="Jl. Sudirman No. 1"
-                    bind:value={formData.address}
-                    required
-                />
-            </div>
-
-            <div class="space-y-2">
-                <Label for="joinDate">Join Date</Label>
-                <Input
-                    id="joinDate"
-                    type="date"
-                    bind:value={formData.joinDate}
-                    required
-                />
-            </div>
-
-            <div class="border-t pt-4">
-                <h4 class="text-sm font-medium mb-3">Bank Information</h4>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-2">
                         <Label for="bankName">Bank Name</Label>
@@ -209,7 +332,6 @@
                             type="text"
                             placeholder="BCA"
                             bind:value={formData.bankName}
-                            required
                         />
                     </div>
 
@@ -220,7 +342,6 @@
                             type="text"
                             placeholder="1234567890"
                             bind:value={formData.bankAccountNumber}
-                            required
                         />
                     </div>
                 </div>
@@ -232,7 +353,6 @@
                         type="text"
                         placeholder="John Doe"
                         bind:value={formData.bankAccountHolder}
-                        required
                     />
                 </div>
             </div>

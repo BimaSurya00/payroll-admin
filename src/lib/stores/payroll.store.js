@@ -181,6 +181,100 @@ function createPayrollStore() {
         },
 
         /**
+         * Get my payrolls (current user's own payrolls)
+         * @param {Object} params - Query parameters
+         */
+        fetchMyPayrolls: async (params = {}) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await payrollService.getMyPayrolls(params);
+
+                update((state) => ({
+                    ...state,
+                    data: response.data || response,
+                    pagination: response.pagination || {
+                        currentPage: params.page || 1,
+                        perPage: params.perPage || 15,
+                        total: response.data?.length || 0,
+                        lastPage: 1,
+                    },
+                    loading: false,
+                }));
+
+                return response;
+            } catch (error) {
+                // Handle employee not found error
+                if (error.message?.includes('Employee record not found')) {
+                    update((state) => ({
+                        ...state,
+                        data: [],
+                        error: 'Employee record not found. Please contact HR to set up your employee profile.',
+                        loading: false,
+                    }));
+                    return { data: [], pagination: { total: 0 } };
+                }
+
+                // Handle 500 Server Error
+                if (error.status === 500) {
+                    console.warn('Server error when fetching payrolls.');
+                    update((state) => ({
+                        ...state,
+                        data: [],
+                        error: null,
+                        loading: false,
+                    }));
+                    return { data: [], pagination: { total: 0 } };
+                }
+
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to fetch payrolls',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
+         * Get my payroll by ID (current user's own payroll detail)
+         * @param {string} id - Payroll UUID
+         */
+        fetchMyPayrollById: async (id) => {
+            update((state) => ({ ...state, loading: true, error: null }));
+
+            try {
+                const response = await payrollService.getMyPayrollById(id);
+
+                update((state) => ({
+                    ...state,
+                    selected: response.data,
+                    loading: false,
+                }));
+
+                return response.data;
+            } catch (error) {
+                // Handle employee not found error
+                if (error.message?.includes('Employee record not found')) {
+                    update((state) => ({
+                        ...state,
+                        selected: null,
+                        error: 'Employee record not found. Please contact HR to set up your employee profile.',
+                        loading: false,
+                    }));
+                    return null;
+                }
+
+                update((state) => ({
+                    ...state,
+                    error: error.message || 'Failed to fetch payroll details',
+                    loading: false,
+                }));
+                throw error;
+            }
+        },
+
+        /**
          * Select a payroll
          * @param {Object} payroll - Payroll to select
          */

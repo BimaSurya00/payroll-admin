@@ -4,8 +4,14 @@
 	import ChevronsUpDownIcon from "@lucide/svelte/icons/chevrons-up-down";
 	import CreditCardIcon from "@lucide/svelte/icons/credit-card";
 	import LogOutIcon from "@lucide/svelte/icons/log-out";
+	import MonitorIcon from "@lucide/svelte/icons/monitor";
+	import UserIcon from "@lucide/svelte/icons/user";
 	import SparklesIcon from "@lucide/svelte/icons/sparkles";
 	import LoaderIcon from "@lucide/svelte/icons/loader";
+	import SunIcon from "@lucide/svelte/icons/sun";
+	import MoonIcon from "@lucide/svelte/icons/moon";
+
+	import ThemeToggle from "$lib/components/shared/theme-toggle.svelte";
 
 	import { goto } from "$app/navigation";
 	import * as Avatar from "$lib/components/ui/avatar/index.js";
@@ -53,6 +59,20 @@
 			loggingOut = false;
 		}
 	}
+
+	async function handleLogoutAll() {
+		loggingOut = true;
+		try {
+			await authStore.logoutAll();
+			goto("/auth/login");
+		} catch (error) {
+			console.error("Logout all failed:", error);
+			// Force redirect even if logout fails
+			goto("/auth/login");
+		} finally {
+			loggingOut = false;
+		}
+	}
 </script>
 
 <Sidebar.Menu>
@@ -63,29 +83,29 @@
 					<Sidebar.MenuButton
 						{...props}
 						size="lg"
-						class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+						class="text-white/80 hover:text-white hover:bg-white/10 data-[state=open]:bg-white/20 data-[state=open]:text-white"
 					>
-						<Avatar.Root class="size-8 rounded-lg">
+						<Avatar.Root class="size-9 rounded-xl border-2 border-white/30 bg-white/10">
 							<Avatar.Image
 								src={displayUser?.avatar ||
 									displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="rounded-lg"
+							<Avatar.Fallback class="rounded-xl bg-gradient-to-br from-primary to-chart-4 text-white font-semibold"
 								>{userInitials}</Avatar.Fallback
 							>
 						</Avatar.Root>
 						<div
 							class="grid flex-1 text-start text-sm leading-tight"
 						>
-							<span class="truncate font-medium"
+							<span class="truncate font-semibold text-white"
 								>{displayUser?.name || "User"}</span
 							>
-							<span class="truncate text-xs"
+							<span class="truncate text-xs text-white/60"
 								>{displayUser?.email || ""}</span
 							>
 						</div>
-						<ChevronsUpDownIcon class="ms-auto size-4" />
+						<ChevronsUpDownIcon class="ms-auto size-4 text-white/60" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>
@@ -134,16 +154,45 @@
 						<BadgeCheckIcon />
 						Account
 					</DropdownMenu.Item>
+					<a href="/dashboard/profile" class="contents">
+						<DropdownMenu.Item>
+							<UserIcon />
+							Profile
+						</DropdownMenu.Item>
+					</a>
 					<DropdownMenu.Item>
 						<CreditCardIcon />
 						Billing
 					</DropdownMenu.Item>
-					<DropdownMenu.Item>
-						<BellIcon />
-						Notifications
-					</DropdownMenu.Item>
-				</DropdownMenu.Group>
-				<DropdownMenu.Separator />
+				<DropdownMenu.Item>
+					<BellIcon />
+					Notifications
+				</DropdownMenu.Item>
+			</DropdownMenu.Group>
+			<DropdownMenu.Separator />
+			<DropdownMenu.Group>
+			<DropdownMenu.Item class="cursor-pointer p-0" onclick={(e) => e.preventDefault()}>
+				<ThemeToggle variant="menu" class="rounded-sm" />
+			</DropdownMenu.Item>
+			</DropdownMenu.Group>
+			<DropdownMenu.Separator />
+			<DropdownMenu.Group>
+				<DropdownMenu.Item
+					onclick={handleLogoutAll}
+					disabled={loggingOut}
+					class="text-orange-600 dark:text-orange-400 focus:bg-orange-50 dark:focus:bg-orange-950"
+				>
+					{#if loggingOut}
+						<LoaderIcon class="animate-spin" />
+						Logging out...
+					{:else}
+						<MonitorIcon />
+						Log out all devices
+					{/if}
+				</DropdownMenu.Item>
+			</DropdownMenu.Group>
+			<DropdownMenu.Separator />
+			<DropdownMenu.Group>
 				<DropdownMenu.Item
 					onclick={handleLogout}
 					disabled={loggingOut}
@@ -157,6 +206,7 @@
 						Log out
 					{/if}
 				</DropdownMenu.Item>
+			</DropdownMenu.Group>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</Sidebar.MenuItem>

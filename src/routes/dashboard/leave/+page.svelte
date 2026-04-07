@@ -14,54 +14,6 @@
     import LeaveRequestDialog from "$lib/components/dashboard/leave-request-dialog.svelte";
     import LeaveApprovalDialog from "$lib/components/dashboard/leave-approval-dialog.svelte";
 
-    // Fallback dummy data
-    const fallbackRequests = [
-        {
-            id: "1",
-            employeeName: "John Doe",
-            leaveTypeName: "Cuti Tahunan",
-            startDate: "2026-02-01",
-            endDate: "2026-02-03",
-            totalDays: 3,
-            reason: "Liburan keluarga",
-            status: "PENDING",
-        },
-        {
-            id: "2",
-            employeeName: "Jane Smith",
-            leaveTypeName: "Cuti Sakit",
-            startDate: "2026-01-28",
-            endDate: "2026-01-29",
-            totalDays: 2,
-            reason: "Tidak enak badan",
-            status: "APPROVED",
-        },
-    ];
-
-    const fallbackBalances = [
-        {
-            leaveTypeName: "Cuti Tahunan",
-            balance: 12,
-            used: 3,
-            pending: 0,
-            available: 9,
-        },
-        {
-            leaveTypeName: "Cuti Sakit",
-            balance: 10,
-            used: 2,
-            pending: 0,
-            available: 8,
-        },
-        {
-            leaveTypeName: "Cuti Melahirkan",
-            balance: 90,
-            used: 0,
-            pending: 0,
-            available: 90,
-        },
-    ];
-
     // Reactive state from store
     let storeState = $state({
         requests: [],
@@ -86,13 +38,9 @@
             authState.user?.role === "SUPER_USER",
     );
 
-    // Use API data if available, otherwise use fallback
-    let requests = $derived(
-        storeState.requests.length > 0 ? storeState.requests : fallbackRequests,
-    );
-    let balances = $derived(
-        storeState.balances.length > 0 ? storeState.balances : fallbackBalances,
-    );
+    // Use API data only
+    let requests = $derived(storeState.requests);
+    let balances = $derived(storeState.balances);
     let pending = $derived(storeState.pending || []);
     let loading = $derived(storeState.loading);
     let error = $derived(storeState.error);
@@ -100,7 +48,8 @@
     // Fetch data on mount
     onMount(async () => {
         try {
-            await leaveStore.fetchBalances();
+            // Only fetch balances for non-admin users or admin with employee profile
+            await leaveStore.fetchBalances(new Date().getFullYear(), isAdmin);
             if (isAdmin) {
                 await leaveStore.fetchAll();
                 await leaveStore.fetchPending();
@@ -108,13 +57,13 @@
                 await leaveStore.fetchMyRequests();
             }
         } catch (err) {
-            console.log("Using fallback data:", err.message);
+            console.error("Failed to fetch leave data:", err.message);
         }
     });
 
     // Refresh function
     async function handleRefresh() {
-        await leaveStore.fetchBalances();
+        await leaveStore.fetchBalances(new Date().getFullYear(), isAdmin);
         if (isAdmin) {
             await leaveStore.fetchAll();
             await leaveStore.fetchPending();
@@ -174,7 +123,17 @@
         >
             <p class="text-sm font-medium">Error: {error}</p>
             <p class="text-xs mt-1">
-                Using fallback data. Click refresh to retry.
+                Click refresh to retry.
+            </p>
+        </div>
+    {/if}
+
+    <!-- Admin without Employee Profile -->
+    {#if isAdmin && balances.length === 0 && !loading}
+        <div class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-blue-800 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300">
+            <p class="text-sm font-medium">Admin Mode</p>
+            <p class="text-xs mt-1">
+                Anda login sebagai admin. Leave balances hanya tersedia untuk karyawan dengan profil employee.
             </p>
         </div>
     {/if}
@@ -270,9 +229,6 @@
                     {isAdmin
                         ? "Daftar semua pengajuan cuti karyawan"
                         : "Riwayat pengajuan cuti Anda"}
-                    {#if storeState.requests.length === 0 && !loading}
-                        <span class="text-yellow-600">(Showing demo data)</span>
-                    {/if}
                 </Card.Description>
             </div>
             <div class="flex gap-2">
