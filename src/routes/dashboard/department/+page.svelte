@@ -1,5 +1,4 @@
 <script>
-	export const prerender = false;
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import DashboardHeader from '$lib/components/dashboard/dashboard-header.svelte';

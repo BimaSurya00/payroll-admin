@@ -1,0 +1,7 @@
+services:
+  hris-admin:
+    image: admin-hris
+    container_name: hris-admin
+    restart: always
+    ports:
+      - 5177:80

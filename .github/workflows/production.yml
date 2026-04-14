@@ -1,0 +1,31 @@
+name: Deploy HRIS Admin Production
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ["self-hosted", "Linux", "X64"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Environment Variables
+        run: |
+          echo "${{ vars.ENV_PRODUCTION }}" > .env
+          echo "File .env dibuat di: $(pwd)"
+          ls -la
+
+      - name: Build Docker Image
+        run: |
+          chmod +x create_image.sh
+          ./create_image.sh
+
+      - name: Deploy
+        run: |
+          docker compose down || true
+          docker compose up -d
+          echo "=== Container Status ==="
+          docker ps | grep hris-admin

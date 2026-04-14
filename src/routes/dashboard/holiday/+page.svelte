@@ -1,5 +1,4 @@
 <script>
-    export const prerender = false;
     import { onMount } from 'svelte';
     import DashboardHeader from '$lib/components/dashboard/dashboard-header.svelte';
     import ErrorForbidden from '$lib/components/error-forbidden.svelte';
