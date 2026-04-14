@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // API Base URL - sesuaikan dengan backend kamu
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://192.168.100.114:8080/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://8.215.33.70:8080/api/v1';
 
 // Create axios instance dengan default config
 const apiClient = axios.create({
