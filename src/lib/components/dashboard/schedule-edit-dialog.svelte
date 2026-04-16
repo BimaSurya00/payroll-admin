@@ -19,9 +19,6 @@
         timeIn: "",
         timeOut: "",
         allowedLateMinutes: "",
-        officeLat: "",
-        officeLong: "",
-        allowedRadiusMeters: "",
     });
 
     function initForm() {
@@ -32,10 +29,6 @@
                 timeOut: schedule.timeOut || "",
                 allowedLateMinutes:
                     schedule.allowedLateMinutes?.toString() || "15",
-                officeLat: schedule.officeLat?.toString() || "",
-                officeLong: schedule.officeLong?.toString() || "",
-                allowedRadiusMeters:
-                    schedule.allowedRadiusMeters?.toString() || "100",
             };
         }
         error = null;
@@ -52,9 +45,6 @@
                 timeIn: formData.timeIn,
                 timeOut: formData.timeOut,
                 allowedLateMinutes: parseInt(formData.allowedLateMinutes, 10),
-                officeLat: parseFloat(formData.officeLat),
-                officeLong: parseFloat(formData.officeLong),
-                allowedRadiusMeters: parseInt(formData.allowedRadiusMeters, 10),
             };
             await scheduleStore.update(schedule.id, payload);
             open = false;
@@ -130,8 +120,7 @@
             </div>
 
             <div class="space-y-2">
-                <Label for="edit-allowedLateMinutes">Allowed Late Minutes</Label
-                >
+                <Label for="edit-allowedLateMinutes">Allowed Late Minutes</Label>
                 <Input
                     id="edit-allowedLateMinutes"
                     type="number"
@@ -140,49 +129,6 @@
                     required
                     min="0"
                 />
-            </div>
-
-            <div class="border-t pt-4">
-                <h4 class="text-sm font-medium mb-3">Office Location</h4>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <Label for="edit-officeLat">Latitude</Label>
-                        <Input
-                            id="edit-officeLat"
-                            type="number"
-                            step="any"
-                            placeholder="-6.2088"
-                            bind:value={formData.officeLat}
-                            required
-                        />
-                    </div>
-
-                    <div class="space-y-2">
-                        <Label for="edit-officeLong">Longitude</Label>
-                        <Input
-                            id="edit-officeLong"
-                            type="number"
-                            step="any"
-                            placeholder="106.8456"
-                            bind:value={formData.officeLong}
-                            required
-                        />
-                    </div>
-                </div>
-
-                <div class="space-y-2 mt-4">
-                    <Label for="edit-allowedRadiusMeters"
-                        >Allowed Radius (meters)</Label
-                    >
-                    <Input
-                        id="edit-allowedRadiusMeters"
-                        type="number"
-                        placeholder="100"
-                        bind:value={formData.allowedRadiusMeters}
-                        required
-                        min="1"
-                    />
-                </div>
             </div>
 
             <Dialog.Footer>

@@ -46,6 +46,9 @@
 		taxId: '',
 		description: '',
 		isActive: true,
+		officeLat: '',
+		officeLong: '',
+		allowedRadiusMeters: '100',
 	});
 
 	companyStore.subscribe((state) => {
@@ -78,6 +81,9 @@
 			taxId: '',
 			description: '',
 			isActive: true,
+			officeLat: '',
+			officeLong: '',
+			allowedRadiusMeters: '100',
 		};
 	}
 
@@ -106,6 +112,9 @@
 			taxId: company.taxId || '',
 			description: company.description || '',
 			isActive: company.isActive ?? true,
+			officeLat: company.officeLat?.toString() || '',
+			officeLong: company.officeLong?.toString() || '',
+			allowedRadiusMeters: company.allowedRadiusMeters?.toString() || '100',
 		};
 		editDialogOpen = true;
 	}
@@ -356,6 +365,24 @@
 				<Label for="create-description">Description</Label>
 				<Textarea id="create-description" bind:value={formData.description} placeholder="Company description" rows="3" />
 			</div>
+			<div class="border-t pt-4">
+				<h4 class="text-sm font-medium mb-3">Office Location</h4>
+				<p class="text-xs text-muted-foreground mb-3">Set the office location for employee attendance check-in geofencing.</p>
+				<div class="grid grid-cols-2 gap-4">
+					<div class="space-y-2">
+						<Label for="create-officeLat">Latitude</Label>
+						<Input id="create-officeLat" type="number" step="any" placeholder="-6.2088" bind:value={formData.officeLat} />
+					</div>
+					<div class="space-y-2">
+						<Label for="create-officeLong">Longitude</Label>
+						<Input id="create-officeLong" type="number" step="any" placeholder="106.8456" bind:value={formData.officeLong} />
+					</div>
+				</div>
+				<div class="space-y-2 mt-4">
+					<Label for="create-allowedRadiusMeters">Allowed Radius (meters)</Label>
+					<Input id="create-allowedRadiusMeters" type="number" placeholder="100" bind:value={formData.allowedRadiusMeters} min="10" max="1000" />
+				</div>
+			</div>
 		</div>
 		<Dialog.Footer>
 			<Button variant="outline" onclick={() => { createDialogOpen = false; resetForm(); }}>Cancel</Button>
@@ -424,6 +451,24 @@
 			<div class="space-y-2">
 				<Label for="edit-description">Description</Label>
 				<Textarea id="edit-description" bind:value={formData.description} placeholder="Company description" rows="3" />
+			</div>
+			<div class="border-t pt-4">
+				<h4 class="text-sm font-medium mb-3">Office Location</h4>
+				<p class="text-xs text-muted-foreground mb-3">Set the office location for employee attendance check-in geofencing.</p>
+				<div class="grid grid-cols-2 gap-4">
+					<div class="space-y-2">
+						<Label for="edit-officeLat">Latitude</Label>
+						<Input id="edit-officeLat" type="number" step="any" placeholder="-6.2088" bind:value={formData.officeLat} />
+					</div>
+					<div class="space-y-2">
+						<Label for="edit-officeLong">Longitude</Label>
+						<Input id="edit-officeLong" type="number" step="any" placeholder="106.8456" bind:value={formData.officeLong} />
+					</div>
+				</div>
+				<div class="space-y-2 mt-4">
+					<Label for="edit-allowedRadiusMeters">Allowed Radius (meters)</Label>
+					<Input id="edit-allowedRadiusMeters" type="number" placeholder="100" bind:value={formData.allowedRadiusMeters} min="10" max="1000" />
+				</div>
 			</div>
 		</div>
 		<Dialog.Footer>

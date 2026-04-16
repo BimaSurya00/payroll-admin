@@ -158,21 +158,6 @@
                         </div>
                         <div class="flex items-center gap-3">
                             <div
-                                class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30"
-                            >
-                                <MapPinIcon class="h-5 w-5 text-blue-600" />
-                            </div>
-                            <div>
-                                <p class="text-sm text-muted-foreground">
-                                    Check-in Radius
-                                </p>
-                                <p class="font-medium">
-                                    {schedule.allowedRadiusMeters} meters
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div
                                 class="flex h-10 w-10 items-center justify-center rounded-lg bg-muted"
                             >
                                 <FileTextIcon

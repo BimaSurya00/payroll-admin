@@ -95,14 +95,7 @@
               )
             : 0,
     );
-    let avgRadius = $derived(
-        schedules.length > 0
-            ? Math.round(
-                  schedules.reduce((sum, s) => sum + s.allowedRadiusMeters, 0) /
-                      schedules.length,
-              )
-            : 0,
-    );
+    let avgRadius = $derived(0);
 </script>
 
 <svelte:head>
@@ -307,25 +300,6 @@
                                         </p>
                                         <p class="font-medium">
                                             {schedule.allowedLateMinutes} min
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2 text-sm">
-                                    <div
-                                        class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30"
-                                    >
-                                        <MapPinIcon
-                                            class="h-4 w-4 text-blue-600"
-                                        />
-                                    </div>
-                                    <div>
-                                        <p
-                                            class="text-muted-foreground text-xs"
-                                        >
-                                            Check-in Radius
-                                        </p>
-                                        <p class="font-medium">
-                                            {schedule.allowedRadiusMeters} m
                                         </p>
                                     </div>
                                 </div>

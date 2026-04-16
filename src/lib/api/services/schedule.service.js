@@ -27,7 +27,7 @@ export const scheduleService = {
     /**
      * Create new schedule
      * @param {Object} data - Schedule data
-     *   { name, timeIn, timeOut, allowedLateMinutes, officeLat, officeLong, allowedRadiusMeters }
+     *   { name, timeIn, timeOut, allowedLateMinutes }
      * @returns {Promise} Response with created schedule
      */
     create: (data) => {
