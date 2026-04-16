@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import DashboardHeader from '$lib/components/dashboard/dashboard-header.svelte';
 	import EmptyState from '$lib/components/shared/empty-state.svelte';
 	import Alert from '$lib/components/shared/alert.svelte';
@@ -21,6 +22,7 @@
 	import MailIcon from '@lucide/svelte/icons/mail';
 	import PhoneIcon from '@lucide/svelte/icons/phone';
 	import RefreshCwIcon from '@lucide/svelte/icons/refresh-cw';
+	import EyeIcon from '@lucide/svelte/icons/eye';
 	import LoaderIcon from '@lucide/svelte/icons/loader';
 
 	import { companyStore } from '$lib/stores/company.store.js';
@@ -236,7 +238,12 @@
 												<Building2Icon class="h-5 w-5 text-primary" />
 											</div>
 											<div>
-												<p class="font-medium">{company.name}</p>
+												<button
+													class="font-medium text-left hover:underline cursor-pointer"
+													onclick={() => goto(`/dashboard/company/${company.id}`)}
+												>
+													{company.name}
+												</button>
 												{#if company.description}
 													<p class="text-sm text-muted-foreground line-clamp-1 max-w-[200px]">{company.description}</p>
 												{/if}
@@ -269,6 +276,15 @@
 									</Table.Cell>
 									<Table.Cell class="text-right">
 										<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+											<Button
+												variant="ghost"
+												size="icon"
+												class="h-8 w-8"
+												onclick={() => goto(`/dashboard/company/${company.id}`)}
+											>
+												<EyeIcon class="h-4 w-4" />
+												<span class="sr-only">View</span>
+											</Button>
 											<Button
 												variant="ghost"
 												size="icon"

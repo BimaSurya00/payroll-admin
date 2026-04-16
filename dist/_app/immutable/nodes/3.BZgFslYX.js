@@ -1,0 +1,1 @@
+import"../chunks/DsnmJJEf.js";import{i as a}from"../chunks/D5wLt8-1.js";import{o as t}from"../chunks/hzxn3-Mw.js";import{p,a as i}from"../chunks/DSb7YsDx.js";import{g as r}from"../chunks/DUBCcM7Q.js";function g(m,o){p(o,!1),t(async()=>{await r("auth/login")}),a(),i()}export{g as component};
