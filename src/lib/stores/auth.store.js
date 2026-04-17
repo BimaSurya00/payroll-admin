@@ -1,4 +1,5 @@
 import { writable, get } from 'svelte/store';
+import axios from 'axios';
 import { authService } from '$lib/api/services/auth.service.js';
 
 /**
@@ -44,12 +45,15 @@ function createAuthStore() {
     const { subscribe, set, update } = writable(loadFromStorage());
 
     // Helper to save to localStorage
-    const saveToStorage = (user, accessToken, refreshToken) => {
+    const saveToStorage = (user, accessToken, refreshToken, expiresAt) => {
         if (typeof window === 'undefined') return;
 
         localStorage.setItem('token', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
         localStorage.setItem('user', JSON.stringify(user));
+        if (expiresAt) {
+            localStorage.setItem('tokenExpiresAt', expiresAt.toString());
+        }
     };
 
     // Helper to clear localStorage
@@ -59,6 +63,7 @@ function createAuthStore() {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
+        localStorage.removeItem('tokenExpiresAt');
     };
 
     return {
@@ -74,9 +79,9 @@ function createAuthStore() {
 
             try {
                 const response = await authService.login(email, password);
-                const { user, accessToken, refreshToken } = response.data;
+                const { user, accessToken, refreshToken, expiresAt } = response.data;
 
-                saveToStorage(user, accessToken, refreshToken);
+                saveToStorage(user, accessToken, refreshToken, expiresAt);
 
                 update((state) => ({
                     ...state,
@@ -107,9 +112,9 @@ function createAuthStore() {
 
             try {
                 const response = await authService.register(data);
-                const { user, accessToken, refreshToken } = response.data;
+                const { user, accessToken, refreshToken, expiresAt } = response.data;
 
-                saveToStorage(user, accessToken, refreshToken);
+                saveToStorage(user, accessToken, refreshToken, expiresAt);
 
                 update((state) => ({
                     ...state,
@@ -227,6 +232,55 @@ function createAuthStore() {
         checkAuth: () => {
             const state = get({ subscribe });
             return state.isAuthenticated && state.accessToken;
+        },
+
+        refreshSession: async () => {
+            const refreshToken = localStorage.getItem('refreshToken');
+            const userData = localStorage.getItem('user');
+            const userId = userData ? JSON.parse(userData).id : null;
+
+            if (!refreshToken || !userId) {
+                return false;
+            }
+
+            try {
+                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://8.215.33.70:8080'}/api/v1/auth/refresh`, {
+                    refreshToken,
+                    userId,
+                });
+
+                const { accessToken, refreshToken: newRefreshToken, expiresAt } = response.data?.data || response.data;
+
+                if (accessToken) {
+                    const user = JSON.parse(localStorage.getItem('user') || '{}');
+                    saveToStorage(user, accessToken, newRefreshToken || refreshToken, expiresAt);
+
+                    update((state) => ({
+                        ...state,
+                        accessToken,
+                        refreshToken: newRefreshToken || refreshToken,
+                    }));
+
+                    return true;
+                }
+            } catch (e) {
+                return false;
+            }
+            return false;
+        },
+
+        ensureValidToken: async () => {
+            if (typeof window === 'undefined') return;
+            const expiresAt = localStorage.getItem('tokenExpiresAt');
+            if (!expiresAt) return;
+
+            const expiresAtMs = parseInt(expiresAt, 10) * 1000;
+            const now = Date.now();
+            const minutesLeft = (expiresAtMs - now) / 60000;
+
+            if (minutesLeft < 2) {
+                await get({ subscribe }).refreshSession();
+            }
         },
 
         /**

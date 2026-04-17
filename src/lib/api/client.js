@@ -29,8 +29,44 @@ const processQueue = (error, token = null) => {
 
 // Request Interceptor - tambahkan auth token ke setiap request
 apiClient.interceptors.request.use(
-    (config) => {
-        // Ambil token dari localStorage
+    async (config) => {
+        // Proactive refresh: check if token will expire within 2 minutes
+        if (typeof window !== 'undefined') {
+            const expiresAt = localStorage.getItem('tokenExpiresAt');
+            if (expiresAt) {
+                const expiresAtMs = parseInt(expiresAt, 10) * 1000;
+                const now = Date.now();
+                const minutesLeft = (expiresAtMs - now) / 60000;
+
+                if (minutesLeft < 2 && !isRefreshing) {
+                    const refreshToken = localStorage.getItem('refreshToken');
+                    const userData = localStorage.getItem('user');
+                    const userId = userData ? JSON.parse(userData).id : null;
+
+                    if (refreshToken && userId) {
+                        isRefreshing = true;
+                        try {
+                            const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+                                refreshToken,
+                                userId,
+                            });
+                            const { accessToken, refreshToken: newRefreshToken, expiresAt: newExpiresAt } = response.data?.data || response.data;
+                            if (accessToken) {
+                                localStorage.setItem('token', accessToken);
+                                if (newRefreshToken) localStorage.setItem('refreshToken', newRefreshToken);
+                                if (newExpiresAt) localStorage.setItem('tokenExpiresAt', newExpiresAt.toString());
+                                apiClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+                            }
+                        } catch (e) {
+                            // Silently fail, let 401 handler do the job
+                        } finally {
+                            isRefreshing = false;
+                        }
+                    }
+                }
+            }
+        }
+
         const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
         if (token) {
@@ -108,13 +144,16 @@ apiClient.interceptors.response.use(
                     userId,
                 });
 
-                const { accessToken, refreshToken: newRefreshToken } = response.data?.data || response.data;
+                const { accessToken, refreshToken: newRefreshToken, expiresAt } = response.data?.data || response.data;
 
                 if (accessToken) {
                     // Store new tokens
                     localStorage.setItem('token', accessToken);
                     if (newRefreshToken) {
                         localStorage.setItem('refreshToken', newRefreshToken);
+                    }
+                    if (expiresAt) {
+                        localStorage.setItem('tokenExpiresAt', expiresAt.toString());
                     }
 
                     // Update authorization header
