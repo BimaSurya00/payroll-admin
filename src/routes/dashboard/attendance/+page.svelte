@@ -54,15 +54,15 @@
     // Fetch data on mount
     onMount(async () => {
         try {
-            await attendanceStore.fetchAll();
+            await attendanceStore.fetchAll({ dateFrom: today, dateTo: today });
         } catch (err) {
             console.error("Failed to fetch attendance data:", err.message);
         }
     });
 
-    // Refresh functionx
+    // Refresh function
     async function handleRefresh() {
-        await attendanceStore.fetchAll();
+        await attendanceStore.fetchAll({ dateFrom: today, dateTo: today });
     }
 
     function getStatusConfig(status) {
@@ -121,7 +121,7 @@
         ).length,
     );
 
-    // Current date for display
+    // Current date for display and filter
     const today = new Date().toISOString().split("T")[0];
 </script>
 
