@@ -145,6 +145,29 @@
         });
     }
 
+    function formatTime(timeString) {
+        if (!timeString) return '-';
+        const date = new Date(timeString);
+        if (isNaN(date.getTime())) return timeString;
+        return date.toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+        });
+    }
+
+    function formatTableDate(dateString) {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+        return date.toLocaleDateString('id-ID', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+        });
+    }
+
     let presentCount = $derived(
         attendances.filter((a) => a.status === "PRESENT").length,
     );
@@ -404,7 +427,7 @@
                                         </div>
                                     </Table.Cell>
                                     <Table.Cell class="text-muted-foreground"
-                                        >{attendance.date}</Table.Cell
+                                        >{formatTableDate(attendance.date)}</Table.Cell
                                     >
                                     <Table.Cell>
                                         {#if attendance.clockInTime}
@@ -412,10 +435,10 @@
                                                 class="flex items-center gap-1.5"
                                             >
                                                 <ClockIcon
-                                                    class="h-3.5 w-3.5 text-green-600"
+                                                    class="h-3.5 text-green-600"
                                                 />
                                                 <span class="font-medium"
-                                                    >{attendance.clockInTime}</span
+                                                    >{formatTime(attendance.clockInTime)}</span
                                                 >
                                             </div>
                                         {:else}
@@ -430,10 +453,10 @@
                                                 class="flex items-center gap-1.5"
                                             >
                                                 <ClockIcon
-                                                    class="h-3.5 w-3.5 text-red-600"
+                                                    class="h-3.5 text-red-600"
                                                 />
                                                 <span class="font-medium"
-                                                    >{attendance.clockOutTime}</span
+                                                    >{formatTime(attendance.clockOutTime)}</span
                                                 >
                                             </div>
                                         {:else}
