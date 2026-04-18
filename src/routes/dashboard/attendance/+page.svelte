@@ -18,20 +18,18 @@
     import { authStore } from "$lib/stores/auth.store.js";
     import AttendanceCorrectionDialog from "$lib/components/dashboard/attendance-correction-dialog.svelte";
 
-    let storeState = $state({ data: [], loading: false, error: null });
     let authState = $state({ user: null });
     let showCorrectionDialog = $state(false);
     let selectedAttendance = $state(null);
+    let attendances = $state([]);
+    let loading = $state(false);
+    let error = $state(null);
 
     let filterDateFrom = $state(new Date().toISOString().split("T")[0]);
     let filterDateTo = $state(new Date().toISOString().split("T")[0]);
     let showFilter = $state(false);
 
     const today = new Date().toISOString().split("T")[0];
-
-    attendanceStore.subscribe((state) => {
-        storeState = state;
-    });
 
     authStore.subscribe((state) => {
         authState = state;
@@ -42,14 +40,10 @@
     );
 
     let isForbidden = $derived(
-        storeState.error?.includes("403") ||
-            storeState.error?.toLowerCase().includes("forbidden") ||
-            storeState.error?.toLowerCase().includes("access denied"),
+        error?.includes("403") ||
+            error?.toLowerCase().includes("forbidden") ||
+            error?.toLowerCase().includes("access denied"),
     );
-
-    let attendances = $derived(storeState.data);
-    let loading = $derived(storeState.loading);
-    let error = $derived(storeState.error);
 
     let isFiltered = $derived(filterDateFrom !== today || filterDateTo !== today);
 
@@ -61,14 +55,26 @@
 
     onMount(async () => {
         try {
-            await attendanceStore.fetchAll({ dateFrom: filterDateFrom, dateTo: filterDateTo });
+            const response = await attendanceStore.fetchAll({ dateFrom: filterDateFrom, dateTo: filterDateTo });
+            attendances = response?.data || [];
         } catch (err) {
+            error = err.message || 'Failed to fetch attendance data';
             console.error("Failed to fetch attendance data:", err.message);
         }
     });
 
     async function fetchWithFilter() {
-        await attendanceStore.fetchAll({ dateFrom: filterDateFrom, dateTo: filterDateTo });
+        loading = true;
+        error = null;
+        try {
+            const response = await attendanceStore.fetchAll({ dateFrom: filterDateFrom, dateTo: filterDateTo });
+            attendances = response?.data || [];
+        } catch (err) {
+            error = err.message || 'Failed to fetch attendance data';
+            console.error("Failed to fetch attendance data:", err.message);
+        } finally {
+            loading = false;
+        }
     }
 
     async function handleRefresh() {
@@ -240,7 +246,7 @@
                         Clear
                     </Button>
                 {/if}
-                {#if storeState.data.length === 0 && !loading && !isFiltered}
+                {#if attendances.length === 0 && !loading && !isFiltered}
                     <span class="text-yellow-600 text-sm">(No data today)</span>
                 {/if}
             </div>
@@ -266,10 +272,12 @@
                     {/if}
                     Refresh
                 </Button>
-                <Button variant="outline" size="sm" href="/dashboard/attendance/reports">
-                    <CalendarIcon class="h-4 w-4 mr-2" />
-                    Monthly Reports
-                </Button>
+                <a href="/dashboard/attendance/reports">
+                    <Button variant="outline" size="sm">
+                        <CalendarIcon class="h-4 w-4 mr-2" />
+                        Monthly Reports
+                    </Button>
+                </a>
             </div>
         </div>
 
@@ -356,7 +364,7 @@
                 >
             </Card.Header>
             <Card.Content>
-                {#if loading && storeState.data.length === 0}
+                {#if loading && attendances.length === 0}
                     <div class="flex items-center justify-center py-8">
                         <LoaderIcon
                             class="h-8 w-8 animate-spin text-muted-foreground"
@@ -388,15 +396,10 @@
                                             <div
                                                 class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-medium"
                                             >
-                                                {(
-                                                    attendance.employeeName ||
-                                                    attendance.name ||
-                                                    "?"
-                                                ).charAt(0)}
+                                                {(attendance.employeeName || '?').charAt(0).toUpperCase()}
                                             </div>
                                             <span class="font-medium"
-                                                >{attendance.employeeName ||
-                                                    attendance.name}</span
+                                                >{attendance.employeeName || '-'}</span
                                             >
                                         </div>
                                     </Table.Cell>

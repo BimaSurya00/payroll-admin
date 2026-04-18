@@ -1,5 +1,6 @@
 <script>
     import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
     import DashboardHeader from '$lib/components/dashboard/dashboard-header.svelte';
     import ErrorForbidden from '$lib/components/error-forbidden.svelte';
     import * as Table from '$lib/components/ui/table/index.js';
@@ -16,45 +17,34 @@
     import { attendanceStore } from '$lib/stores/attendance.store.js';
     import { authStore } from '$lib/stores/auth.store.js';
 
-    // Reactive state
-    let storeState = $state({ loading: false, error: null });
     let authState = $state({ user: null });
 
     let reportData = $state(null);
     let selectedMonth = $state(new Date().getMonth() + 1);
     let selectedYear = $state(new Date().getFullYear());
     let selectedEmployee = $state(null);
-
-    // Subscribe to stores
-    attendanceStore.subscribe((state) => {
-        storeState = state;
-    });
+    let loading = $state(false);
+    let error = $state(null);
 
     authStore.subscribe((state) => {
         authState = state;
     });
 
-    // Check if user is admin
     let isAdmin = $derived(
         authState.user?.role === 'ADMIN' || authState.user?.role === 'SUPER_USER'
     );
 
-    // Check if error is forbidden
     let isForbidden = $derived(
-        storeState.error?.includes('403') ||
-            storeState.error?.toLowerCase().includes('forbidden') ||
-            storeState.error?.toLowerCase().includes('access denied')
+        error?.includes('403') ||
+            error?.toLowerCase().includes('forbidden') ||
+            error?.toLowerCase().includes('access denied')
     );
 
-    let loading = $derived(storeState.loading);
-    let error = $derived(storeState.error);
-
-    // Fetch report on mount and when filters change
     async function fetchReport() {
         if (!isAdmin) return;
 
-        storeState.loading = true;
-        storeState.error = null;
+        loading = true;
+        error = null;
 
         try {
             const params = {
@@ -69,9 +59,10 @@
             const response = await attendanceStore.getMonthlyReport(params);
             reportData = response.data;
         } catch (err) {
+            error = err.message || 'Failed to fetch attendance report';
             console.error('Failed to fetch attendance report:', err.message);
         } finally {
-            storeState.loading = false;
+            loading = false;
         }
     }
 
@@ -79,23 +70,27 @@
         fetchReport();
     });
 
-    // Refresh function
     function handleRefresh() {
         fetchReport();
     }
 
-    // Export CSV
+    function handleBack() {
+        goto('/dashboard/attendance');
+    }
+
     function exportCSV() {
         if (!reportData) return;
 
-        const headers = ['Employee Name', 'Total Days', 'Present', 'Late', 'Absent', 'Present Rate'];
-        const rows = reportData.records.map((record) => [
-            record.employeeName,
+        const headers = ['Employee Name', 'Position', 'Total Days', 'Present', 'Late', 'Absent', 'Leave', 'Attendance Rate'];
+        const rows = (reportData.items || []).map((record) => [
+            record.employeeName || '',
+            record.position || '',
             record.totalDays,
-            record.presentDays,
-            record.lateDays,
-            record.absentDays,
-            `${record.presentRate}%`,
+            record.totalPresent,
+            record.totalLate,
+            record.totalAbsent,
+            record.totalLeave,
+            `${(record.attendanceRate || 0).toFixed(1)}%`,
         ]);
 
         const csvContent = [
@@ -124,18 +119,10 @@
         return 'text-red-600';
     }
 
-    // Calculated from report
-    let summary = $derived(
-        reportData?.summary || {
-            totalEmployees: 0,
-            avgPresentRate: 0,
-            totalPresentDays: 0,
-            totalLateDays: 0,
-            totalAbsentDays: 0,
-        }
-    );
-
-    let records = $derived(reportData?.records || []);
+    let summary = $derived(reportData?.summary || null);
+    let totalEmployees = $derived(reportData?.totalEmployees || 0);
+    let items = $derived(reportData?.items || []);
+    let avgAttendanceRate = $derived(summary ? summary.attendanceRate || 0 : 0);
 </script>
 
 <svelte:head>
@@ -146,10 +133,14 @@
 
 <div class="flex flex-1 flex-col gap-4 p-4 pt-0">
     <!-- Back Button -->
-    <Button variant="ghost" href="/dashboard/attendance" class="w-fit">
-        <ArrowLeftIcon class="h-4 w-4 mr-2" />
+    <button
+        type="button"
+        onclick={handleBack}
+        class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors w-fit"
+    >
+        <ArrowLeftIcon class="h-4 w-4" />
         Back to Attendance
-    </Button>
+    </button>
 
     <!-- Forbidden Error -->
     {#if isForbidden}
@@ -159,7 +150,7 @@
         />
     {:else}
         <!-- Regular Error Alert -->
-        {#if error && !isForbidden}
+        {#if error}
             <div
                 class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
             >
@@ -238,19 +229,19 @@
                     </Card.Title>
                 </Card.Header>
                 <Card.Content>
-                    <p class="text-2xl font-bold">{summary.totalEmployees}</p>
+                    <p class="text-2xl font-bold">{totalEmployees}</p>
                 </Card.Content>
             </Card.Root>
 
             <Card.Root>
                 <Card.Header class="pb-3">
                     <Card.Title class="text-sm font-medium text-muted-foreground">
-                        Avg Present Rate
+                        Avg Attendance Rate
                     </Card.Title>
                 </Card.Header>
                 <Card.Content>
-                    <p class="text-2xl font-bold {getPresentRateColor(summary.avgPresentRate)}">
-                        {summary.avgPresentRate.toFixed(1)}%
+                    <p class="text-2xl font-bold {getPresentRateColor(avgAttendanceRate)}">
+                        {avgAttendanceRate.toFixed(1)}%
                     </p>
                 </Card.Content>
             </Card.Root>
@@ -264,7 +255,7 @@
                 <Card.Content>
                     <div class="flex items-center gap-1">
                         <TrendingUpIcon class="h-4 w-4 text-orange-600" />
-                        <p class="text-2xl font-bold text-orange-600">{summary.totalLateDays}</p>
+                        <p class="text-2xl font-bold text-orange-600">{summary?.totalLate || 0}</p>
                     </div>
                 </Card.Content>
             </Card.Root>
@@ -278,7 +269,7 @@
                 <Card.Content>
                     <div class="flex items-center gap-1">
                         <TrendingDownIcon class="h-4 w-4 text-red-600" />
-                        <p class="text-2xl font-bold text-red-600">{summary.totalAbsentDays}</p>
+                        <p class="text-2xl font-bold text-red-600">{summary?.totalAbsent || 0}</p>
                     </div>
                 </Card.Content>
             </Card.Root>
@@ -300,56 +291,64 @@
                         <LoaderIcon class="h-8 w-8 animate-spin text-muted-foreground" />
                         <span class="ml-2 text-muted-foreground">Loading report...</span>
                     </div>
+                {:else if items.length === 0}
+                    <div class="flex items-center justify-center py-8 text-muted-foreground">
+                        <p>No attendance data for this period</p>
+                    </div>
                 {:else}
                     <Table.Root>
                         <Table.Header>
                             <Table.Row>
                                 <Table.Head>Employee</Table.Head>
+                                <Table.Head>Position</Table.Head>
                                 <Table.Head class="text-center">Total Days</Table.Head>
                                 <Table.Head class="text-center">Present</Table.Head>
                                 <Table.Head class="text-center">Late</Table.Head>
                                 <Table.Head class="text-center">Absent</Table.Head>
-                                <Table.Head class="text-center">Present Rate</Table.Head>
+                                <Table.Head class="text-center">Attendance Rate</Table.Head>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {#each records as record (record.employeeId)}
+                            {#each items as record (record.employeeId)}
                                 <Table.Row>
                                     <Table.Cell>
                                         <div class="flex items-center gap-3">
                                             <div
                                                 class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-medium"
                                             >
-                                                {record.employeeName.charAt(0)}
+                                                {(record.employeeName || '?').charAt(0).toUpperCase()}
                                             </div>
-                                            <span class="font-medium">{record.employeeName}</span>
+                                            <span class="font-medium">{record.employeeName || '-'}</span>
                                         </div>
+                                    </Table.Cell>
+                                    <Table.Cell class="text-muted-foreground">
+                                        {record.position || '-'}
                                     </Table.Cell>
                                     <Table.Cell class="text-center">
                                         <span class="font-medium">{record.totalDays}</span>
                                     </Table.Cell>
                                     <Table.Cell class="text-center">
                                         <span class="text-green-600 font-semibold">
-                                            {record.presentDays}
+                                            {record.totalPresent}
                                         </span>
                                     </Table.Cell>
                                     <Table.Cell class="text-center">
                                         <span class="text-orange-600 font-semibold">
-                                            {record.lateDays}
+                                            {record.totalLate}
                                         </span>
                                     </Table.Cell>
                                     <Table.Cell class="text-center">
                                         <span class="text-red-600 font-semibold">
-                                            {record.absentDays}
+                                            {record.totalAbsent}
                                         </span>
                                     </Table.Cell>
                                     <Table.Cell class="text-center">
                                         <span
                                             class="text-lg font-bold {getPresentRateColor(
-                                                record.presentRate
+                                                record.attendanceRate || 0
                                             )}"
                                         >
-                                            {record.presentRate.toFixed(1)}%
+                                            {(record.attendanceRate || 0).toFixed(1)}%
                                         </span>
                                     </Table.Cell>
                                 </Table.Row>
