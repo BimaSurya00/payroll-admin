@@ -44,6 +44,14 @@
         goto("/dashboard/schedule");
     }
 
+    function formatScheduleTime(timeString) {
+        if (!timeString) return '-';
+        if (/^\d{1,2}:\d{2}$/.test(timeString)) return timeString;
+        const date = new Date(timeString);
+        if (isNaN(date.getTime())) return timeString;
+        return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+
     async function handleDelete() {
         if (confirm("Are you sure you want to delete this schedule?")) {
             try {
@@ -121,7 +129,7 @@
                                 <span>Clock In</span>
                             </div>
                             <p class="text-3xl font-bold text-green-600">
-                                {schedule.timeIn}
+                                {formatScheduleTime(schedule.timeIn)}
                             </p>
                         </div>
                         <div
@@ -134,7 +142,7 @@
                                 <span>Clock Out</span>
                             </div>
                             <p class="text-3xl font-bold text-red-600">
-                                {schedule.timeOut}
+                                {formatScheduleTime(schedule.timeOut)}
                             </p>
                         </div>
                     </div>

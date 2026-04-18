@@ -86,6 +86,14 @@
         return colors[name] || "bg-gray-100 dark:bg-gray-900/30";
     }
 
+    function formatScheduleTime(timeString) {
+        if (!timeString) return '-';
+        if (/^\d{1,2}:\d{2}$/.test(timeString)) return timeString;
+        const date = new Date(timeString);
+        if (isNaN(date.getTime())) return timeString;
+        return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+
     // Calculate stats
     let avgLateTolerance = $derived(
         schedules.length > 0
@@ -263,7 +271,7 @@
                                         <span>Time In</span>
                                     </div>
                                     <p class="text-xl font-bold">
-                                        {schedule.timeIn}
+                                        {formatScheduleTime(schedule.timeIn)}
                                     </p>
                                 </div>
                                 <div
@@ -278,7 +286,7 @@
                                         <span>Time Out</span>
                                     </div>
                                     <p class="text-xl font-bold">
-                                        {schedule.timeOut}
+                                        {formatScheduleTime(schedule.timeOut)}
                                     </p>
                                 </div>
                             </div>
