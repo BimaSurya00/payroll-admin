@@ -1,6 +1,5 @@
 <script>
     import { onMount } from "svelte";
-    import { goto } from "$app/navigation";
     import DashboardHeader from "$lib/components/dashboard/dashboard-header.svelte";
     import ErrorForbidden from "$lib/components/error-forbidden.svelte";
     import * as Table from "$lib/components/ui/table/index.js";
@@ -8,24 +7,28 @@
     import { Button } from "$lib/components/ui/button/index.js";
     import CalendarIcon from "@lucide/svelte/icons/calendar";
     import ClockIcon from "@lucide/svelte/icons/clock";
-    import DownloadIcon from "@lucide/svelte/icons/download";
     import FilterIcon from "@lucide/svelte/icons/filter";
     import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+    import SearchIcon from "@lucide/svelte/icons/search";
+    import XIcon from "@lucide/svelte/icons/x";
     import LoaderIcon from "@lucide/svelte/icons/loader";
     import EditIcon from "@lucide/svelte/icons/edit";
 
-    // Import store
     import { attendanceStore } from "$lib/stores/attendance.store.js";
     import { authStore } from "$lib/stores/auth.store.js";
     import AttendanceCorrectionDialog from "$lib/components/dashboard/attendance-correction-dialog.svelte";
 
-    // Reactive state from store
     let storeState = $state({ data: [], loading: false, error: null });
     let authState = $state({ user: null });
     let showCorrectionDialog = $state(false);
     let selectedAttendance = $state(null);
 
-    // Subscribe to stores
+    let filterDateFrom = $state(new Date().toISOString().split("T")[0]);
+    let filterDateTo = $state(new Date().toISOString().split("T")[0]);
+    let showFilter = $state(false);
+
+    const today = new Date().toISOString().split("T")[0];
+
     attendanceStore.subscribe((state) => {
         storeState = state;
     });
@@ -34,35 +37,58 @@
         authState = state;
     });
 
-    // Check if user is admin
     let isAdmin = $derived(
         authState.user?.role === 'ADMIN' || authState.user?.role === 'SUPER_USER'
     );
 
-    // Check if error is forbidden
     let isForbidden = $derived(
         storeState.error?.includes("403") ||
             storeState.error?.toLowerCase().includes("forbidden") ||
             storeState.error?.toLowerCase().includes("access denied"),
     );
 
-    // Use API data only
     let attendances = $derived(storeState.data);
     let loading = $derived(storeState.loading);
     let error = $derived(storeState.error);
 
-    // Fetch data on mount
+    let isFiltered = $derived(filterDateFrom !== today || filterDateTo !== today);
+
+    let filterLabel = $derived(
+        isFiltered
+            ? `${formatDate(filterDateFrom)}${filterDateFrom !== filterDateTo ? ' - ' + formatDate(filterDateTo) : ''}`
+            : formatDate(today)
+    );
+
     onMount(async () => {
         try {
-            await attendanceStore.fetchAll({ dateFrom: today, dateTo: today });
+            await attendanceStore.fetchAll({ dateFrom: filterDateFrom, dateTo: filterDateTo });
         } catch (err) {
             console.error("Failed to fetch attendance data:", err.message);
         }
     });
 
-    // Refresh function
+    async function fetchWithFilter() {
+        await attendanceStore.fetchAll({ dateFrom: filterDateFrom, dateTo: filterDateTo });
+    }
+
     async function handleRefresh() {
-        await attendanceStore.fetchAll({ dateFrom: today, dateTo: today });
+        await fetchWithFilter();
+    }
+
+    function handleApplyFilter() {
+        showFilter = false;
+        fetchWithFilter();
+    }
+
+    function handleResetFilter() {
+        filterDateFrom = today;
+        filterDateTo = today;
+        showFilter = false;
+        fetchWithFilter();
+    }
+
+    function toggleFilter() {
+        showFilter = !showFilter;
     }
 
     function getStatusConfig(status) {
@@ -105,7 +131,14 @@
         });
     }
 
-    // Calculate stats
+    function formatDateShort(dateString) {
+        return new Date(dateString).toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+        });
+    }
+
     let presentCount = $derived(
         attendances.filter((a) => a.status === "PRESENT").length,
     );
@@ -120,9 +153,6 @@
             (a) => a.status === "ON_LEAVE" || a.status === "EARLY_LEAVE",
         ).length,
     );
-
-    // Current date for display and filter
-    const today = new Date().toISOString().split("T")[0];
 </script>
 
 <svelte:head>
@@ -154,7 +184,48 @@
             </div>
         {/if}
 
-        <!-- Date selector and stats -->
+        <!-- Date filter panel -->
+        {#if showFilter}
+            <Card.Root>
+                <Card.Content class="pt-4">
+                    <div class="flex flex-wrap gap-4 items-end">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-sm font-medium text-muted-foreground">Date From</label>
+                            <input
+                                type="date"
+                                bind:value={filterDateFrom}
+                                max={filterDateTo}
+                                class="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            />
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-sm font-medium text-muted-foreground">Date To</label>
+                            <input
+                                type="date"
+                                bind:value={filterDateTo}
+                                min={filterDateFrom}
+                                class="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            />
+                        </div>
+                        <div class="flex gap-2">
+                            <Button variant="default" size="sm" onclick={handleApplyFilter}>
+                                <SearchIcon class="h-4 w-4 mr-1.5" />
+                                Apply
+                            </Button>
+                            <Button variant="outline" size="sm" onclick={handleResetFilter}>
+                                <XIcon class="h-4 w-4 mr-1.5" />
+                                Reset
+                            </Button>
+                            <Button variant="ghost" size="sm" onclick={toggleFilter}>
+                                Cancel
+                            </Button>
+                        </div>
+                    </div>
+                </Card.Content>
+            </Card.Root>
+        {/if}
+
+        <!-- Date display and actions -->
         <div
             class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between"
         >
@@ -162,12 +233,26 @@
                 class="flex items-center gap-2 rounded-lg border bg-card p-2 px-4"
             >
                 <CalendarIcon class="h-4 w-4 text-muted-foreground" />
-                <span class="font-medium">{formatDate(today)}</span>
-                {#if storeState.data.length === 0 && !loading}
-                    <span class="text-yellow-600 text-sm">(Demo data)</span>
+                <span class="font-medium">{filterLabel}</span>
+                {#if isFiltered}
+                    <Button variant="ghost" size="sm" class="h-6 px-2 text-xs" onclick={handleResetFilter}>
+                        <XIcon class="h-3 w-3 mr-1" />
+                        Clear
+                    </Button>
+                {/if}
+                {#if storeState.data.length === 0 && !loading && !isFiltered}
+                    <span class="text-yellow-600 text-sm">(No data today)</span>
                 {/if}
             </div>
             <div class="flex gap-2">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onclick={toggleFilter}
+                >
+                    <FilterIcon class="h-4 w-4 mr-2" />
+                    Filter Date
+                </Button>
                 <Button
                     variant="outline"
                     size="sm"
@@ -181,16 +266,10 @@
                     {/if}
                     Refresh
                 </Button>
-                <Button variant="outline" size="sm">
-                    <FilterIcon class="h-4 w-4 mr-2" />
-                    Filter
+                <Button variant="outline" size="sm" href="/dashboard/attendance/reports">
+                    <CalendarIcon class="h-4 w-4 mr-2" />
+                    Monthly Reports
                 </Button>
-                <a href="/dashboard/attendance/reports">
-                    <Button variant="outline" size="sm">
-                        <CalendarIcon class="h-4 w-4 mr-2" />
-                        Monthly Reports
-                    </Button>
-                </a>
             </div>
         </div>
 
@@ -273,7 +352,7 @@
                     >Attendance Records</Card.Title
                 >
                 <Card.Description
-                    >Today's attendance log for all employees</Card.Description
+                    >{isFiltered ? 'Filtered' : "Today's"} attendance log for all employees</Card.Description
                 >
             </Card.Header>
             <Card.Content>

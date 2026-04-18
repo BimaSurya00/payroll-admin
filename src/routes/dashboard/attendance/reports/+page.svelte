@@ -1,6 +1,5 @@
 <script>
     import { onMount } from 'svelte';
-    import { goto } from '$app/navigation';
     import DashboardHeader from '$lib/components/dashboard/dashboard-header.svelte';
     import ErrorForbidden from '$lib/components/error-forbidden.svelte';
     import * as Table from '$lib/components/ui/table/index.js';
@@ -147,7 +146,7 @@
 
 <div class="flex flex-1 flex-col gap-4 p-4 pt-0">
     <!-- Back Button -->
-    <Button variant="ghost" onclick={() => goto('/dashboard/attendance')} class="w-fit">
+    <Button variant="ghost" href="/dashboard/attendance" class="w-fit">
         <ArrowLeftIcon class="h-4 w-4 mr-2" />
         Back to Attendance
     </Button>
