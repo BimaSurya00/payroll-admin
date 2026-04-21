@@ -85,7 +85,7 @@
                     </p>
                     <p class="text-sm">
                         <strong>Jam:</strong>
-                        {request.startTime} - {request.endTime}
+                        {request.startTime?.substring(0, 5)} - {request.endTime?.substring(0, 5)}
                     </p>
                     <p class="text-sm">
                         <strong>Durasi:</strong>
@@ -157,7 +157,7 @@
                     </p>
                     <p class="text-sm">
                         <strong>Jam:</strong>
-                        {request.startTime} - {request.endTime}
+                        {request.startTime?.substring(0, 5)} - {request.endTime?.substring(0, 5)}
                     </p>
                     <p class="text-sm">
                         <strong>Alasan:</strong>

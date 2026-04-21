@@ -97,6 +97,11 @@
         });
     }
 
+    function formatTime(timeString) {
+        if (!timeString) return '-';
+        return timeString.substring(0, 5);
+    }
+
     function getStatusColor(status) {
         const colors = {
             PENDING:
@@ -221,7 +226,7 @@
                                     )}</Table.Cell
                                 >
                                 <Table.Cell
-                                    >{request.startTime} - {request.endTime}</Table.Cell
+                                    >{formatTime(request.startTime)} - {formatTime(request.endTime)}</Table.Cell
                                 >
                                 <Table.Cell>{request.totalHours} jam</Table.Cell
                                 >
@@ -323,7 +328,7 @@
                                     )}</Table.Cell
                                 >
                                 <Table.Cell
-                                    >{request.startTime} - {request.endTime}</Table.Cell
+                                    >{formatTime(request.startTime)} - {formatTime(request.endTime)}</Table.Cell
                                 >
                                 <Table.Cell>{request.totalHours} jam</Table.Cell
                                 >
