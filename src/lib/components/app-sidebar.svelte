@@ -7,8 +7,8 @@
   import CalendarOffIcon from "@lucide/svelte/icons/calendar-off";
   import BuildingIcon from "@lucide/svelte/icons/building";
 
-  // Base navigation data - will be filtered based on user role
-  const baseNavData = {
+  // Admin navigation data - company-scoped features
+  const adminNavData = {
     user: {
       name: "Admin",
       email: "admin@example.com",
@@ -21,120 +21,122 @@
         icon: LayoutDashboardIcon,
         isActive: false,
         items: [],
-        superUserOnly: false,
       },
-      // Organization Structure (Admin/Super User)
       {
         title: "Organization",
         url: "#",
         icon: BuildingIcon,
         isActive: false,
-        superUserOnly: false,
         items: [
-          {
-            title: "Companies",
-            url: "/dashboard/company",
-            superUserOnly: true, // Only SUPER_USER can access
-          },
           {
             title: "Departments",
             url: "/dashboard/department",
-            superUserOnly: false,
           },
           {
             title: "Employees",
             url: "/dashboard/employee",
-            superUserOnly: false,
           },
         ],
       },
-      // Time Management (Core HR Functions)
       {
         title: "Time Management",
         url: "#",
         icon: CalendarClockIcon,
         isActive: false,
-        superUserOnly: false,
         items: [
           {
             title: "Attendance",
             url: "/dashboard/attendance",
-            superUserOnly: false,
           },
           {
             title: "Work Schedules",
             url: "/dashboard/schedule",
-            superUserOnly: true, // Only SUPER_USER can access
           },
           {
             title: "Leave & Time Off",
             url: "/dashboard/leave",
-            superUserOnly: false,
           },
           {
             title: "Overtime",
             url: "/dashboard/overtime",
-            superUserOnly: false,
           },
           {
             title: "Holidays",
             url: "/dashboard/holiday",
-            superUserOnly: false,
           },
         ],
       },
-      // Leave Configuration (Admin Only)
       {
         title: "Leave Config",
         url: "#",
         icon: CalendarOffIcon,
         isActive: false,
-        superUserOnly: false,
         items: [
           {
             title: "Leave Types",
             url: "/dashboard/leave/types",
-            superUserOnly: false,
           },
         ],
       },
-      // Payroll & Compensation
       {
         title: "Payroll",
         url: "#",
         icon: WalletIcon,
         isActive: false,
-        superUserOnly: false,
         items: [
           {
             title: "Payroll Management",
             url: "/dashboard/payroll",
-            superUserOnly: false,
           },
           {
             title: "My Payslips",
             url: "/dashboard/my-payroll",
-            superUserOnly: false,
           },
         ],
       },
-      // User Management & Audit (Super User Only)
+    ],
+  };
+
+  // Superuser navigation data - multi-company platform management
+  const superUserNavData = {
+    user: {
+      name: "Super User",
+      email: "super@platform.com",
+      avatar: "/avatars/super.jpg",
+    },
+    navMain: [
+      {
+        title: "Dashboard",
+        url: "/dashboard",
+        icon: LayoutDashboardIcon,
+        isActive: false,
+        items: [],
+      },
+      {
+        title: "Organization",
+        url: "#",
+        icon: BuildingIcon,
+        isActive: false,
+        items: [
+          {
+            title: "Companies",
+            url: "/dashboard/company",
+          },
+        ],
+      },
       {
         title: "Administration",
         url: "#",
         icon: Settings2Icon,
         isActive: false,
-        superUserOnly: true, // Only SUPER_USER can access this section
         items: [
           {
             title: "Users",
             url: "/dashboard/user",
-            superUserOnly: true,
           },
           {
             title: "Audit Logs",
             url: "/dashboard/audit",
-            superUserOnly: true,
           },
         ],
       },
@@ -142,49 +144,12 @@
   };
 
   /**
-   * Filter navigation items based on user role
+   * Get navigation data based on user role
    * @param {boolean} isSuperUser - Whether current user is SUPER_USER
-   * @returns {Object} Filtered navigation data
+   * @returns {Object} Navigation data
    */
   export function getNavData(isSuperUser = false) {
-    // Filter main navigation items
-    const filteredNavMain = baseNavData.navMain
-      .filter((item) => {
-        // If item is superUserOnly, only show for SUPER_USER
-        if (item.superUserOnly && !isSuperUser) {
-          return false;
-        }
-        return true;
-      })
-      .map((item) => {
-        // If item has children, filter them too
-        if (item.items && item.items.length > 0) {
-          const filteredItems = item.items.filter((subItem) => {
-            // If subItem is superUserOnly, only show for SUPER_USER
-            if (subItem.superUserOnly && !isSuperUser) {
-              return false;
-            }
-            return true;
-          });
-
-          // If no items left after filtering, return null to remove parent
-          if (filteredItems.length === 0) {
-            return null;
-          }
-
-          return {
-            ...item,
-            items: filteredItems,
-          };
-        }
-        return item;
-      })
-      .filter(Boolean); // Remove null items
-
-    return {
-      user: baseNavData.user,
-      navMain: filteredNavMain,
-    };
+    return isSuperUser ? superUserNavData : adminNavData;
   }
 </script>
 

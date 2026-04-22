@@ -25,6 +25,7 @@
         payrollStats: null,
         employeeStats: null,
         recentActivities: null,
+        superUserSummary: null,
         loading: false, 
         error: null 
     });
@@ -52,6 +53,8 @@
         authState.user?.role === 'ADMIN' || authState.user?.role === 'SUPER_USER'
     );
 
+    let isSuperUser = $derived(authState.user?.role === 'SUPER_USER');
+
     // Check if error is forbidden
     let isForbidden = $derived(
         storeState.error?.includes('403') ||
@@ -65,19 +68,24 @@
     let payrollStats = $derived(storeState.payrollStats);
     let employeeStats = $derived(storeState.employeeStats);
     let recentActivities = $derived(storeState.recentActivities);
+    let superUserSummary = $derived(storeState.superUserSummary);
     let loading = $derived(storeState.loading);
     let error = $derived(storeState.error);
 
     // Fetch data on mount
     onMount(async () => {
-        if (isAdmin) {
+        if (isSuperUser) {
+            try {
+                await dashboardStore.fetchSuperUserSummary();
+            } catch (err) {
+                console.log('Error fetching superuser dashboard:', err.message);
+            }
+        } else if (isAdmin) {
             try {
                 await dashboardStore.fetchAll();
-                // Fetch current company data
                 try {
                     await companyStore.fetchCurrent();
                 } catch (err) {
-                    // Silently fail if user doesn't have company access
                     console.log('Could not fetch company:', err.message);
                 }
             } catch (err) {
@@ -88,7 +96,9 @@
 
     // Refresh function
     async function handleRefresh() {
-        if (isAdmin) {
+        if (isSuperUser) {
+            await dashboardStore.fetchSuperUserSummary();
+        } else if (isAdmin) {
             await dashboardStore.fetchAll();
         }
     }
@@ -192,10 +202,164 @@
 </div>
 
 <div class="flex flex-1 flex-col gap-4 p-4 pt-0">
-    {#if !isAdmin}
+    {#if isSuperUser}
+        {#if loading && !superUserSummary}
+            <div class="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {#each Array(4) as _}
+                    <Card.Root class="relative overflow-hidden">
+                        <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <div class="h-4 w-24 skeleton rounded"></div>
+                            <div class="w-8 h-8 rounded-lg skeleton"></div>
+                        </Card.Header>
+                        <Card.Content>
+                            <div class="h-8 w-20 skeleton rounded mb-2"></div>
+                            <div class="h-3 w-32 skeleton rounded"></div>
+                        </Card.Content>
+                    </Card.Root>
+                {/each}
+            </div>
+        {:else if superUserSummary}
+            <!-- Superuser Summary Cards -->
+            <div class="grid auto-rows-min gap-5 md:grid-cols-2 lg:grid-cols-4">
+                <Card.Root class="card-hover card-3d relative overflow-hidden group border-0 shadow-soft bg-gradient-to-br from-card to-background">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-chart-4"></div>
+                    <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-3 relative">
+                        <Card.Title class="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Total Companies</Card.Title>
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-glow-sm">
+                            <BuildingIcon class="h-5 w-5 text-primary" />
+                        </div>
+                    </Card.Header>
+                    <Card.Content class="relative">
+                        <div class="text-3xl font-extrabold gradient-text">{formatNumber(superUserSummary.totalCompanies)}</div>
+                        <p class="text-sm text-muted-foreground mt-2">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success/10 text-success text-xs font-semibold">
+                                <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                                {formatNumber(superUserSummary.activeCompanies)} active
+                            </span>
+                        </p>
+                    </Card.Content>
+                </Card.Root>
+
+                <Card.Root class="card-hover card-3d relative overflow-hidden group border-0 shadow-soft bg-gradient-to-br from-card to-background">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-info to-primary"></div>
+                    <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-3 relative">
+                        <Card.Title class="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Total Users</Card.Title>
+                        <div class="w-10 h-10 rounded-xl bg-info/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <UsersIcon class="h-5 w-5 text-info" />
+                        </div>
+                    </Card.Header>
+                    <Card.Content class="relative">
+                        <div class="text-3xl font-extrabold text-info">{formatNumber(superUserSummary.totalUsers)}</div>
+                        <p class="text-sm text-muted-foreground mt-2">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+                                {formatNumber(superUserSummary.totalAdmins)} admins
+                            </span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-chart-4/10 text-chart-4 text-xs font-semibold ml-1">
+                                {formatNumber(superUserSummary.totalSuperUsers)} superusers
+                            </span>
+                        </p>
+                    </Card.Content>
+                </Card.Root>
+
+                <Card.Root class="card-hover card-3d relative overflow-hidden group border-0 shadow-soft bg-gradient-to-br from-card to-background">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-success to-chart-2"></div>
+                    <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-3 relative">
+                        <Card.Title class="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Total Employees</Card.Title>
+                        <div class="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <UserCheckIcon class="h-5 w-5 text-success" />
+                        </div>
+                    </Card.Header>
+                    <Card.Content class="relative">
+                        <div class="text-3xl font-extrabold text-success">{formatNumber(superUserSummary.totalEmployees)}</div>
+                        <p class="text-sm text-muted-foreground mt-2">Across all companies</p>
+                    </Card.Content>
+                </Card.Root>
+
+                <Card.Root class="card-hover card-3d relative overflow-hidden group border-0 shadow-soft bg-gradient-to-br from-card to-background">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-warning to-chart-3"></div>
+                    <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-3 relative">
+                        <Card.Title class="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avg per Company</Card.Title>
+                        <div class="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <ActivityIcon class="h-5 w-5 text-warning" />
+                        </div>
+                    </Card.Header>
+                    <Card.Content class="relative">
+                        <div class="text-3xl font-extrabold text-warning">
+                            {superUserSummary.totalCompanies > 0 ? formatNumber(Math.round(superUserSummary.totalEmployees / superUserSummary.totalCompanies)) : '0'}
+                        </div>
+                        <p class="text-sm text-muted-foreground mt-2">Employees per company</p>
+                    </Card.Content>
+                </Card.Root>
+            </div>
+
+            <!-- Company Stats Table -->
+            <Card.Root>
+                <Card.Header>
+                    <Card.Title class="flex items-center gap-2">
+                        <BuildingIcon class="h-5 w-5" />
+                        Company Overview
+                    </Card.Title>
+                </Card.Header>
+                <Card.Content>
+                    {#if superUserSummary.companyStats?.length > 0}
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b text-left text-muted-foreground">
+                                        <th class="pb-3 font-semibold">Company</th>
+                                        <th class="pb-3 font-semibold">Plan</th>
+                                        <th class="pb-3 font-semibold text-center">Status</th>
+                                        <th class="pb-3 font-semibold text-center">Users</th>
+                                        <th class="pb-3 font-semibold text-center">Employees</th>
+                                        <th class="pb-3 font-semibold text-center">Max</th>
+                                        <th class="pb-3 font-semibold">Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {#each superUserSummary.companyStats as company}
+                                        <tr class="border-b hover:bg-muted/50 transition-colors">
+                                            <td class="py-3 font-medium">{company.companyName}</td>
+                                            <td class="py-3">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold
+                                                    {company.plan === 'enterprise' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300' :
+                                                      company.plan === 'pro' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' :
+                                                      company.plan === 'starter' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                                                      'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'}">
+                                                    {company.plan}
+                                                </span>
+                                            </td>
+                                            <td class="py-3 text-center">
+                                                {#if company.isActive}
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-success/10 text-success">Active</span>
+                                                {:else}
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-destructive/10 text-destructive">Inactive</span>
+                                                {/if}
+                                            </td>
+                                            <td class="py-3 text-center">{formatNumber(company.userCount)}</td>
+                                            <td class="py-3 text-center">{formatNumber(company.employeeCount)}</td>
+                                            <td class="py-3 text-center">{formatNumber(company.maxEmployees)}</td>
+                                            <td class="py-3 text-muted-foreground">{formatDate(company.createdAt)}</td>
+                                        </tr>
+                                    {/each}
+                                </tbody>
+                            </table>
+                        </div>
+                    {:else}
+                        <p class="text-muted-foreground text-center py-8">No companies registered yet</p>
+                    {/if}
+                </Card.Content>
+            </Card.Root>
+        {:else if error}
+            <div class="rounded-xl border border-destructive/30 bg-destructive/10 p-4 flex items-start gap-3" role="alert">
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-destructive">{error}</p>
+                </div>
+            </div>
+        {/if}
+    {:else if !isAdmin}
         <ErrorForbidden
             title="Access Denied"
-            message="You don't have permission to view the admin dashboard. This feature requires Admin or Super User access."
+            message="You don't have permission to view the admin dashboard."
         />
     {:else if isForbidden}
         <ErrorForbidden

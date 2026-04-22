@@ -8,17 +8,34 @@
   import { ROUTE_NAMES, getRouteLabel } from "$lib/utils/constants.js";
   import { authStore } from "$lib/stores/auth.store.js";
 
-  // SUPER_USER only routes - these should not be accessible by ADMIN
+  // SUPER_USER only routes
   const superUserOnlyRoutes = [
     '/dashboard/company',
-    '/dashboard/schedule',
     '/dashboard/user',
     '/dashboard/audit',
   ];
 
-  // Check if current path is a SUPER_USER only route
+  // ADMIN only routes (SUPER_USER should not access)
+  const adminOnlyRoutes = [
+    '/dashboard/department',
+    '/dashboard/employee',
+    '/dashboard/attendance',
+    '/dashboard/schedule',
+    '/dashboard/leave',
+    '/dashboard/overtime',
+    '/dashboard/holiday',
+    '/dashboard/payroll',
+    '/dashboard/my-payroll',
+    '/dashboard/profile',
+    '/dashboard/my-attendance',
+  ];
+
   function isSuperUserOnlyRoute(pathname) {
     return superUserOnlyRoutes.some(route => pathname.startsWith(route));
+  }
+
+  function isAdminOnlyRoute(pathname) {
+    return adminOnlyRoutes.some(route => pathname.startsWith(route));
   }
 
   // Subscribe to auth store
@@ -31,8 +48,12 @@
   let isSuperUser = $derived(authState.user?.role === 'SUPER_USER');
 
   // Redirect if ADMIN tries to access SUPER_USER only routes
+  // Redirect if SUPER_USER tries to access ADMIN only routes
   $effect(() => {
     if (!isSuperUser && isSuperUserOnlyRoute($page.url.pathname)) {
+      goto('/dashboard');
+    }
+    if (isSuperUser && isAdminOnlyRoute($page.url.pathname)) {
       goto('/dashboard');
     }
   });

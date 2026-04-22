@@ -57,4 +57,8 @@ export const dashboardService = {
     getRecentActivities: (params = {}) => {
         return apiClient.get('/dashboard/recent-activities', { params });
     },
+
+    getSuperUserSummary: () => {
+        return apiClient.get('/dashboard/super/summary');
+    },
 };

@@ -8,6 +8,7 @@ const createDashboardStore = () => {
         payrollStats: null,
         employeeStats: null,
         recentActivities: null,
+        superUserSummary: null,
         loading: false,
         error: null,
     });
@@ -199,9 +200,31 @@ const createDashboardStore = () => {
                 payrollStats: null,
                 employeeStats: null,
                 recentActivities: null,
+                superUserSummary: null,
                 loading: false,
                 error: null,
             });
+        },
+
+        fetchSuperUserSummary: async () => {
+            update((s) => ({ ...s, loading: true, error: null }));
+            try {
+                const response = await dashboardService.getSuperUserSummary();
+                update((s) => ({
+                    ...s,
+                    superUserSummary: response.data || null,
+                    loading: false,
+                    error: null,
+                }));
+                return response.data;
+            } catch (error) {
+                update((s) => ({
+                    ...s,
+                    loading: false,
+                    error: error.message || 'Failed to fetch superuser dashboard',
+                }));
+                throw error;
+            }
         },
     };
 };
