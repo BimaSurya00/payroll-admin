@@ -1,15 +1,34 @@
 <script>
+	import { onMount } from "svelte";
 	import * as Collapsible from "$lib/components/ui/collapsible/index.js";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
+	import { leaveStore } from "$lib/stores/leave.store.js";
 
 	let {
 		items,
 	} = $props();
 
-	// Check if item has children
+	let pendingCount = $state(0);
+
+	leaveStore.subscribe((state) => {
+		pendingCount = state.pending?.length || 0;
+	});
+
+	onMount(async () => {
+		try {
+			await leaveStore.fetchPending();
+		} catch (e) {
+			// silent fail
+		}
+	});
+
 	function hasChildren(item) {
 		return item.items && item.items.length > 0;
+	}
+
+	function isLeavePage(url) {
+		return url === "/dashboard/leave";
 	}
 </script>
 
@@ -47,7 +66,14 @@
 												href={subItem.url}
 												class="text-white/70 hover:text-white hover:bg-white/10 data-[active=true]:bg-white/20 data-[active=true]:text-white rounded-lg"
 											>
-												<span class="text-sm">{subItem.title}</span>
+												<span class="text-sm flex items-center gap-2">
+													{subItem.title}
+													{#if isLeavePage(subItem.url) && pendingCount > 0}
+														<span class="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-yellow-500 text-white text-[10px] font-bold px-1">
+															{pendingCount > 99 ? "99+" : pendingCount}
+														</span>
+													{/if}
+												</span>
 											</Sidebar.MenuSubButton>
 										</Sidebar.MenuSubItem>
 									{/each}
