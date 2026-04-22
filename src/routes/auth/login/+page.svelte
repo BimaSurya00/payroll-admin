@@ -9,12 +9,15 @@
 	import LockIcon from "@lucide/svelte/icons/lock";
 	import AlertCircleIcon from "@lucide/svelte/icons/alert-circle";
 	import SparklesIcon from "@lucide/svelte/icons/sparkles";
+	import EyeIcon from "@lucide/svelte/icons/eye";
+	import EyeOffIcon from "@lucide/svelte/icons/eye-off";
 
 	// Import auth store
 	import { authStore } from "$lib/stores/auth.store.js";
 
 	let email = $state("");
 	let password = $state("");
+	let showPassword = $state(false);
 	let loading = $state(false);
 	let error = $state(null);
 
@@ -135,16 +138,30 @@
 							Forgot password?
 						</a>
 					</div>
-					<Input
-						id="password"
-						type="password"
-						placeholder="••••••••"
-						bind:value={password}
-						oninput={clearError}
-						required
-						disabled={loading}
-						class="h-12"
-					/>
+					<div class="relative">
+						<Input
+							id="password"
+							type={showPassword ? "text" : "password"}
+							placeholder="••••••••"
+							bind:value={password}
+							oninput={clearError}
+							required
+							disabled={loading}
+							class="h-12 pr-10"
+						/>
+						<button
+							type="button"
+							onclick={() => showPassword = !showPassword}
+							class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+							aria-label={showPassword ? "Hide password" : "Show password"}
+						>
+							{#if showPassword}
+								<EyeOffIcon class="w-5 h-5" />
+							{:else}
+								<EyeIcon class="w-5 h-5" />
+							{/if}
+						</button>
+					</div>
 				</div>
 				
 				<Button 
