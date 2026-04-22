@@ -13,13 +13,13 @@ export const auditService = {
      * @returns {Promise} Response with audit logs and pagination
      */
     getAll: (params = {}) => {
-        const { page, perPage, action, resourceType, userId, dateFrom, dateTo, ...rest } = params;
+        const { page, perPage, action, resourceType, userId, companyId, dateFrom, dateTo, ...rest } = params;
         const queryParams = buildPaginationParams({ page, perPage });
 
-        // Add optional filters
         if (action) queryParams.action = action;
         if (resourceType) queryParams.resource_type = resourceType;
         if (userId) queryParams.user_id = userId;
+        if (companyId) queryParams.company_id = companyId;
         if (dateFrom) queryParams.date_from = dateFrom;
         if (dateTo) queryParams.date_to = dateTo;
 

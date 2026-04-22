@@ -8,6 +8,7 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Table from '$lib/components/ui/table/index.js';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -24,28 +25,33 @@
 	import RefreshCwIcon from '@lucide/svelte/icons/refresh-cw';
 	import EyeIcon from '@lucide/svelte/icons/eye';
 	import LoaderIcon from '@lucide/svelte/icons/loader';
+	import UsersIcon from '@lucide/svelte/icons/users';
+	import UserCheckIcon from '@lucide/svelte/icons/user-check';
 
-	import { companyStore } from '$lib/stores/company.store.js';
+	import { companyService } from '$lib/api/services/company.service.js';
 	import { authStore } from '$lib/stores/auth.store.js';
 	import { toast } from 'svelte-sonner';
 
-	// Reactive state
-	let storeState = $state({ data: [], loading: false, error: null });
 	let authState = $state({ user: null });
-	
+	let isSuperUser = $derived(authState.user?.role === 'SUPER_USER');
+
+	let companies = $state([]);
+	let loading = $state(false);
+	let error = $state(null);
+
 	let createDialogOpen = $state(false);
 	let editDialogOpen = $state(false);
 	let deleteDialogOpen = $state(false);
 	let selectedCompany = $state(null);
+	let togglingId = $state(null);
 
 	let formData = $state({
 		name: '',
 		slug: '',
-		address: '',
-		phone: '',
+		plan: 'free',
+		maxEmployees: 25,
 		email: '',
 		website: '',
-		taxId: '',
 		description: '',
 		isActive: true,
 		officeLat: '',
@@ -53,47 +59,35 @@
 		allowedRadiusMeters: '100',
 	});
 
-	companyStore.subscribe((state) => {
-		storeState = state;
-	});
+	authStore.subscribe((state) => { authState = state; });
 
-	authStore.subscribe((state) => {
-		authState = state;
-	});
-
-	let isSuperUser = $derived(authState.user?.role === 'SUPER_USER');
-	let companies = $derived(storeState.data);
-	let loading = $derived(storeState.loading);
-	let error = $derived(storeState.error);
+	async function fetchCompanies() {
+		loading = true;
+		error = null;
+		try {
+			const response = await companyService.getAllWithStats();
+			companies = response.data || [];
+		} catch (err) {
+			error = err.message || 'Failed to fetch companies';
+		} finally {
+			loading = false;
+		}
+	}
 
 	onMount(() => {
-		if (isSuperUser) {
-			companyStore.fetchAll();
-		}
+		if (isSuperUser) fetchCompanies();
 	});
 
 	function resetForm() {
 		formData = {
-			name: '',
-			slug: '',
-			address: '',
-			phone: '',
-			email: '',
-			website: '',
-			taxId: '',
-			description: '',
-			isActive: true,
-			officeLat: '',
-			officeLong: '',
-			allowedRadiusMeters: '100',
+			name: '', slug: '', plan: 'free', maxEmployees: 25,
+			email: '', website: '', description: '', isActive: true,
+			officeLat: '', officeLong: '', allowedRadiusMeters: '100',
 		};
 	}
 
 	function generateSlug(name) {
-		return name
-			.toLowerCase()
-			.replace(/[^a-z0-9]+/g, '-')
-			.replace(/(^-|-$)/g, '');
+		return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 	}
 
 	function handleNameChange() {
@@ -107,11 +101,10 @@
 		formData = {
 			name: company.name,
 			slug: company.slug,
-			address: company.address || '',
-			phone: company.phone || '',
+			plan: company.plan || 'free',
+			maxEmployees: company.maxEmployees || 25,
 			email: company.email || '',
 			website: company.website || '',
-			taxId: company.taxId || '',
 			description: company.description || '',
 			isActive: company.isActive ?? true,
 			officeLat: company.officeLat?.toString() || '',
@@ -128,10 +121,11 @@
 
 	async function handleCreate() {
 		try {
-			await companyStore.create(formData);
+			await companyService.create(formData);
 			toast.success('Company created successfully');
 			createDialogOpen = false;
 			resetForm();
+			await fetchCompanies();
 		} catch (err) {
 			toast.error(err.message || 'Failed to create company');
 		}
@@ -139,10 +133,11 @@
 
 	async function handleUpdate() {
 		try {
-			await companyStore.update(selectedCompany.id, formData);
+			await companyService.update(selectedCompany.id, formData);
 			toast.success('Company updated successfully');
 			editDialogOpen = false;
 			resetForm();
+			await fetchCompanies();
 		} catch (err) {
 			toast.error(err.message || 'Failed to update company');
 		}
@@ -150,19 +145,44 @@
 
 	async function handleDelete() {
 		try {
-			await companyStore.delete(selectedCompany.id);
+			await companyService.delete(selectedCompany.id);
 			toast.success('Company deleted successfully');
 			deleteDialogOpen = false;
 			selectedCompany = null;
+			await fetchCompanies();
 		} catch (err) {
 			toast.error(err.message || 'Failed to delete company');
 		}
 	}
 
-	function getStatusColor(isActive) {
-		return isActive
-			? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-			: 'bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-300';
+	async function toggleStatus(company) {
+		togglingId = company.id;
+		try {
+			await companyService.update(company.id, { isActive: !company.isActive });
+			await fetchCompanies();
+			toast.success(`Company ${!company.isActive ? 'activated' : 'deactivated'}`);
+		} catch (err) {
+			toast.error(err.message || 'Failed to update status');
+		} finally {
+			togglingId = null;
+		}
+	}
+
+	function getPlanBadge(plan) {
+		switch (plan) {
+			case 'enterprise': return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
+			case 'pro': return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+			case 'starter': return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
+			default: return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
+		}
+	}
+
+	function getUsageColor(used, max) {
+		if (max === 0) return 'bg-gray-200';
+		const pct = (used / max) * 100;
+		if (pct >= 90) return 'bg-red-500';
+		if (pct >= 70) return 'bg-yellow-500';
+		return 'bg-primary';
 	}
 </script>
 
@@ -170,14 +190,11 @@
 	<title>Companies | Dashboard</title>
 </svelte:head>
 
-<DashboardHeader
-	title="Companies"
-	subtitle="Manage companies in the system (Super User only)"
-/>
+<DashboardHeader title="Companies" subtitle="Manage companies in the system" />
 
 <div class="flex flex-1 flex-col gap-6 p-4 pt-0">
 	{#if error}
-		<Alert variant="error" message={error} dismissible onDismiss={() => companyStore.clearError?.()} />
+		<Alert variant="error" message={error} dismissible onDismiss={() => error = null} />
 	{/if}
 
 	{#if !isSuperUser}
@@ -186,7 +203,7 @@
 				<Building2Icon class="h-12 w-12 text-muted-foreground mb-4" />
 				<h3 class="text-lg font-semibold">Access Restricted</h3>
 				<p class="text-muted-foreground text-center max-w-md">
-					Company management is only available to Super Users. Please contact your system administrator if you need access.
+					Company management is only available to Super Users.
 				</p>
 			</Card.Content>
 		</Card.Root>
@@ -198,7 +215,7 @@
 					<Card.Description>Manage companies in the system</Card.Description>
 				</div>
 				<div class="flex gap-2">
-					<Button variant="outline" size="icon" onclick={() => companyStore.fetchAll()} disabled={loading}>
+					<Button variant="outline" size="icon" onclick={fetchCompanies} disabled={loading}>
 						<RefreshCwIcon class="h-4 w-4 {loading ? 'animate-spin' : ''}" />
 					</Button>
 					<Button onclick={() => { createDialogOpen = true; resetForm(); }}>
@@ -222,11 +239,12 @@
 					<Table.Root>
 						<Table.Header>
 							<Table.Row>
-								<Table.Head class="w-[250px]">Company</Table.Head>
-								<Table.Head>Slug</Table.Head>
-								<Table.Head>Contact</Table.Head>
-								<Table.Head class="w-[100px]">Status</Table.Head>
-								<Table.Head class="w-[100px] text-right">Actions</Table.Head>
+								<Table.Head class="w-[220px]">Company</Table.Head>
+								<Table.Head>Plan</Table.Head>
+								<Table.Head class="text-center">Users</Table.Head>
+								<Table.Head class="min-w-[160px]">Employees</Table.Head>
+								<Table.Head>Status</Table.Head>
+								<Table.Head class="text-right">Actions</Table.Head>
 							</Table.Row>
 						</Table.Header>
 						<Table.Body>
@@ -234,74 +252,64 @@
 								<Table.Row class="group">
 									<Table.Cell>
 										<div class="flex items-center gap-3">
-											<div class="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+											<div class="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
 												<Building2Icon class="h-5 w-5 text-primary" />
 											</div>
-											<div>
+											<div class="min-w-0">
 												<button
-													class="font-medium text-left hover:underline cursor-pointer"
+													class="font-medium text-left hover:underline cursor-pointer truncate block"
 													onclick={() => goto(`/dashboard/company/${company.id}`)}
 												>
 													{company.name}
 												</button>
-												{#if company.description}
-													<p class="text-sm text-muted-foreground line-clamp-1 max-w-[200px]">{company.description}</p>
-												{/if}
+												<code class="text-xs text-muted-foreground">{company.slug}</code>
 											</div>
 										</div>
 									</Table.Cell>
 									<Table.Cell>
-										<code class="text-sm bg-muted px-2 py-1 rounded">{company.slug}</code>
+										<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold {getPlanBadge(company.plan)}">
+											{company.plan}
+										</span>
+									</Table.Cell>
+									<Table.Cell class="text-center">
+										<span class="text-sm font-medium">{company.userCount ?? 0}</span>
 									</Table.Cell>
 									<Table.Cell>
 										<div class="space-y-1">
-											{#if company.email}
-												<div class="text-sm flex items-center gap-1">
-													<MailIcon class="h-3 w-3 text-muted-foreground" />
-													{company.email}
-												</div>
-											{/if}
-											{#if company.phone}
-												<div class="text-sm text-muted-foreground flex items-center gap-1">
-													<PhoneIcon class="h-3 w-3" />
-													{company.phone}
-												</div>
-											{/if}
+											<div class="flex items-center justify-between text-sm">
+												<span class="font-medium">{company.employeeCount ?? 0}</span>
+												<span class="text-xs text-muted-foreground">/ {company.maxEmployees ?? 25}</span>
+											</div>
+											<div class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+												<div
+													class="h-full rounded-full transition-all {getUsageColor(company.employeeCount ?? 0, company.maxEmployees ?? 25)}"
+													style="width: {Math.min(((company.employeeCount ?? 0) / (company.maxEmployees || 25)) * 100, 100)}%"
+												></div>
+											</div>
 										</div>
 									</Table.Cell>
 									<Table.Cell>
-										<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium {getStatusColor(company.isActive)}">
-											{company.isActive ? 'Active' : 'Inactive'}
-										</span>
+										<div class="flex items-center gap-2">
+											{#if togglingId === company.id}
+												<LoaderIcon class="h-4 w-4 animate-spin text-muted-foreground" />
+											{:else}
+												<Switch
+													checked={company.isActive}
+													onchange={() => toggleStatus(company)}
+												/>
+											{/if}
+										</div>
 									</Table.Cell>
 									<Table.Cell class="text-right">
 										<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-											<Button
-												variant="ghost"
-												size="icon"
-												class="h-8 w-8"
-												onclick={() => goto(`/dashboard/company/${company.id}`)}
-											>
+											<Button variant="ghost" size="icon" class="h-8 w-8" onclick={() => goto(`/dashboard/company/${company.id}`)}>
 												<EyeIcon class="h-4 w-4" />
-												<span class="sr-only">View</span>
 											</Button>
-											<Button
-												variant="ghost"
-												size="icon"
-												class="h-8 w-8"
-												onclick={() => openEditDialog(company)}
-											>
+											<Button variant="ghost" size="icon" class="h-8 w-8" onclick={() => openEditDialog(company)}>
 												<PencilIcon class="h-4 w-4" />
-												<span class="sr-only">Edit</span>
 											</Button>
-											<Button
-												variant="ghost"
-												size="icon"
-												class="h-8 w-8 text-destructive hover:text-destructive"
-												onclick={() => openDeleteDialog(company)}
-											>
+											<Button variant="ghost" size="icon" class="h-8 w-8 text-destructive hover:text-destructive" onclick={() => openDeleteDialog(company)}>
 												<TrashIcon class="h-4 w-4" />
-												<span class="sr-only">Delete</span>
 											</Button>
 										</div>
 									</Table.Cell>
@@ -326,16 +334,37 @@
 			<div class="grid grid-cols-2 gap-4">
 				<div class="space-y-2">
 					<Label for="create-name">Company Name *</Label>
-					<Input
-						id="create-name"
-						bind:value={formData.name}
-						oninput={handleNameChange}
-						placeholder="e.g., Acme Corporation"
-					/>
+					<Input id="create-name" bind:value={formData.name} oninput={handleNameChange} placeholder="e.g., Acme Corporation" />
 				</div>
 				<div class="space-y-2">
 					<Label for="create-slug">Slug *</Label>
 					<Input id="create-slug" bind:value={formData.slug} placeholder="e.g., acme-corporation" />
+				</div>
+			</div>
+			<div class="grid grid-cols-3 gap-4">
+				<div class="space-y-2">
+					<Label for="create-plan">Plan</Label>
+					<Select.Root type="single" bind:value={formData.plan}>
+						<Select.Trigger class="w-full">
+							{formData.plan ? formData.plan.charAt(0).toUpperCase() + formData.plan.slice(1) : 'Select plan'}
+						</Select.Trigger>
+						<Select.Content>
+							<Select.Item value="free">Free</Select.Item>
+							<Select.Item value="starter">Starter</Select.Item>
+							<Select.Item value="pro">Pro</Select.Item>
+							<Select.Item value="enterprise">Enterprise</Select.Item>
+						</Select.Content>
+					</Select.Root>
+				</div>
+				<div class="space-y-2">
+					<Label for="create-maxEmployees">Max Employees</Label>
+					<Input id="create-maxEmployees" type="number" bind:value={formData.maxEmployees} min="1" />
+				</div>
+				<div class="flex items-end">
+					<div class="flex items-center space-x-2">
+						<Switch id="create-isActive" bind:checked={formData.isActive} />
+						<Label for="create-isActive">Active</Label>
+					</div>
 				</div>
 			</div>
 			<div class="grid grid-cols-2 gap-4">
@@ -362,28 +391,11 @@
 				</div>
 			</div>
 			<div class="space-y-2">
-				<Label for="create-address">Address</Label>
-				<Textarea id="create-address" bind:value={formData.address} placeholder="Full company address" rows="2" />
-			</div>
-			<div class="grid grid-cols-2 gap-4">
-				<div class="space-y-2">
-					<Label for="create-taxId">Tax ID</Label>
-					<Input id="create-taxId" bind:value={formData.taxId} placeholder="Tax identification number" />
-				</div>
-				<div class="flex items-end">
-					<div class="flex items-center space-x-2">
-						<Switch id="create-isActive" bind:checked={formData.isActive} />
-						<Label for="create-isActive">Active</Label>
-					</div>
-				</div>
-			</div>
-			<div class="space-y-2">
 				<Label for="create-description">Description</Label>
-				<Textarea id="create-description" bind:value={formData.description} placeholder="Company description" rows="3" />
+				<Textarea id="create-description" bind:value={formData.description} placeholder="Company description" rows="2" />
 			</div>
 			<div class="border-t pt-4">
 				<h4 class="text-sm font-medium mb-3">Office Location</h4>
-				<p class="text-xs text-muted-foreground mb-3">Set the office location for employee attendance check-in geofencing.</p>
 				<div class="grid grid-cols-2 gap-4">
 					<div class="space-y-2">
 						<Label for="create-officeLat">Latitude</Label>
@@ -425,6 +437,32 @@
 					<Input id="edit-slug" bind:value={formData.slug} placeholder="e.g., acme-corporation" />
 				</div>
 			</div>
+			<div class="grid grid-cols-3 gap-4">
+				<div class="space-y-2">
+					<Label for="edit-plan">Plan</Label>
+					<Select.Root type="single" bind:value={formData.plan}>
+						<Select.Trigger class="w-full">
+							{formData.plan ? formData.plan.charAt(0).toUpperCase() + formData.plan.slice(1) : 'Select plan'}
+						</Select.Trigger>
+						<Select.Content>
+							<Select.Item value="free">Free</Select.Item>
+							<Select.Item value="starter">Starter</Select.Item>
+							<Select.Item value="pro">Pro</Select.Item>
+							<Select.Item value="enterprise">Enterprise</Select.Item>
+						</Select.Content>
+					</Select.Root>
+				</div>
+				<div class="space-y-2">
+					<Label for="edit-maxEmployees">Max Employees</Label>
+					<Input id="edit-maxEmployees" type="number" bind:value={formData.maxEmployees} min="1" />
+				</div>
+				<div class="flex items-end">
+					<div class="flex items-center space-x-2">
+						<Switch id="edit-isActive" bind:checked={formData.isActive} />
+						<Label for="edit-isActive">Active</Label>
+					</div>
+				</div>
+			</div>
 			<div class="grid grid-cols-2 gap-4">
 				<div class="space-y-2">
 					<Label for="edit-email">Email</Label>
@@ -449,28 +487,11 @@
 				</div>
 			</div>
 			<div class="space-y-2">
-				<Label for="edit-address">Address</Label>
-				<Textarea id="edit-address" bind:value={formData.address} placeholder="Full company address" rows="2" />
-			</div>
-			<div class="grid grid-cols-2 gap-4">
-				<div class="space-y-2">
-					<Label for="edit-taxId">Tax ID</Label>
-					<Input id="edit-taxId" bind:value={formData.taxId} placeholder="Tax identification number" />
-				</div>
-				<div class="flex items-end">
-					<div class="flex items-center space-x-2">
-						<Switch id="edit-isActive" bind:checked={formData.isActive} />
-						<Label for="edit-isActive">Active</Label>
-					</div>
-				</div>
-			</div>
-			<div class="space-y-2">
 				<Label for="edit-description">Description</Label>
-				<Textarea id="edit-description" bind:value={formData.description} placeholder="Company description" rows="3" />
+				<Textarea id="edit-description" bind:value={formData.description} placeholder="Company description" rows="2" />
 			</div>
 			<div class="border-t pt-4">
 				<h4 class="text-sm font-medium mb-3">Office Location</h4>
-				<p class="text-xs text-muted-foreground mb-3">Set the office location for employee attendance check-in geofencing.</p>
 				<div class="grid grid-cols-2 gap-4">
 					<div class="space-y-2">
 						<Label for="edit-officeLat">Latitude</Label>

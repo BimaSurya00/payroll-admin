@@ -18,20 +18,21 @@
 	import FingerprintIcon from '@lucide/svelte/icons/fingerprint';
 	import CalendarIcon from '@lucide/svelte/icons/calendar';
 	import UsersIcon from '@lucide/svelte/icons/users';
+	import UserCheckIcon from '@lucide/svelte/icons/user-check';
+	import BriefcaseIcon from '@lucide/svelte/icons/briefcase';
+	import ClockIcon from '@lucide/svelte/icons/clock';
 	import LoaderIcon from '@lucide/svelte/icons/loader';
 
-	import { companyStore } from '$lib/stores/company.store.js';
+	import { companyService } from '$lib/api/services/company.service.js';
+	import { authStore } from '$lib/stores/auth.store.js';
 
 	let id = $derived($page.params.id);
-	let storeState = $state({ selected: null, loading: false, error: null });
+	let company = $state(null);
+	let stats = $state(null);
+	let loading = $state(false);
+	let error = $state(null);
 
-	companyStore.subscribe((state) => {
-		storeState = state;
-	});
-
-	let company = $derived(storeState.selected);
-	let loading = $derived(storeState.loading);
-	let error = $derived(storeState.error);
+	authStore.subscribe((state) => {});
 
 	let isForbidden = $derived(
 		error?.includes('403') ||
@@ -41,7 +42,19 @@
 
 	onMount(async () => {
 		if (id) {
-			await companyStore.fetchById(id);
+			loading = true;
+			try {
+				const [companyRes, statsRes] = await Promise.all([
+					companyService.getById(id),
+					companyService.getStats(id),
+				]);
+				company = companyRes.data || companyRes;
+				stats = statsRes.data;
+			} catch (err) {
+				error = err.message || 'Failed to load company';
+			} finally {
+				loading = false;
+			}
 		}
 	});
 
@@ -104,6 +117,63 @@
 				Back to Companies
 			</Button>
 		</div>
+
+		{#if stats}
+			<!-- Stats Cards -->
+			<div class="grid grid-cols-2 gap-4 md:grid-cols-4 mt-2">
+				<Card.Root>
+					<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+						<Card.Title class="text-sm font-medium text-muted-foreground">Users</Card.Title>
+						<div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+							<UsersIcon class="h-4 w-4 text-blue-600" />
+						</div>
+					</Card.Header>
+					<Card.Content>
+						<div class="text-2xl font-bold">{stats.userCount}</div>
+						<p class="text-xs text-muted-foreground">registered users</p>
+					</Card.Content>
+				</Card.Root>
+
+				<Card.Root>
+					<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+						<Card.Title class="text-sm font-medium text-muted-foreground">Employees</Card.Title>
+						<div class="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+							<UserCheckIcon class="h-4 w-4 text-green-600" />
+						</div>
+					</Card.Header>
+					<Card.Content>
+						<div class="text-2xl font-bold">{stats.employeeCount}</div>
+						<p class="text-xs text-muted-foreground">of {company.maxEmployees || '-'} max</p>
+					</Card.Content>
+				</Card.Root>
+
+				<Card.Root>
+					<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+						<Card.Title class="text-sm font-medium text-muted-foreground">Departments</Card.Title>
+						<div class="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+							<BriefcaseIcon class="h-4 w-4 text-purple-600" />
+						</div>
+					</Card.Header>
+					<Card.Content>
+						<div class="text-2xl font-bold">{stats.departmentCount}</div>
+						<p class="text-xs text-muted-foreground">departments</p>
+					</Card.Content>
+				</Card.Root>
+
+				<Card.Root>
+					<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
+						<Card.Title class="text-sm font-medium text-muted-foreground">Schedules</Card.Title>
+						<div class="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
+							<ClockIcon class="h-4 w-4 text-orange-600" />
+						</div>
+					</Card.Header>
+					<Card.Content>
+						<div class="text-2xl font-bold">{stats.scheduleCount}</div>
+						<p class="text-xs text-muted-foreground">work schedules</p>
+					</Card.Content>
+				</Card.Root>
+			</div>
+		{/if}
 
 		<!-- Company Card -->
 		<Card.Root>

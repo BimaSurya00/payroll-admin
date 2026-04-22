@@ -69,4 +69,8 @@ export const companyService = {
     getStats: (id) => {
         return apiClient.get(`/companies/${id}/stats`);
     },
+
+    getAllWithStats: (params = {}) => {
+        return apiClient.get('/companies', { params: buildPaginationParams(params) });
+    },
 };

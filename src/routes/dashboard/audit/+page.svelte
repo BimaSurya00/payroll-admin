@@ -18,6 +18,7 @@
 
 	import { auditStore } from '$lib/stores/audit.store.js';
 	import { authStore } from '$lib/stores/auth.store.js';
+	import { companyService } from '$lib/api/services/company.service.js';
 	import { formatDateTime } from '$lib/utils/format.js';
 
 	// Reactive state
@@ -32,7 +33,7 @@
 	let filters = $state({
 		action: '',
 		resourceType: '',
-		userId: '',
+		companyId: '',
 		dateFrom: '',
 		dateTo: '',
 	});
@@ -46,14 +47,29 @@
 	});
 
 	let isAdmin = $derived(authState.user?.role === 'ADMIN' || authState.user?.role === 'SUPER_USER');
+	let isSuperUser = $derived(authState.user?.role === 'SUPER_USER');
 	let logs = $derived(storeState.logs);
 	let loading = $derived(storeState.loading);
 	let error = $derived(storeState.error);
 	let pagination = $derived(storeState.pagination);
 
-	onMount(() => {
+	let companyList = $state([]);
+	let companyLoading = $state(false);
+
+	async function fetchCompanies() {
+		if (!isSuperUser) return;
+		companyLoading = true;
+		try {
+			const res = await companyService.getAllWithStats({ perPage: 100 });
+			companyList = res.data || [];
+		} catch { companyList = []; }
+		finally { companyLoading = false; }
+	}
+
+	onMount(async () => {
 		if (isAdmin) {
 			loadLogs();
+			if (isSuperUser) fetchCompanies();
 		}
 	});
 
@@ -61,7 +77,7 @@
 		const params = { page };
 		if (filters.action) params.action = filters.action;
 		if (filters.resourceType) params.resourceType = filters.resourceType;
-		if (filters.userId) params.userId = filters.userId;
+		if (filters.companyId) params.companyId = filters.companyId;
 		if (filters.dateFrom) params.dateFrom = filters.dateFrom;
 		if (filters.dateTo) params.dateTo = filters.dateTo;
 
@@ -76,7 +92,7 @@
 		filters = {
 			action: '',
 			resourceType: '',
-			userId: '',
+			companyId: '',
 			dateFrom: '',
 			dateTo: '',
 		};
@@ -140,9 +156,28 @@
 			</Card.Title>
 		</Card.Header>
 		<Card.Content>
-			<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+			<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+				{#if isSuperUser}
+					<div class="space-y-2">
+						<Label>Company</Label>
+						<Select.Root bind:value={filters.companyId}>
+							<Select.Trigger>
+								{filters.companyId
+									? (companyList.find(c => c.id === filters.companyId)?.name || 'Select company')
+									: 'All Companies'}
+							</Select.Trigger>
+							<Select.Content>
+								<Select.Item value="">All Companies</Select.Item>
+								{#each companyList as company}
+									<Select.Item value={company.id}>{company.name}</Select.Item>
+								{/each}
+							</Select.Content>
+						</Select.Root>
+					</div>
+				{/if}
+
 				<div class="space-y-2">
-					<Label>Action</Label>
+					<label class="text-sm font-medium">Action</label>
 					<Select.Root bind:value={filters.action}>
 						<Select.Trigger>
 							<Select.Value placeholder="All Actions" />
