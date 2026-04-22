@@ -6,6 +6,7 @@
     import * as Select from "$lib/components/ui/select/index.js";
     import PencilIcon from "@lucide/svelte/icons/pencil";
     import LoaderIcon from "@lucide/svelte/icons/loader";
+    import { formatTime } from "$lib/utils.js";
 
     import { employeeStore } from "$lib/stores/employee.store.js";
     import { scheduleStore } from "$lib/stores/schedule.store.js";
@@ -219,7 +220,7 @@
                                         (s) => s.id === formData.scheduleId,
                                     )}
                                     {selected
-                                        ? `${selected.name} (${selected.timeIn} - ${selected.timeOut}${selected.allowedLateMinutes ? `, Late: ${selected.allowedLateMinutes}min` : ''})`
+                                        ? `${selected.name} (${formatTime(selected.timeIn)} - ${formatTime(selected.timeOut)}${selected.allowedLateMinutes ? `, Late: ${selected.allowedLateMinutes}min` : ''})`
                                         : "Select schedule"}
                                 {:else}
                                     No Schedule
@@ -229,7 +230,7 @@
                                 <Select.Item value="">No Schedule</Select.Item>
                                 {#each schedules as schedule}
                                     <Select.Item value={schedule.id}>
-                                        {schedule.name} ({schedule.timeIn} - {schedule.timeOut}
+                                        {schedule.name} ({formatTime(schedule.timeIn)} - {formatTime(schedule.timeOut)}
                                         {schedule.allowedLateMinutes ? `, Late: ${schedule.allowedLateMinutes}min` : ''})
                                     </Select.Item>
                                 {/each}

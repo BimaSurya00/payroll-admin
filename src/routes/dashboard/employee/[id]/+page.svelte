@@ -6,6 +6,7 @@
     import ErrorForbidden from "$lib/components/error-forbidden.svelte";
     import * as Card from "$lib/components/ui/card/index.js";
     import { Button } from "$lib/components/ui/button/index.js";
+    import { formatTime } from "$lib/utils.js";
     import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
     import PencilIcon from "@lucide/svelte/icons/pencil";
     import TrashIcon from "@lucide/svelte/icons/trash";
@@ -268,7 +269,7 @@
                                 {#if employee.schedule}
                                     <p class="font-medium">{employee.schedule.name}</p>
                                     <p class="text-xs text-muted-foreground">
-                                        {employee.schedule.timeIn} - {employee.schedule.timeOut}
+                                        {formatTime(employee.schedule.timeIn)} - {formatTime(employee.schedule.timeOut)}
                                     </p>
                                 {:else}
                                     <p class="font-medium text-muted-foreground">No Schedule</p>

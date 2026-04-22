@@ -6,6 +6,7 @@
     import * as Select from "$lib/components/ui/select/index.js";
     import PlusIcon from "@lucide/svelte/icons/plus";
     import LoaderIcon from "@lucide/svelte/icons/loader";
+    import { formatTime } from "$lib/utils.js";
 
     import { employeeStore } from "$lib/stores/employee.store.js";
     import { scheduleStore } from "$lib/stores/schedule.store.js";
@@ -240,7 +241,7 @@
                                         (s) => s.id === formData.scheduleId,
                                     )}
                                     {selected
-                                        ? `${selected.name} (${selected.timeIn} - ${selected.timeOut})`
+                                        ? `${selected.name} (${formatTime(selected.timeIn)} - ${formatTime(selected.timeOut)})`
                                         : "Select schedule"}
                                 {:else}
                                     Select schedule
@@ -249,7 +250,7 @@
                             <Select.Content>
                                 {#each schedules as schedule}
                                     <Select.Item value={schedule.id}>
-                                        {schedule.name} ({schedule.timeIn} - {schedule.timeOut})
+                                        {schedule.name} ({formatTime(schedule.timeIn)} - {formatTime(schedule.timeOut)})
                                     </Select.Item>
                                 {/each}
                             </Select.Content>
