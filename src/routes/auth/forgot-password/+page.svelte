@@ -5,12 +5,10 @@
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
-	import Alert from "$lib/components/shared/alert.svelte";
 	import LoaderIcon from "@lucide/svelte/icons/loader";
 	import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
 	import MailIcon from "@lucide/svelte/icons/mail";
 	import KeyRoundIcon from "@lucide/svelte/icons/key-round";
-	import SparklesIcon from "@lucide/svelte/icons/sparkles";
 
 	import { authService } from "$lib/api/services/auth.service.js";
 	import { toast } from "svelte-sonner";
@@ -18,7 +16,6 @@
 	let email = $state("");
 	let loading = $state(false);
 	let success = $state(false);
-	let resetToken = $state("");
 
 	onMount(() => {
 		if (localStorage.getItem("token")) {
@@ -32,10 +29,9 @@
 
 		loading = true;
 		try {
-			const response = await authService.forgotPassword(email);
-			resetToken = response.data?.token || "";
+			await authService.forgotPassword(email);
 			success = true;
-			toast.success("Reset token generated");
+			toast.success("If an account exists, a reset link has been sent to your email.");
 		} catch (err) {
 			toast.error(err.response?.data?.message || "Failed to process request");
 		} finally {
@@ -43,12 +39,20 @@
 		}
 	}
 
-	function goToReset() {
-		goto(`/auth/reset-password?token=${resetToken}`);
+	async function handleResend() {
+		loading = true;
+		try {
+			await authService.forgotPassword(email);
+			toast.success("Reset link resent successfully.");
+		} catch (err) {
+			toast.error(err.response?.data?.message || "Failed to resend");
+		} finally {
+			loading = false;
+		}
 	}
 
 	function goToLogin() {
-		goto("/auth/login");
+		window.location.replace("/auth/login");
 	}
 </script>
 
@@ -75,7 +79,7 @@
 			<div class="text-center space-y-1">
 				<Card.Title class="text-3xl font-bold gradient-text">Forgot Password</Card.Title>
 				<Card.Description class="text-muted-foreground">
-					Enter your email to receive a password reset token
+					We'll send you a password reset link
 				</Card.Description>
 			</div>
 		</Card.Header>
@@ -83,17 +87,25 @@
 		<Card.Content class="space-y-4">
 			{#if success}
 				<div class="space-y-4">
-					<div class="rounded-xl border border-success/30 bg-success/10 p-4 text-center">
-						<MailIcon class="h-8 w-8 text-success mx-auto mb-2" />
-						<p class="text-sm font-medium text-success">Reset token generated!</p>
-						<p class="text-xs text-muted-foreground mt-1">Token: <code class="bg-muted px-1.5 py-0.5 rounded text-xs">{resetToken}</code></p>
+					<div class="rounded-xl border border-success/30 bg-success/10 p-6 text-center">
+						<MailIcon class="h-10 w-10 text-success mx-auto mb-3" />
+						<p class="text-sm font-medium text-success">Check your email</p>
+						<p class="text-xs text-muted-foreground mt-2">
+							If an account exists for <span class="font-medium text-foreground">{email}</span>,
+							we've sent a password reset link to your inbox.
+						</p>
 					</div>
 					<p class="text-xs text-muted-foreground text-center">
-						Use this token to reset your password. In production, this would be sent via email.
+						Didn't receive the email? Check your spam folder.
 					</p>
 					<div class="flex flex-col gap-2">
-						<Button onclick={goToReset} class="w-full">
-							Reset Password
+						<Button onclick={handleResend} variant="outline" class="w-full" disabled={loading}>
+							{#if loading}
+								<LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
+								Sending...
+							{:else}
+								Resend Reset Link
+							{/if}
 						</Button>
 						<Button variant="outline" onclick={goToLogin} class="w-full">
 							Back to Login
@@ -123,7 +135,7 @@
 							<LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
 							Processing...
 						{:else}
-							Get Reset Token
+							Send Reset Link
 						{/if}
 					</Button>
 				</form>
