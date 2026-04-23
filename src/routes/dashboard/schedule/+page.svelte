@@ -13,6 +13,7 @@
     import TimerIcon from "@lucide/svelte/icons/timer";
     import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
     import LoaderIcon from "@lucide/svelte/icons/loader";
+    import { formatTime } from "$lib/utils.js";
 
     // Import store
     import { scheduleStore } from "$lib/stores/schedule.store.js";
@@ -86,15 +87,7 @@
         return colors[name] || "bg-gray-100 dark:bg-gray-900/30";
     }
 
-    function formatScheduleTime(timeString) {
-        if (!timeString) return '-';
-        if (/^\d{1,2}:\d{2}$/.test(timeString)) return timeString;
-        const date = new Date(timeString);
-        if (isNaN(date.getTime())) return timeString;
-        return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
-    }
 
-    // Calculate stats
     let avgLateTolerance = $derived(
         schedules.length > 0
             ? Math.round(
@@ -271,7 +264,7 @@
                                         <span>Time In</span>
                                     </div>
                                     <p class="text-xl font-bold">
-                                        {formatScheduleTime(schedule.timeIn)}
+                                        {formatTime(schedule.timeIn)}
                                     </p>
                                 </div>
                                 <div
@@ -286,7 +279,7 @@
                                         <span>Time Out</span>
                                     </div>
                                     <p class="text-xl font-bold">
-                                        {formatScheduleTime(schedule.timeOut)}
+                                        {formatTime(schedule.timeOut)}
                                     </p>
                                 </div>
                             </div>

@@ -10,6 +10,7 @@
     import PencilIcon from "@lucide/svelte/icons/pencil";
     import TrashIcon from "@lucide/svelte/icons/trash";
     import LoaderIcon from "@lucide/svelte/icons/loader";
+    import { formatTime } from "$lib/utils.js";
     import ClockIcon from "@lucide/svelte/icons/clock";
     import TimerIcon from "@lucide/svelte/icons/timer";
     import MapPinIcon from "@lucide/svelte/icons/map-pin";
@@ -42,14 +43,6 @@
 
     function goBack() {
         goto("/dashboard/schedule");
-    }
-
-    function formatScheduleTime(timeString) {
-        if (!timeString) return '-';
-        if (/^\d{1,2}:\d{2}$/.test(timeString)) return timeString;
-        const date = new Date(timeString);
-        if (isNaN(date.getTime())) return timeString;
-        return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
     }
 
     async function handleDelete() {
@@ -129,7 +122,7 @@
                                 <span>Clock In</span>
                             </div>
                             <p class="text-3xl font-bold text-green-600">
-                                {formatScheduleTime(schedule.timeIn)}
+                                {formatTime(schedule.timeIn)}
                             </p>
                         </div>
                         <div
@@ -142,7 +135,7 @@
                                 <span>Clock Out</span>
                             </div>
                             <p class="text-3xl font-bold text-red-600">
-                                {formatScheduleTime(schedule.timeOut)}
+                                {formatTime(schedule.timeOut)}
                             </p>
                         </div>
                     </div>

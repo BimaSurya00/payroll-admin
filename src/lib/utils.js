@@ -8,6 +8,7 @@ export function cn(...inputs) {
 export function formatTime(timeString) {
 	if (!timeString) return "-";
 	if (/^\d{1,2}:\d{2}$/.test(timeString)) return timeString;
+	if (/^\d{1,2}:\d{2}(:\d{2})/.test(timeString)) return timeString.slice(0, 5);
 	const date = new Date(timeString);
 	if (isNaN(date.getTime())) return timeString;
 	return date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", hour12: false });

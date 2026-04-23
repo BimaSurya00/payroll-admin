@@ -151,6 +151,9 @@ function createAuthStore() {
             } finally {
                 clearStorage();
                 set(initialState);
+                if (typeof window !== 'undefined') {
+                    window.location.replace('/auth/login');
+                }
             }
         },
 
@@ -165,6 +168,9 @@ function createAuthStore() {
             } finally {
                 clearStorage();
                 set(initialState);
+                if (typeof window !== 'undefined') {
+                    window.location.replace('/auth/login');
+                }
             }
         },
 

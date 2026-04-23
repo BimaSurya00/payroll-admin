@@ -13,7 +13,6 @@
 
 	import ThemeToggle from "$lib/components/shared/theme-toggle.svelte";
 
-	import { goto } from "$app/navigation";
 	import * as Avatar from "$lib/components/ui/avatar/index.js";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
@@ -50,11 +49,8 @@
 		loggingOut = true;
 		try {
 			await authStore.logout();
-			goto("/auth/login");
 		} catch (error) {
 			console.error("Logout failed:", error);
-			// Force redirect even if logout fails
-			goto("/auth/login");
 		} finally {
 			loggingOut = false;
 		}
@@ -64,11 +60,8 @@
 		loggingOut = true;
 		try {
 			await authStore.logoutAll();
-			goto("/auth/login");
 		} catch (error) {
 			console.error("Logout all failed:", error);
-			// Force redirect even if logout fails
-			goto("/auth/login");
 		} finally {
 			loggingOut = false;
 		}

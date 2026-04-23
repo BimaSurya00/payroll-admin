@@ -4,6 +4,7 @@
 	import { Label } from "$lib/components/ui/label/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { goto } from "$app/navigation";
+	import { onMount } from "svelte";
 	import LoaderIcon from "@lucide/svelte/icons/loader";
 	import MailIcon from "@lucide/svelte/icons/mail";
 	import LockIcon from "@lucide/svelte/icons/lock";
@@ -12,7 +13,6 @@
 	import EyeIcon from "@lucide/svelte/icons/eye";
 	import EyeOffIcon from "@lucide/svelte/icons/eye-off";
 
-	// Import auth store
 	import { authStore } from "$lib/stores/auth.store.js";
 
 	let email = $state("");
@@ -21,10 +21,15 @@
 	let loading = $state(false);
 	let error = $state(null);
 
-	// Subscribe to auth store
 	authStore.subscribe((state) => {
 		loading = state.loading;
 		error = state.error;
+	});
+
+	onMount(() => {
+		if (authStore.checkAuth()) {
+			goto("/dashboard", { replaceState: true });
+		}
 	});
 
 	async function handleLogin(e) {
