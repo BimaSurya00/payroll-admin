@@ -60,4 +60,23 @@ export const authService = {
     changePassword: (data) => {
         return apiClient.put('/auth/change-password', data);
     },
+
+    /**
+     * Forgot password - request reset token
+     * @param {string} email - User email
+     * @returns {Promise} Response with reset token
+     */
+    forgotPassword: (email) => {
+        return apiClient.post('/auth/forgot-password', { email });
+    },
+
+    /**
+     * Reset password with token
+     * @param {string} token - Reset token
+     * @param {string} newPassword - New password
+     * @returns {Promise} Response confirmation
+     */
+    resetPassword: (token, newPassword) => {
+        return apiClient.post('/auth/reset-password', { token, newPassword });
+    },
 };
