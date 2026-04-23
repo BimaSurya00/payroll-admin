@@ -110,19 +110,13 @@
 					</Button>
 				</div>
 			{:else}
-				<form onsubmit={handleSubmit} class="space-y-4">
-					<div class="space-y-2">
-						<Label for="token">Reset Token</Label>
-						<Input
-							id="token"
-							type="text"
-							placeholder="Enter reset token"
-							bind:value={token}
-							required
-							disabled={loading}
-						/>
+				{#if !token}
+					<div class="text-center py-4">
+						<p class="text-sm text-muted-foreground">Invalid or missing reset token.</p>
+						<Button variant="outline" onclick={goToLogin} class="mt-4">Back to Login</Button>
 					</div>
-
+				{:else}
+				<form onsubmit={handleSubmit} class="space-y-4">
 					<div class="space-y-2">
 						<Label for="newPassword">New Password</Label>
 						<div class="relative">
@@ -170,6 +164,7 @@
 						{/if}
 					</Button>
 				</form>
+				{/if}
 			{/if}
 		</Card.Content>
 
