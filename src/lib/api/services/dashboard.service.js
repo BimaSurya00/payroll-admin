@@ -59,6 +59,6 @@ export const dashboardService = {
     },
 
     getSuperUserSummary: () => {
-        return apiClient.get('/dashboard/super/summary');
+        return apiClient.get('/platform/summary');
     },
 };
