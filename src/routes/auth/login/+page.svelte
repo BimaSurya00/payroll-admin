@@ -196,15 +196,6 @@
 				</div>
 			</div>
 			
-			<div class="text-center text-sm">
-				<span class="text-muted-foreground">Don't have an account?</span>
-				<a
-					href="/auth/register"
-					class="text-primary font-semibold hover:underline ml-1 transition-all hover:text-primary/80"
-				>
-					Sign up
-				</a>
-			</div>
 		</Card.Footer>
 	</Card.Root>
 	
