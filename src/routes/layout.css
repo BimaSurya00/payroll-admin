@@ -184,7 +184,7 @@
   select, 
   .cursor-pointer,
   .interactive {
-    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' style='font-size:24px'><text y='20'>👆🏻</text></svg>") 12 0, pointer !important;
+    cursor: pointer !important;
   }
 }
 
