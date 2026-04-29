@@ -7,6 +7,8 @@
     import PlusIcon from "@lucide/svelte/icons/plus";
     import LoaderIcon from "@lucide/svelte/icons/loader";
     import ClockIcon from "@lucide/svelte/icons/clock";
+    import Swal from "sweetalert2";
+    import { extractValidationErrors } from "$lib/utils.js";
 
     import { overtimeStore } from "$lib/stores/overtime.store.js";
     import { onMount } from "svelte";
@@ -67,7 +69,12 @@
         e.preventDefault();
 
         if (formData.reason.length < 10) {
-            error = "Alasan minimal 10 karakter";
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal',
+                text: 'Alasan minimal 10 karakter',
+                confirmButtonColor: '#d33'
+            });
             return;
         }
 
@@ -78,8 +85,22 @@
             await overtimeStore.create(formData);
             open = false;
             resetForm();
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: 'Pengajuan lembur berhasil dibuat.',
+                confirmButtonColor: '#3085d6',
+            });
         } catch (err) {
-            error = err.message || "Failed to create overtime request";
+            const { errorMessage, validationList } = extractValidationErrors(err, "Gagal mengajukan lembur");
+            error = err.message || "Gagal mengajukan lembur";
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal mengajukan lembur',
+                html: `<p>${errorMessage}</p>${validationList}`,
+                confirmButtonColor: '#d33',
+            });
         } finally {
             loading = false;
         }

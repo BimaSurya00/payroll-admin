@@ -21,6 +21,8 @@
 	import PlusIcon from '@lucide/svelte/icons/plus';
 	import LoaderIcon from '@lucide/svelte/icons/loader';
 	import Building2Icon from '@lucide/svelte/icons/building-2';
+	import Swal from 'sweetalert2';
+	import { extractValidationErrors } from '$lib/utils.js';
 
 	import { departmentStore } from '$lib/stores/department.store.js';
 	import { employeeStore } from '$lib/stores/employee.store.js';
@@ -97,17 +99,30 @@
 		const employeeCount = dept?.employeeCount || 0;
 
 		if (employeeCount > 0) {
-			alert(
-				`Cannot delete department "${dept?.name}" because it has ${employeeCount} employees. Please reassign employees first.`
-			);
+			Swal.fire({
+				icon: 'error',
+				title: 'Cannot Delete',
+				text: `Cannot delete department "${dept?.name}" because it has ${employeeCount} employees. Please reassign employees first.`
+			});
 			return;
 		}
 
-		if (confirm(`Are you sure you want to delete department "${dept?.name}"?`)) {
+		const result = await Swal.fire({
+			title: 'Are you sure?',
+			text: `Do you want to delete department "${dept?.name}"?`,
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#3085d6',
+			confirmButtonText: 'Yes, delete it!'
+		});
+
+		if (result.isConfirmed) {
 			try {
 				await departmentStore.delete(id);
+				Swal.fire('Deleted!', 'Department has been deleted.', 'success');
 			} catch (err) {
-				alert('Failed to delete department: ' + err.message);
+				Swal.fire('Error', 'Failed to delete department: ' + err.message, 'error');
 			}
 		}
 	}
@@ -170,8 +185,21 @@
 		try {
 			await departmentStore.create(formData);
 			closeCreateDialog();
+			Swal.fire({
+				icon: 'success',
+				title: 'Success!',
+				text: 'Department created successfully.',
+				confirmButtonColor: '#3085d6',
+			});
 		} catch (err) {
-			alert('Failed to create department: ' + err.message);
+			const { errorMessage, validationList } = extractValidationErrors(err, "Failed to create department");
+
+			Swal.fire({
+				icon: 'error',
+				title: 'Failed to create department',
+				html: `<p>${errorMessage}</p>${validationList}`,
+				confirmButtonColor: '#d33',
+			});
 		} finally {
 			submitting = false;
 		}
@@ -185,8 +213,21 @@
 		try {
 			await departmentStore.update(selectedDepartment.id, formData);
 			closeEditDialog();
+			Swal.fire({
+				icon: 'success',
+				title: 'Success!',
+				text: 'Department updated successfully.',
+				confirmButtonColor: '#3085d6',
+			});
 		} catch (err) {
-			alert('Failed to update department: ' + err.message);
+			const { errorMessage, validationList } = extractValidationErrors(err, "Failed to update department");
+
+			Swal.fire({
+				icon: 'error',
+				title: 'Failed to update department',
+				html: `<p>${errorMessage}</p>${validationList}`,
+				confirmButtonColor: '#d33',
+			});
 		} finally {
 			submitting = false;
 		}
