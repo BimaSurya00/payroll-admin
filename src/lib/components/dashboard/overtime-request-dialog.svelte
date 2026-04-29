@@ -11,6 +11,7 @@
     import { extractValidationErrors } from "$lib/utils.js";
 
     import { overtimeStore } from "$lib/stores/overtime.store.js";
+    import { employeeStore } from "$lib/stores/employee.store.js";
     import { onMount } from "svelte";
 
     let open = $state(false);
@@ -18,8 +19,10 @@
     let error = $state(null);
 
     let policies = $state([]);
+    let employees = $state([]);
 
     let formData = $state({
+        employeeId: "",
         overtimeDate: new Date().toISOString().split("T")[0],
         startTime: "",
         endTime: "",
@@ -32,12 +35,19 @@
         policies = state.policies || [];
     });
 
+    // Subscribe to employee store
+    employeeStore.subscribe((state) => {
+        employees = state.data || [];
+    });
+
     onMount(async () => {
         await overtimeStore.fetchPolicies();
+        await employeeStore.fetchAll();
     });
 
     function resetForm() {
         formData = {
+            employeeId: "",
             overtimeDate: new Date().toISOString().split("T")[0],
             startTime: "",
             endTime: "",
@@ -67,6 +77,16 @@
 
     async function handleSubmit(e) {
         e.preventDefault();
+
+        if (!formData.employeeId) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validasi Gagal',
+                text: 'Silakan pilih karyawan',
+                confirmButtonColor: '#d33'
+            });
+            return;
+        }
 
         if (formData.reason.length < 10) {
             Swal.fire({
@@ -135,6 +155,39 @@
                     <p class="text-sm">{error}</p>
                 </div>
             {/if}
+
+            <div class="space-y-2">
+                <Label for="employeeId">Karyawan *</Label>
+                <Select.Root
+                    type="single"
+                    bind:value={formData.employeeId}
+                >
+                    <Select.Trigger class="w-full">
+                        {#if formData.employeeId}
+                            {@const selected = employees.find(
+                                (e) => e.id === formData.employeeId,
+                            )}
+                            {selected
+                                ? selected.name || selected.userName || "Karyawan terpilih"
+                                : "Pilih Karyawan"}
+                        {:else}
+                            Pilih Karyawan
+                        {/if}
+                    </Select.Trigger>
+                    <Select.Content class="max-h-[200px] overflow-y-auto">
+                        {#each employees as employee}
+                            <Select.Item value={employee.id}>
+                                {employee.name || employee.userName} 
+                                {#if employee.position} - {employee.position} {/if}
+                            </Select.Item>
+                        {:else}
+                            <Select.Item value="" disabled>
+                                Memuat karyawan...
+                            </Select.Item>
+                        {/each}
+                    </Select.Content>
+                </Select.Root>
+            </div>
 
             <div class="space-y-2">
                 <Label for="overtimePolicyId">Kebijakan Lembur</Label>
