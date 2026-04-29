@@ -332,7 +332,6 @@
                             type="text"
                             placeholder="1234567890"
                             bind:value={formData.bankAccountNumber}
-                            required
                         />
                     </div>
                 </div>
@@ -344,7 +343,6 @@
                         type="text"
                         placeholder="John Doe"
                         bind:value={formData.bankAccountHolder}
-                        required
                     />
                 </div>
             </div>
