@@ -7,6 +7,7 @@
     import PlusIcon from "@lucide/svelte/icons/plus";
     import LoaderIcon from "@lucide/svelte/icons/loader";
     import { formatTime } from "$lib/utils.js";
+    import Swal from "sweetalert2";
 
     import { employeeStore } from "$lib/stores/employee.store.js";
     import { scheduleStore } from "$lib/stores/schedule.store.js";
@@ -91,8 +92,43 @@
             await employeeStore.create(payload);
             open = false;
             resetForm();
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Employee created successfully.',
+                confirmButtonColor: '#3085d6',
+            });
         } catch (err) {
+            console.error("Create employee error:", err);
+            let errorMessage = err.message || "Failed to create employee";
+            let validationList = "";
+            
+            // Extract field-specific validation errors if available
+            if (err.data?.errors && typeof err.data.errors === 'object') {
+                // Laravel style errors: { field: ["error message"] }
+                const errors = err.data.errors;
+                const errList = Object.keys(errors).map(key => {
+                    const msgs = Array.isArray(errors[key]) ? errors[key].join(', ') : errors[key];
+                    return `<li><b>${key}</b>: ${msgs}</li>`;
+                });
+                validationList = `<ul style="text-align: left; margin-top: 10px;">${errList.join('')}</ul>`;
+            } else if (err.data?.message && Array.isArray(err.data.message)) {
+                // NestJS style errors (class-validator): ["error message 1", "error message 2"]
+                const errList = err.data.message.map(msg => `<li>${msg}</li>`);
+                validationList = `<ul style="text-align: left; margin-top: 10px;">${errList.join('')}</ul>`;
+            } else if (err.data?.message && typeof err.data.message === 'string' && err.data.message !== errorMessage) {
+                errorMessage = err.data.message;
+            }
+
             error = err.message || "Failed to create employee";
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed to create employee',
+                html: `<p>${errorMessage}</p>${validationList}`,
+                confirmButtonColor: '#d33',
+            });
         } finally {
             loading = false;
         }

@@ -7,6 +7,7 @@
     import PencilIcon from "@lucide/svelte/icons/pencil";
     import LoaderIcon from "@lucide/svelte/icons/loader";
     import { formatTime } from "$lib/utils.js";
+    import Swal from "sweetalert2";
 
     import { employeeStore } from "$lib/stores/employee.store.js";
     import { scheduleStore } from "$lib/stores/schedule.store.js";
@@ -107,9 +108,40 @@
             console.log("=== END DEBUG ===");
 
             open = false;
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Employee updated successfully.',
+                confirmButtonColor: '#3085d6',
+            });
         } catch (err) {
             console.error("UPDATE ERROR:", err);
+            let errorMessage = err.message || "Failed to update employee";
+            let validationList = "";
+            
+            if (err.data?.errors && typeof err.data.errors === 'object') {
+                const errors = err.data.errors;
+                const errList = Object.keys(errors).map(key => {
+                    const msgs = Array.isArray(errors[key]) ? errors[key].join(', ') : errors[key];
+                    return `<li><b>${key}</b>: ${msgs}</li>`;
+                });
+                validationList = `<ul style="text-align: left; margin-top: 10px;">${errList.join('')}</ul>`;
+            } else if (err.data?.message && Array.isArray(err.data.message)) {
+                const errList = err.data.message.map(msg => `<li>${msg}</li>`);
+                validationList = `<ul style="text-align: left; margin-top: 10px;">${errList.join('')}</ul>`;
+            } else if (err.data?.message && typeof err.data.message === 'string' && err.data.message !== errorMessage) {
+                errorMessage = err.data.message;
+            }
+
             error = err.message || "Failed to update employee";
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed to update employee',
+                html: `<p>${errorMessage}</p>${validationList}`,
+                confirmButtonColor: '#d33',
+            });
         } finally {
             loading = false;
         }
