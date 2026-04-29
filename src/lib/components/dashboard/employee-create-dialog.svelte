@@ -84,6 +84,17 @@
         loading = true;
         error = null;
 
+        if (!formData.departmentId) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Department is required',
+                confirmButtonColor: '#d33'
+            });
+            loading = false;
+            return;
+        }
+
         try {
             const payload = {
                 ...formData,
@@ -234,7 +245,7 @@
                     </div>
 
                     <div class="space-y-2">
-                        <Label for="departmentId">Department</Label>
+                        <Label for="departmentId">Department *</Label>
                         <Select.Root type="single" bind:value={formData.departmentId}>
                             <Select.Trigger class="w-full">
                                 {departments.find((d) => d.id === formData.departmentId)
