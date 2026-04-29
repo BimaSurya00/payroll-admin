@@ -20,7 +20,8 @@ export function extractValidationErrors(err, defaultMessage = "Validation failed
     let errorMessage = err.message || defaultMessage;
     let validationList = "";
     
-    let errorsData = err.data?.errors || err.data?.details || err.data?.data;
+    // Support "error", "errors", "details", or "data" keys for validation arrays/objects
+    let errorsData = err.data?.error || err.data?.errors || err.data?.details || err.data?.data;
     
     if (Array.isArray(errorsData)) {
         // Array of objects format: [{ field: 'name', message: 'is required' }] or strings
