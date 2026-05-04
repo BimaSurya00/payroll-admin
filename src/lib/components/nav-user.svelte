@@ -20,42 +20,22 @@
 	let loggingOut = $state(false);
 
 	let authState = $state({ user: null, isAuthenticated: false });
-	authStore.subscribe((state) => {
-		authState = state;
-	});
+	authStore.subscribe((state) => { authState = state; });
 
-	let displayUser = $derived(authStore.user || user);
+	let displayUser = $derived(authState.user || user);
 	let userInitials = $derived(
 		displayUser?.name
-			? displayUser.name
-				.split(" ")
-				.map((n) => n[0])
-				.join("")
-				.toUpperCase()
-				.slice(0, 2)
+			? displayUser.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
 			: "U",
 	);
 
 	async function handleLogout() {
 		loggingOut = true;
-		try {
-			await authStore.logout();
-		} catch (error) {
-			console.error("Logout failed:", error);
-		} finally {
-			loggingOut = false;
-		}
+		try { await authStore.logout(); } catch (e) { console.error(e); } finally { loggingOut = false; }
 	}
-
 	async function handleLogoutAll() {
 		loggingOut = true;
-		try {
-			await authStore.logoutAll();
-		} catch (error) {
-			console.error("Logout all failed:", error);
-		} finally {
-			loggingOut = false;
-		}
+		try { await authStore.logoutAll(); } catch (e) { console.error(e); } finally { loggingOut = false; }
 	}
 </script>
 
@@ -67,22 +47,17 @@
 					<Sidebar.MenuButton
 						{...props}
 						size="lg"
-						class="w-full text-sidebar-foreground hover:bg-accent hover:text-foreground data-[state=open]:bg-accent transition-all duration-150 h-auto py-2.5 rounded-lg"
+						class="w-full text-sidebar-foreground hover:bg-accent hover:text-foreground data-[state=open]:bg-accent transition-all duration-150 h-auto py-2.5 rounded-xl"
 					>
-						<Avatar.Root class="size-8 rounded-full bg-muted">
-							<Avatar.Image
-								src={displayUser?.avatar || displayUser?.profileImage}
-								alt={displayUser?.name}
-							/>
-							<Avatar.Fallback class="rounded-full bg-foreground text-background font-semibold text-xs">
-								{userInitials}
-							</Avatar.Fallback>
+						<Avatar.Root class="size-7 rounded-full">
+							<Avatar.Image src={displayUser?.avatar || displayUser?.profileImage} alt={displayUser?.name} />
+							<Avatar.Fallback class="rounded-full bg-primary text-primary-foreground font-semibold text-[11px]">{userInitials}</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
 							<span class="truncate font-medium text-foreground text-[13px]">{displayUser?.name || "User"}</span>
 							<span class="truncate text-[11px] text-muted-foreground">{displayUser?.email || ""}</span>
 						</div>
-						<ChevronsUpDownIcon class="ms-auto size-3.5 text-muted-foreground/60" />
+						<ChevronsUpDownIcon class="ms-auto size-3.5 text-muted-foreground/50" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>
@@ -90,18 +65,13 @@
 				class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-xl bg-popover border border-border shadow-card-hover"
 				side={sidebar.isMobile ? "bottom" : "right"}
 				align="end"
-				sideOffset={4}
+				sideOffset={6}
 			>
 				<DropdownMenu.Label class="p-0 font-normal">
 					<div class="flex items-center gap-2.5 px-1 py-1.5 text-start text-sm">
 						<Avatar.Root class="size-8 rounded-full border border-border">
-							<Avatar.Image
-								src={displayUser?.avatar || displayUser?.profileImage}
-								alt={displayUser?.name}
-							/>
-							<Avatar.Fallback class="rounded-full bg-foreground text-background text-xs font-semibold">
-								{userInitials}
-							</Avatar.Fallback>
+							<Avatar.Image src={displayUser?.avatar || displayUser?.profileImage} alt={displayUser?.name} />
+							<Avatar.Fallback class="rounded-full bg-primary text-primary-foreground text-xs font-semibold">{userInitials}</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
 							<span class="truncate font-medium text-foreground">{displayUser?.name || "User"}</span>
@@ -112,60 +82,26 @@
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<a href="/dashboard/profile" class="contents">
-						<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg">
-							<UserIcon class="size-4" />
-							Profile
-						</DropdownMenu.Item>
+						<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg"><UserIcon class="size-4" /> Profile</DropdownMenu.Item>
 					</a>
-					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg">
-						<BadgeCheckIcon class="size-4" />
-						Account
-					</DropdownMenu.Item>
-					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg">
-						<CreditCardIcon class="size-4" />
-						Billing
-					</DropdownMenu.Item>
-					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg">
-						<BellIcon class="size-4" />
-						Notifications
+					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg"><BadgeCheckIcon class="size-4" /> Account</DropdownMenu.Item>
+					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg"><CreditCardIcon class="size-4" /> Billing</DropdownMenu.Item>
+					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg"><BellIcon class="size-4" /> Notifications</DropdownMenu.Item>
+				</DropdownMenu.Group>
+				<DropdownMenu.Separator />
+				<DropdownMenu.Group>
+					<DropdownMenu.Item class="cursor-pointer p-0" onclick={(e) => e.preventDefault()}><ThemeToggle variant="menu" /></DropdownMenu.Item>
+				</DropdownMenu.Group>
+				<DropdownMenu.Separator />
+				<DropdownMenu.Group>
+					<DropdownMenu.Item onclick={handleLogoutAll} disabled={loggingOut} class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg">
+						{#if loggingOut}<LoaderIcon class="animate-spin size-4" /> Logging out...{:else}<MonitorIcon class="size-4" /> Log out all devices{/if}
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
-					<DropdownMenu.Item class="cursor-pointer p-0" onclick={(e) => e.preventDefault()}>
-						<ThemeToggle variant="menu" />
-					</DropdownMenu.Item>
-				</DropdownMenu.Group>
-				<DropdownMenu.Separator />
-				<DropdownMenu.Group>
-					<DropdownMenu.Item
-						onclick={handleLogoutAll}
-						disabled={loggingOut}
-						class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg"
-					>
-						{#if loggingOut}
-							<LoaderIcon class="animate-spin size-4" />
-							Logging out...
-						{:else}
-							<MonitorIcon class="size-4" />
-							Log out all devices
-						{/if}
-					</DropdownMenu.Item>
-				</DropdownMenu.Group>
-				<DropdownMenu.Separator />
-				<DropdownMenu.Group>
-					<DropdownMenu.Item
-						onclick={handleLogout}
-						disabled={loggingOut}
-						class="text-destructive hover:text-destructive cursor-pointer rounded-lg"
-					>
-						{#if loggingOut}
-							<LoaderIcon class="animate-spin size-4" />
-							Logging out...
-						{:else}
-							<LogOutIcon class="size-4" />
-							Log out
-						{/if}
+					<DropdownMenu.Item onclick={handleLogout} disabled={loggingOut} class="text-destructive hover:text-destructive cursor-pointer rounded-lg">
+						{#if loggingOut}<LoaderIcon class="animate-spin size-4" /> Logging out...{:else}<LogOutIcon class="size-4" /> Log out{/if}
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 			</DropdownMenu.Content>

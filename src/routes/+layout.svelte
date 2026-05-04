@@ -7,14 +7,7 @@
 
 	if (browser) {
 		const theme = localStorage.getItem('theme');
-		if (theme === 'dark') {
-			document.documentElement.classList.add('dark');
-		} else if (theme === 'light') {
-			document.documentElement.classList.remove('dark');
-		} else {
-			// Default to light mode
-			document.documentElement.classList.remove('dark');
-		}
+		document.documentElement.classList.toggle('dark', theme === 'dark');
 	}
 </script>
 
