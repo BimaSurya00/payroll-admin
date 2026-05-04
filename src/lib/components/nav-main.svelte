@@ -27,6 +27,7 @@
 						{#if hasChildren(mainItem)}
 							<Sidebar.MenuButton 
 								tooltipContent={mainItem.title}
+								isActive={mainItem.isActive}
 								class="w-full text-sidebar-foreground hover:text-foreground hover:bg-accent data-[active=true]:bg-accent data-[active=true]:text-accent-foreground rounded-md h-9 transition-all duration-150 group"
 							>
 								<div class="flex items-center gap-3">
@@ -50,7 +51,8 @@
 										<Sidebar.MenuSubItem>
 											<Sidebar.MenuSubButton 
 												href={subItem.url}
-												class="text-sidebar-foreground/70 hover:text-foreground hover:bg-accent data-[active=true]:text-primary data-[active=true]:font-medium rounded-md h-8 transition-all duration-150 text-[13px] w-full"
+												isActive={subItem.isActive}
+												class="text-sidebar-foreground/70 hover:text-foreground hover:bg-accent data-[active=true]:bg-accent/50 data-[active=true]:text-primary data-[active=true]:font-medium rounded-md h-8 transition-all duration-150 text-[13px] w-full"
 											>
 												<span class="flex items-center justify-between w-full">
 													{subItem.title}
@@ -68,6 +70,7 @@
 						{:else}
 							<Sidebar.MenuButton 
 								tooltipContent={mainItem.title}
+								isActive={mainItem.isActive}
 								class="w-full text-sidebar-foreground hover:text-foreground hover:bg-accent data-[active=true]:bg-accent data-[active=true]:text-accent-foreground rounded-md h-9 transition-all duration-150 group"
 							>
 								{#snippet child({ props })}

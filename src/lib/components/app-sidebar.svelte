@@ -60,7 +60,25 @@
   authStore.subscribe((state) => { authState = state; });
 
   let isSuperUser = $derived(authState.user?.role === "SUPER_USER");
-  let navData = $derived(getNavData(isSuperUser));
+  
+  import { page } from '$app/stores';
+  let currentPath = $derived($page.url.pathname);
+  let navDataRaw = $derived(getNavData(isSuperUser));
+  
+  let navData = $derived({
+    navMain: navDataRaw.navMain.map(item => {
+      const isItemActive = item.url !== '#' && (currentPath === item.url || currentPath.startsWith(item.url + '/'));
+      const isSubItemActive = item.items?.some(sub => currentPath === sub.url || currentPath.startsWith(sub.url + '/'));
+      return {
+        ...item,
+        isActive: isItemActive || isSubItemActive,
+        items: item.items?.map(sub => ({
+          ...sub,
+          isActive: currentPath === sub.url || currentPath.startsWith(sub.url + '/')
+        }))
+      };
+    })
+  });
   let currentUser = $derived(authState.user || { name: "User", email: "" });
 </script>
 

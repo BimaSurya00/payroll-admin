@@ -125,22 +125,22 @@
         {:else if summary}
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Card.Root class="stat-card"><Card.Content class="p-6">
-                    <div class="flex items-center justify-between mb-4"><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Employees</span><div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><UsersIcon class="h-5 w-5 text-primary" /></div></div>
+                    <div class="flex items-center justify-between mb-4"><span class="text-sm font-semibold text-foreground/80">Employees</span><div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><UsersIcon class="h-5 w-5 text-primary" /></div></div>
                     <div class="text-3xl font-bold text-foreground mb-1">{employeeStats ? formatNumber(employeeStats.totalCount || 0) : '-'}</div>
                     {#if employeeStats}<span class="text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-1 font-medium"><TrendingUpIcon class="h-3.5 w-3.5" />{formatNumber(employeeStats.totalCount - (employeeStats.statusBreakdown?.resigned || 0))} active</span>{:else}<span class="text-muted-foreground text-sm">Active employees</span>{/if}
                 </Card.Content></Card.Root>
                 <Card.Root class="stat-card"><Card.Content class="p-6">
-                    <div class="flex items-center justify-between mb-4"><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Present Today</span><div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center"><UserCheckIcon class="h-5 w-5 text-emerald-600 dark:text-emerald-400" /></div></div>
+                    <div class="flex items-center justify-between mb-4"><span class="text-sm font-semibold text-foreground/80">Present Today</span><div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center"><UserCheckIcon class="h-5 w-5 text-emerald-600 dark:text-emerald-400" /></div></div>
                     <div class="text-3xl font-bold text-foreground mb-1">{formatNumber(summary.attendance?.todayPresent || 0)}</div>
                     {#if summary.attendance}{@const total = summary.attendance.totalEmployees || 1}{@const present = summary.attendance.todayPresent || 0}<span class="text-muted-foreground text-sm">{((present / total) * 100).toFixed(1)}% attendance</span>{:else}<span class="text-muted-foreground text-sm">Attendance rate</span>{/if}
                 </Card.Content></Card.Root>
                 <Card.Root class="stat-card"><Card.Content class="p-6">
-                    <div class="flex items-center justify-between mb-4"><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Monthly Payroll</span><div class="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center"><DollarSignIcon class="h-5 w-5 text-violet-600 dark:text-violet-400" /></div></div>
+                    <div class="flex items-center justify-between mb-4"><span class="text-sm font-semibold text-foreground/80">Monthly Payroll</span><div class="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center"><DollarSignIcon class="h-5 w-5 text-violet-600 dark:text-violet-400" /></div></div>
                     <div class="text-2xl font-bold text-foreground mb-1">{formatCurrency(summary.payroll?.totalNetSalary || 0)}</div>
                     {#if summary.payroll}<span class="text-amber-600 dark:text-amber-400 text-sm flex items-center gap-1 font-medium"><ClockIcon class="h-3.5 w-3.5" />{formatNumber(summary.payroll.draftCount || 0)} pending</span>{:else}<span class="text-muted-foreground text-sm">Pending payouts</span>{/if}
                 </Card.Content></Card.Root>
                 <Card.Root class="stat-card"><Card.Content class="p-6">
-                    <div class="flex items-center justify-between mb-4"><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Pending Requests</span><div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center relative"><ClockIcon class="h-5 w-5 text-amber-600 dark:text-amber-400" />{#if summary.leave?.pendingRequests > 0}<span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1 shadow-card">{Math.min(summary.leave.pendingRequests, 99)}</span>{/if}</div></div>
+                    <div class="flex items-center justify-between mb-4"><span class="text-sm font-semibold text-foreground/80">Pending Requests</span><div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center relative"><ClockIcon class="h-5 w-5 text-amber-600 dark:text-amber-400" />{#if summary.leave?.pendingRequests > 0}<span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1 shadow-card">{Math.min(summary.leave.pendingRequests, 99)}</span>{/if}</div></div>
                     <div class="text-3xl font-bold text-foreground mb-1">{formatNumber(summary.leave?.pendingRequests || 0)}</div>
                     <p class="text-muted-foreground text-sm">Awaiting approval</p>
                 </Card.Content></Card.Root>
@@ -151,7 +151,7 @@
                     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         {#each [{ label: 'Present', value: attendanceStats.summary.totalPresent || 0, avg: attendanceStats.summary.avgPresent?.toFixed(1), icon: UserCheckIcon, cls: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400' },{ label: 'Late', value: attendanceStats.summary.totalLate || 0, avg: attendanceStats.summary.avgLate?.toFixed(1), icon: ClockIcon, cls: 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400' },{ label: 'Absent', value: attendanceStats.summary.totalAbsent || 0, avg: null, icon: MinusIcon, cls: 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400' },{ label: 'On Leave', value: attendanceStats.summary.totalLeave || 0, avg: null, icon: CalendarIcon, cls: 'bg-violet-100 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400' }] as stat}
                             <Card.Root class="stat-card"><Card.Content class="p-5">
-                                <div class="flex items-center gap-3 mb-3"><div class="w-9 h-9 rounded-lg {stat.cls} flex items-center justify-center"><stat.icon class="h-4 w-4" /></div><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">{stat.label}</span></div>
+                                <div class="flex items-center justify-between mb-3"><span class="text-sm font-semibold text-foreground/80">{stat.label}</span><div class="w-9 h-9 rounded-lg {stat.cls} flex items-center justify-center"><stat.icon class="h-4 w-4" /></div></div>
                                 <div class="text-2xl font-bold text-foreground mb-0.5">{formatNumber(stat.value)}</div>
                                 {#if stat.avg}<p class="text-xs text-muted-foreground">Avg: {stat.avg}/day</p>{/if}
                             </Card.Content></Card.Root>
@@ -169,7 +169,13 @@
                                     <div class="flex-1 min-w-0"><p class="text-sm text-foreground">{activity.description}</p><p class="text-xs text-muted-foreground mt-0.5">By {activity.userName} · {formatDate(activity.timestamp)}</p></div>
                                 </div>
                             {/each}</div>
-                        {:else}<p class="text-muted-foreground text-sm text-center py-12">No recent activities</p>{/if}
+                        {:else}
+                            <div class="py-10 flex flex-col items-center justify-center text-center">
+                                <ActivityIcon class="h-10 w-10 text-muted-foreground/30 mb-3" />
+                                <p class="text-sm font-medium text-foreground">No recent activities</p>
+                                <p class="text-xs text-muted-foreground mt-1">Activities will appear here once users start interacting.</p>
+                            </div>
+                        {/if}
                     </Card.Content>
                 </Card.Root>
                 <Card.Root class="surface-elevated"><Card.Header class="pb-3"><Card.Title class="text-base font-semibold text-foreground flex items-center gap-2"><BriefcaseIcon class="h-5 w-5 text-muted-foreground" />Employee Status</Card.Title></Card.Header>
