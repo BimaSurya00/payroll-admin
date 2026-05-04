@@ -67,22 +67,22 @@
 					<Sidebar.MenuButton
 						{...props}
 						size="lg"
-						class="text-[#0f172a] hover:bg-[#cbd5e1] data-[state=open]:bg-white data-[state=open]:shadow-sm transition-all duration-150 h-auto py-3 w-full"
+						class="w-full text-black hover:bg-neutral-100 data-[state=open]:bg-neutral-100 transition-colors duration-150 h-auto py-2"
 					>
-						<Avatar.Root class="size-10 border-2 border-[#cbd5e1] bg-[#e2e8f0]">
+						<Avatar.Root class="size-9 border border-neutral-300 bg-neutral-100">
 							<Avatar.Image
 								src={displayUser?.avatar || displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="bg-[#2563eb] text-white font-bold text-sm">
+							<Avatar.Fallback class="bg-black text-white font-bold text-xs">
 								{userInitials}
 							</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-bold text-[#0f172a]">{displayUser?.name || "User"}</span>
-							<span class="truncate text-xs text-[#64748b]">{displayUser?.email || ""}</span>
+							<span class="truncate font-semibold text-black">{displayUser?.name || "User"}</span>
+							<span class="truncate text-xs text-neutral-500">{displayUser?.email || ""}</span>
 						</div>
-						<ChevronsUpDownIcon class="ms-auto size-4 text-[#64748b]" />
+						<ChevronsUpDownIcon class="ms-auto size-4 text-neutral-400" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>
@@ -94,38 +94,38 @@
 			>
 				<DropdownMenu.Label class="p-0 font-normal">
 					<div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-						<Avatar.Root class="size-8 border border-[#cbd5e1]">
+						<Avatar.Root class="size-8 border border-neutral-300">
 							<Avatar.Image
 								src={displayUser?.avatar || displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="bg-[#2563eb] text-white text-xs font-bold">
+							<Avatar.Fallback class="bg-black text-white text-xs font-bold">
 								{userInitials}
 							</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-bold text-[#0f172a]">{displayUser?.name || "User"}</span>
-							<span class="truncate text-xs text-[#64748b]">{displayUser?.email || ""}</span>
+							<span class="truncate font-semibold text-black">{displayUser?.name || "User"}</span>
+							<span class="truncate text-xs text-neutral-500">{displayUser?.email || ""}</span>
 						</div>
 					</div>
 				</DropdownMenu.Label>
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<a href="/dashboard/profile" class="contents">
-						<DropdownMenu.Item class="cursor-pointer text-[#334155]">
+						<DropdownMenu.Item class="cursor-pointer text-neutral-700">
 							<UserIcon class="size-4" />
 							Profile
 						</DropdownMenu.Item>
 					</a>
-					<DropdownMenu.Item class="cursor-pointer text-[#334155]">
+					<DropdownMenu.Item class="cursor-pointer text-neutral-700">
 						<BadgeCheckIcon class="size-4" />
 						Account
 					</DropdownMenu.Item>
-					<DropdownMenu.Item class="cursor-pointer text-[#334155]">
+					<DropdownMenu.Item class="cursor-pointer text-neutral-700">
 						<CreditCardIcon class="size-4" />
 						Billing
 					</DropdownMenu.Item>
-					<DropdownMenu.Item class="cursor-pointer text-[#334155]">
+					<DropdownMenu.Item class="cursor-pointer text-neutral-700">
 						<BellIcon class="size-4" />
 						Notifications
 					</DropdownMenu.Item>
@@ -141,7 +141,7 @@
 					<DropdownMenu.Item
 						onclick={handleLogoutAll}
 						disabled={loggingOut}
-						class="text-[#d97706] focus:bg-[#fef3c7] cursor-pointer"
+						class="text-neutral-700 focus:bg-neutral-100 cursor-pointer"
 					>
 						{#if loggingOut}
 							<LoaderIcon class="animate-spin size-4" />
@@ -157,7 +157,7 @@
 					<DropdownMenu.Item
 						onclick={handleLogout}
 						disabled={loggingOut}
-						class="text-[#dc2626] focus:bg-[#fee2e2] cursor-pointer"
+						class="text-neutral-700 focus:bg-neutral-100 cursor-pointer"
 					>
 						{#if loggingOut}
 							<LoaderIcon class="animate-spin size-4" />

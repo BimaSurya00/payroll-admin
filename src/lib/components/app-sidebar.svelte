@@ -114,18 +114,18 @@
   let currentUser = $derived(authState.user || { name: "User", email: "" });
 </script>
 
-<Sidebar.Root bind:ref variant="sidebar" class="bg-[#f1f5f9] border-r border-[#cbd5e1] text-[#0f172a]" {...restProps}>
-  <Sidebar.Header class="px-5 py-6 border-b border-[#cbd5e1]">
+<Sidebar.Root bind:ref variant="sidebar" class="bg-white border-r border-neutral-200" {...restProps}>
+  <Sidebar.Header class="h-16 flex items-center px-5 border-b border-neutral-200">
     <a href="/dashboard" class="flex items-center gap-3">
-      <div class="bg-[#2563eb] text-white flex h-10 w-10 items-center justify-center shadow-sm">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <div class="w-8 h-8 bg-black flex items-center justify-center">
+        <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
           <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
       </div>
       <div class="flex flex-col">
-        <span class="text-base font-bold text-[#0f172a] tracking-tight leading-none">HRIS</span>
-        <span class="text-[11px] text-[#64748b] font-medium leading-tight mt-1">Enterprise</span>
+        <span class="text-base font-bold text-black tracking-tight leading-none">HRIS</span>
+        <span class="text-[11px] text-neutral-500 font-medium leading-none mt-1">Enterprise</span>
       </div>
     </a>
   </Sidebar.Header>
@@ -134,7 +134,7 @@
     <NavMain items={navData.navMain} />
   </Sidebar.Content>
   
-  <Sidebar.Footer class="border-t border-[#cbd5e1] p-4 mt-auto bg-[#e2e8f0]">
+  <Sidebar.Footer class="border-t border-neutral-200 p-3 mt-auto">
     <NavUser user={currentUser} />
   </Sidebar.Footer>
 </Sidebar.Root>
