@@ -3,25 +3,23 @@
 	import { tv } from "tailwind-variants";
 
 	export const buttonVariants = tv({
-		base: "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex shrink-0 items-center justify-center gap-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-300 outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 active:scale-[0.98]",
+		base: "focus-visible:ring-ring/50 inline-flex shrink-0 items-center justify-center rounded-md text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50",
 		variants: {
 			variant: {
-				default: "gradient-primary text-primary-foreground hover:opacity-90 shadow-glow",
-				destructive:
-					"bg-destructive hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 text-white shadow-sm hover:shadow-md",
-				outline:
-					"bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 border shadow-sm hover:shadow-md",
-				secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm hover:shadow-md",
-				ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+				default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
+				destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
+				outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm",
+				secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm",
+				ghost: "hover:bg-accent hover:text-accent-foreground",
 				link: "text-primary underline-offset-4 hover:underline",
 			},
 			size: {
-				default: "h-10 px-5 py-2 has-[>svg]:px-4",
-				sm: "h-8 gap-1.5 rounded-md px-4 has-[>svg]:px-3",
-				lg: "h-11 rounded-lg px-8 has-[>svg]:px-6",
-				icon: "size-10",
-				"icon-sm": "size-9",
-				"icon-lg": "size-11",
+				default: "h-9 px-4 py-2",
+				sm: "h-8 rounded-md px-3 text-xs",
+				lg: "h-10 rounded-md px-8",
+				icon: "h-9 w-9",
+				"icon-sm": "h-8 w-8",
+				"icon-lg": "h-10 w-10",
 			},
 		},
 		defaultVariants: {
