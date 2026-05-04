@@ -83,30 +83,33 @@
 
 <Sidebar.Provider>
   <AppSidebar />
-  <Sidebar.Inset class="bg-background min-h-screen">
-    <header class="flex h-14 shrink-0 items-center gap-2 border-b border-border/60 bg-card/50 backdrop-blur-sm sticky top-0 z-30 px-4">
-      <Sidebar.Trigger class="-ms-1 hover:bg-accent rounded-md transition-colors h-8 w-8" />
-      <Separator orientation="vertical" class="h-4" />
+  <Sidebar.Inset class="bg-slate-950 min-h-screen relative">
+    <!-- Background Glow -->
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[120px] pointer-events-none"></div>
+    
+    <header class="flex h-16 shrink-0 items-center gap-3 border-b border-slate-800/60 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-30 px-6">
+      <Sidebar.Trigger class="text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors h-9 w-9" />
+      <Separator orientation="vertical" class="h-5 bg-slate-700" />
       <Breadcrumb.Root>
         <Breadcrumb.List>
           {#each breadcrumbs as crumb, i (crumb.href)}
             {#if crumb.isLast}
               <Breadcrumb.Item>
-                <Breadcrumb.Page class="font-medium text-foreground text-sm">{crumb.name}</Breadcrumb.Page>
+                <Breadcrumb.Page class="font-semibold text-white text-sm">{crumb.name}</Breadcrumb.Page>
               </Breadcrumb.Item>
             {:else}
               <Breadcrumb.Item class="hidden md:block">
-                <Breadcrumb.Link href={crumb.href} class="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                <Breadcrumb.Link href={crumb.href} class="text-slate-400 hover:text-cyan-400 transition-colors text-sm">
                   {crumb.name}
                 </Breadcrumb.Link>
               </Breadcrumb.Item>
-              <Breadcrumb.Separator class="hidden md:block" />
+              <Breadcrumb.Separator class="hidden md:block text-slate-600" />
             {/if}
           {/each}
         </Breadcrumb.List>
       </Breadcrumb.Root>
     </header>
-    <main class="flex-1 p-6">
+    <main class="flex-1 p-6 relative z-10">
       <slot />
     </main>
   </Sidebar.Inset>

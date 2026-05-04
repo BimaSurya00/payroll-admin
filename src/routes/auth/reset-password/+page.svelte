@@ -73,28 +73,28 @@
 </svelte:head>
 
 <div class="flex min-h-[100dvh] items-center justify-center p-4 relative overflow-hidden auth-bg">
-	<div class="absolute inset-0 pointer-events-none">
-		<div class="absolute inset-0 bg-grid opacity-40"></div>
+	<div class="absolute inset-0 pointer-events-none overflow-hidden">
+		<div class="absolute top-1/4 -left-20 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px] animate-float"></div>
+		<div class="absolute bottom-1/4 -right-20 w-80 h-80 bg-violet-500/10 rounded-full blur-[100px] animate-float" style="animation-delay: 2s;"></div>
+		<div class="absolute inset-0 bg-grid opacity-30"></div>
 	</div>
 
-	<Card.Root class="w-full max-w-[400px] shadow-elevation-2 border-border bg-card relative z-10">
-		<Card.Header class="space-y-5 pt-8 pb-6">
-			<div class="flex items-center gap-3">
-				<div class="bg-primary text-primary-foreground flex h-9 w-9 items-center justify-center rounded-lg shadow-sm">
-					<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+	<Card.Root class="w-full max-w-[420px] glass-card shadow-2xl relative z-10 border-0">
+		<div class="absolute -top-px left-8 right-8 h-px bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div>
+		
+		<Card.Header class="space-y-6 pt-8 pb-6">
+			<div class="flex items-center justify-center">
+				<div class="w-16 h-16 bg-cyan-500 flex items-center justify-center rounded-2xl shadow-lg shadow-cyan-500/25">
+					<svg class="w-8 h-8 text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 						<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
 						<polyline points="9 22 9 12 15 12 15 22"/>
 					</svg>
 				</div>
-				<div>
-					<h1 class="text-lg font-bold text-foreground tracking-tight">HRIS Enterprise</h1>
-					<p class="text-[11px] text-muted-foreground">Human Resource Information System</p>
-				</div>
 			</div>
-			<div class="space-y-1">
-				<Card.Title class="text-xl font-semibold text-foreground">Reset Password</Card.Title>
-				<Card.Description class="text-sm text-muted-foreground">
-					Enter your new password
+			<div class="text-center space-y-2">
+				<Card.Title class="text-2xl font-bold text-white tracking-tight">Reset Password</Card.Title>
+				<Card.Description class="text-slate-400 text-sm">
+					Create a new password for your account
 				</Card.Description>
 			</div>
 		</Card.Header>
@@ -102,29 +102,29 @@
 		<Card.Content class="space-y-4 pb-8">
 			{#if success}
 				<div class="space-y-5 text-center py-2">
-					<div class="mx-auto w-12 h-12 rounded-full bg-success/10 flex items-center justify-center">
-						<CheckCircleIcon class="h-6 w-6 text-success" />
+					<div class="mx-auto w-14 h-14 rounded-full bg-emerald-500/20 flex items-center justify-center">
+						<CheckCircleIcon class="h-7 w-7 text-emerald-400" />
 					</div>
 					<div class="space-y-1">
-						<h3 class="text-lg font-semibold text-foreground">Password Reset!</h3>
-						<p class="text-sm text-muted-foreground">Your password has been changed. You can now login with your new password.</p>
+						<h3 class="text-lg font-semibold text-white">Password Reset!</h3>
+						<p class="text-sm text-slate-400">Your password has been changed successfully. You can now login with your new password.</p>
 					</div>
-					<Button onclick={goToLogin} class="w-full h-10 text-sm font-semibold mt-2">
+					<Button onclick={goToLogin} class="w-full h-11 text-sm font-semibold bg-cyan-500 hover:bg-cyan-400 text-slate-900 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-cyan-500/25 mt-2">
 						Go to Login
 					</Button>
 				</div>
 			{:else}
 				{#if !token}
 					<div class="text-center py-6">
-						<p class="text-sm text-muted-foreground">Invalid or missing reset token.</p>
-						<Button variant="outline" onclick={goToLogin} class="mt-4 h-10">Back to Login</Button>
+						<p class="text-sm text-slate-400">Invalid or missing reset token.</p>
+						<Button variant="outline" onclick={goToLogin} class="mt-4 h-11 border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white rounded-xl">Back to Login</Button>
 					</div>
 				{:else}
 				<form onsubmit={handleSubmit} class="space-y-4">
 					<div class="space-y-1.5">
-						<Label for="newPassword" class="text-sm font-medium text-foreground">New Password</Label>
-						<div class="relative">
-							<LockIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+						<Label for="newPassword" class="text-sm font-medium text-slate-300">New Password</Label>
+						<div class="relative group">
+							<LockIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
 							<Input
 								id="newPassword"
 								type={showPassword ? "text" : "password"}
@@ -132,12 +132,12 @@
 								bind:value={newPassword}
 								required
 								disabled={loading}
-								class="h-10 pl-10 pr-10 bg-background border-input focus-visible:ring-2 focus-visible:ring-ring"
+								class="h-11 pl-10 pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 focus:border-cyan-500 focus:ring-cyan-500/20 rounded-xl"
 							/>
 							<button
 								type="button"
 								onclick={() => showPassword = !showPassword}
-								class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+								class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
 							>
 								{#if showPassword}
 									<EyeOffIcon class="h-4 w-4" />
@@ -149,7 +149,7 @@
 					</div>
 
 					<div class="space-y-1.5">
-						<Label for="confirmPassword" class="text-sm font-medium text-foreground">Confirm Password</Label>
+						<Label for="confirmPassword" class="text-sm font-medium text-slate-300">Confirm Password</Label>
 						<Input
 							id="confirmPassword"
 							type="password"
@@ -157,11 +157,11 @@
 							bind:value={confirmPassword}
 							required
 							disabled={loading}
-							class="h-10 bg-background border-input focus-visible:ring-2 focus-visible:ring-ring"
+							class="h-11 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 focus:border-cyan-500 focus:ring-cyan-500/20 rounded-xl"
 						/>
 					</div>
 
-					<Button type="submit" class="w-full h-10 text-sm font-semibold" disabled={!token || !newPassword || !confirmPassword || !passwordsMatch() || loading}>
+					<Button type="submit" class="w-full h-11 text-sm font-semibold bg-cyan-500 hover:bg-cyan-400 text-slate-900 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-cyan-500/25" disabled={!token || !newPassword || !confirmPassword || !passwordsMatch() || loading}>
 						{#if loading}
 							<LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
 							Resetting...
@@ -178,7 +178,7 @@
 			<button
 				type="button"
 				onclick={goToLogin}
-				class="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+				class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-cyan-400 transition-colors"
 			>
 				<ArrowLeftIcon class="h-4 w-4" />
 				Back to Login

@@ -13,12 +13,13 @@
     import CalendarIcon from '@lucide/svelte/icons/calendar';
     import BriefcaseIcon from '@lucide/svelte/icons/briefcase';
     import ActivityIcon from '@lucide/svelte/icons/activity';
+    import TrendingUpIcon from '@lucide/svelte/icons/trending-up';
+    import MinusIcon from '@lucide/svelte/icons/minus';
 
     import { dashboardStore } from '$lib/stores/dashboard.store.js';
     import { authStore } from '$lib/stores/auth.store.js';
     import { companyStore } from '$lib/stores/company.store.js';
 
-    // Reactive state
     let storeState = $state({ 
         summary: null, 
         attendanceStats: null,
@@ -32,7 +33,6 @@
     let authState = $state({ user: null });
     let companyState = $state({ data: [], selected: null });
 
-    // Subscribe to stores
     dashboardStore.subscribe((state) => {
         storeState = state;
     });
@@ -45,110 +45,75 @@
         companyState = state;
     });
 
-    // Get current user's company
     let currentCompany = $derived(companyState.selected);
-
-    // Check if user is admin
-    let isAdmin = $derived(
-        authState.user?.role === 'ADMIN' || authState.user?.role === 'SUPER_USER'
-    );
-
     let isSuperUser = $derived(authState.user?.role === 'SUPER_USER');
+    
+    let { summary, attendanceStats, payrollStats, employeeStats, recentActivities, superUserSummary, loading, error } = $derived(storeState);
 
-    // Check if error is forbidden
-    let isForbidden = $derived(
-        storeState.error?.includes('403') ||
-            storeState.error?.toLowerCase().includes('forbidden') ||
-            storeState.error?.toLowerCase().includes('access denied')
-    );
-
-    // Derived data
-    let summary = $derived(storeState.summary);
-    let attendanceStats = $derived(storeState.attendanceStats);
-    let payrollStats = $derived(storeState.payrollStats);
-    let employeeStats = $derived(storeState.employeeStats);
-    let recentActivities = $derived(storeState.recentActivities);
-    let superUserSummary = $derived(storeState.superUserSummary);
-    let loading = $derived(storeState.loading);
-    let error = $derived(storeState.error);
-
-    // Fetch data on mount
-    onMount(async () => {
-        if (isSuperUser) {
-            try {
-                await dashboardStore.fetchSuperUserSummary();
-            } catch (err) {
-                console.log('Error fetching superuser dashboard:', err.message);
-            }
-        } else if (isAdmin) {
-            try {
-                await dashboardStore.fetchAll();
-                try {
-                    await companyStore.fetchCurrent();
-                } catch (err) {
-                    console.log('Could not fetch company:', err.message);
-                }
-            } catch (err) {
-                console.log('Error fetching dashboard data:', err.message);
-            }
+    onMount(() => {
+        if (!isSuperUser) {
+            dashboardStore.fetchDashboardSummary();
+        } else {
+            dashboardStore.fetchSuperUserSummary();
         }
     });
 
-    // Refresh function
     async function handleRefresh() {
         if (isSuperUser) {
             await dashboardStore.fetchSuperUserSummary();
-        } else if (isAdmin) {
-            await dashboardStore.fetchAll();
+        } else {
+            await dashboardStore.fetchDashboardSummary();
         }
     }
 
     function formatNumber(num) {
-        if (!num) return '0';
-        return new Intl.NumberFormat('id-ID').format(num);
+        if (num === null || num === undefined) return '-';
+        return new Intl.NumberFormat('en-US').format(num);
     }
 
     function formatCurrency(amount) {
-        if (!amount) return 'Rp 0';
+        if (amount === null || amount === undefined) return '-';
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
             currency: 'IDR',
             minimumFractionDigits: 0,
+            maximumFractionDigits: 0
         }).format(amount);
     }
 
     function formatDate(dateString) {
         if (!dateString) return '-';
-        return new Date(dateString).toLocaleDateString('id-ID', {
-            day: 'numeric',
-            month: 'short',
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
             year: 'numeric',
+            month: 'short',
+            day: 'numeric'
         });
     }
 
     function getActivityIcon(action) {
         switch (action?.toUpperCase()) {
-            case 'CREATE': return '➕';
-            case 'UPDATE': return '✏️';
-            case 'DELETE': return '🗑️';
-            case 'APPROVE': return '✅';
-            case 'REJECT': return '❌';
-            case 'LOGIN': return '🔑';
-            case 'LOGOUT': return '🚪';
-            default: return '📋';
+            case 'CREATE': return '+';
+            case 'UPDATE': return '↻';
+            case 'DELETE': return '×';
+            case 'APPROVE': return '✓';
+            case 'REJECT': return '✕';
+            case 'LOGIN': return '→';
+            case 'LOGOUT': return '←';
+            default: return '•';
         }
     }
 
     function getActivityColor(action) {
         switch (action?.toUpperCase()) {
-            case 'CREATE': return 'text-success bg-success/10';
-            case 'UPDATE': return 'text-primary bg-primary/10';
-            case 'DELETE': return 'text-destructive bg-destructive/10';
-            case 'APPROVE': return 'text-success bg-success/10';
-            case 'REJECT': return 'text-warning bg-warning/10';
-            case 'LOGIN': return 'text-chart-4 bg-chart-4/10';
-            case 'LOGOUT': return 'text-muted-foreground bg-muted';
-            default: return 'text-primary bg-primary/10';
+            case 'CREATE': return 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20';
+            case 'UPDATE': return 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20';
+            case 'DELETE': return 'text-rose-400 bg-rose-400/10 border-rose-400/20';
+            case 'APPROVE': return 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20';
+            case 'REJECT': return 'text-amber-400 bg-amber-400/10 border-amber-400/20';
+            case 'LOGIN': return 'text-violet-400 bg-violet-400/10 border-violet-400/20';
+            case 'LOGOUT': return 'text-slate-400 bg-slate-400/10 border-slate-400/20';
+            default: return 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20';
         }
     }
 </script>
@@ -157,136 +122,124 @@
     <title>Dashboard | HRIS</title>
 </svelte:head>
 
-<div class="relative">
-	<div class="px-6 py-6 md:px-8 md:py-8">
-		<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-			<div class="space-y-2">
-				<div class="flex items-center gap-3">
-					<h1 class="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Dashboard</h1>
-					{#if currentCompany}
-						<span class="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium border border-primary/20">
-							<BuildingIcon class="h-3.5 w-3.5" />
-							{currentCompany.name}
-						</span>
-					{/if}
-				</div>
-				<p class="text-muted-foreground flex items-center gap-2">
-					<span class="w-1.5 h-1.5 rounded-full bg-success"></span>
-					Welcome back, <span class="font-medium text-foreground">{authState.user?.name || 'User'}</span>
-				</p>
-			</div>
-			
-			<div class="flex items-center gap-3">
-				<Button 
-					variant="outline" 
-					onclick={handleRefresh} 
-					disabled={loading}
-					class="rounded-lg px-4 h-10"
-				>
-					{#if loading}
-						<LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
-						Updating...
-					{:else}
-						<RefreshCwIcon class="h-4 w-4 mr-2" />
-						Refresh
-					{/if}
-				</Button>
-			</div>
-		</div>
-	</div>
+<!-- Dashboard Header -->
+<div class="mb-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="space-y-1">
+            <div class="flex items-center gap-3">
+                <h1 class="text-3xl font-bold text-white tracking-tight">Dashboard</h1>
+                {#if currentCompany}
+                    <span class="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-sm font-medium border border-cyan-500/20">
+                        <BuildingIcon class="h-3.5 w-3.5" />
+                        {currentCompany.name}
+                    </span>
+                {/if}
+            </div>
+            <p class="text-slate-400 flex items-center gap-2 text-sm">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50"></span>
+                Welcome back, <span class="font-semibold text-white">{authState.user?.name || 'User'}</span>
+            </p>
+        </div>
+        
+        <Button 
+            variant="outline" 
+            onclick={handleRefresh} 
+            disabled={loading}
+            class="rounded-xl px-4 h-10 border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-cyan-500/50 transition-all"
+        >
+            {#if loading}
+                <LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
+                Updating...
+            {:else}
+                <RefreshCwIcon class="h-4 w-4 mr-2" />
+                Refresh
+            {/if}
+        </Button>
+    </div>
 </div>
 
-<div class="flex flex-1 flex-col gap-6 p-4 md:p-6 md:pt-0">
+<div class="flex flex-1 flex-col gap-6">
     {#if isSuperUser}
         {#if loading && !superUserSummary}
             <div class="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {#each Array(4) as _}
-                    <Card.Root class="relative overflow-hidden">
-                        <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <div class="h-4 w-24 skeleton rounded"></div>
-                            <div class="w-8 h-8 rounded-lg skeleton"></div>
-                        </Card.Header>
-                        <Card.Content>
-                            <div class="h-8 w-20 skeleton rounded mb-2"></div>
-                            <div class="h-3 w-32 skeleton rounded"></div>
-                        </Card.Content>
-                    </Card.Root>
+                    <div class="stat-card p-5">
+                        <div class="h-4 w-24 bg-slate-700/50 rounded mb-4"></div>
+                        <div class="h-8 w-20 bg-slate-700/50 rounded mb-2"></div>
+                        <div class="h-3 w-32 bg-slate-700/50 rounded"></div>
+                    </div>
                 {/each}
             </div>
         {:else if superUserSummary}
-            <!-- Superuser Summary Cards -->
             <div class="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card.Root class="stat-card">
-                    <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Companies</Card.Title>
-                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <BuildingIcon class="h-4 w-4 text-primary" />
+                    <Card.Content class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Companies</span>
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+                                <BuildingIcon class="h-5 w-5 text-cyan-400" />
+                            </div>
                         </div>
-                    </Card.Header>
-                    <Card.Content>
-                        <div class="text-2xl font-bold text-foreground">{formatNumber(superUserSummary.totalCompanies)}</div>
-                        <p class="text-xs text-muted-foreground mt-1.5">
-                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-success/10 text-success text-[10px] font-medium">
-                                {formatNumber(superUserSummary.activeCompanies)} active
+                        <div class="text-3xl font-bold text-white mb-1">{formatNumber(superUserSummary.totalCompanies)}</div>
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="text-emerald-400 flex items-center gap-1">
+                                <TrendingUpIcon class="h-3 w-3" />
+                                {formatNumber(superUserSummary.activeCompanies)}
                             </span>
-                        </p>
+                            <span class="text-slate-500">active</span>
+                        </div>
                     </Card.Content>
                 </Card.Root>
 
                 <Card.Root class="stat-card">
-                    <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Users</Card.Title>
-                        <div class="w-9 h-9 rounded-lg bg-info/10 flex items-center justify-center">
-                            <UsersIcon class="h-4 w-4 text-info" />
+                    <Card.Content class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Users</span>
+                            <div class="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center border border-violet-500/20">
+                                <UsersIcon class="h-5 w-5 text-violet-400" />
+                            </div>
                         </div>
-                    </Card.Header>
-                    <Card.Content>
-                        <div class="text-2xl font-bold text-foreground">{formatNumber(superUserSummary.totalUsers)}</div>
-                        <p class="text-xs text-muted-foreground mt-1.5 flex gap-1">
-                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">
-                                {formatNumber(superUserSummary.totalAdmins)} admins
-                            </span>
-                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-chart-4/10 text-chart-4 text-[10px] font-medium">
-                                {formatNumber(superUserSummary.totalSuperUsers)} super
-                            </span>
-                        </p>
+                        <div class="text-3xl font-bold text-white mb-1">{formatNumber(superUserSummary.totalUsers)}</div>
+                        <div class="flex gap-2 text-sm">
+                            <span class="px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 text-xs font-medium">{formatNumber(superUserSummary.totalAdmins)} admins</span>
+                            <span class="px-2 py-0.5 rounded-md bg-violet-500/10 text-violet-400 text-xs font-medium">{formatNumber(superUserSummary.totalSuperUsers)} super</span>
+                        </div>
                     </Card.Content>
                 </Card.Root>
 
                 <Card.Root class="stat-card">
-                    <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Employees</Card.Title>
-                        <div class="w-9 h-9 rounded-lg bg-success/10 flex items-center justify-center">
-                            <UserCheckIcon class="h-4 w-4 text-success" />
+                    <Card.Content class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Employees</span>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                                <UserCheckIcon class="h-5 w-5 text-emerald-400" />
+                            </div>
                         </div>
-                    </Card.Header>
-                    <Card.Content>
-                        <div class="text-2xl font-bold text-foreground">{formatNumber(superUserSummary.totalEmployees)}</div>
-                        <p class="text-xs text-muted-foreground mt-1.5">Across all companies</p>
+                        <div class="text-3xl font-bold text-white mb-1">{formatNumber(superUserSummary.totalEmployees)}</div>
+                        <p class="text-sm text-slate-500">Across all companies</p>
                     </Card.Content>
                 </Card.Root>
 
                 <Card.Root class="stat-card">
-                    <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Avg per Company</Card.Title>
-                        <div class="w-9 h-9 rounded-lg bg-warning/10 flex items-center justify-center">
-                            <ActivityIcon class="h-4 w-4 text-warning" />
+                    <Card.Content class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Avg per Company</span>
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                                <ActivityIcon class="h-5 w-5 text-amber-400" />
+                            </div>
                         </div>
-                    </Card.Header>
-                    <Card.Content>
-                        <div class="text-2xl font-bold text-foreground">
+                        <div class="text-3xl font-bold text-white mb-1">
                             {superUserSummary.totalCompanies > 0 ? formatNumber(Math.round(superUserSummary.totalEmployees / superUserSummary.totalCompanies)) : '0'}
                         </div>
-                        <p class="text-xs text-muted-foreground mt-1.5">Employees per company</p>
+                        <p class="text-sm text-slate-500">Employees per company</p>
                     </Card.Content>
                 </Card.Root>
             </div>
 
-            <!-- Company Stats Table -->
-            <Card.Root class="stat-card">
-                <Card.Header>
-                    <Card.Title class="flex items-center gap-2 text-sm font-semibold">
-                        <BuildingIcon class="h-4 w-4 text-primary" />
+            <Card.Root class="glass-card">
+                <Card.Header class="pb-4">
+                    <Card.Title class="text-lg font-semibold text-white flex items-center gap-2">
+                        <BuildingIcon class="h-5 w-5 text-cyan-400" />
                         Company Overview
                     </Card.Title>
                 </Card.Header>
@@ -295,552 +248,253 @@
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm">
                                 <thead>
-                                    <tr class="border-b border-border/50 text-left text-muted-foreground">
+                                    <tr class="border-b border-slate-700/50 text-left text-slate-400">
                                         <th class="pb-3 font-medium text-xs uppercase tracking-wider">Company</th>
                                         <th class="pb-3 font-medium text-xs uppercase tracking-wider">Plan</th>
                                         <th class="pb-3 font-medium text-xs uppercase tracking-wider text-center">Status</th>
                                         <th class="pb-3 font-medium text-xs uppercase tracking-wider text-center">Users</th>
                                         <th class="pb-3 font-medium text-xs uppercase tracking-wider text-center">Employees</th>
-                                        <th class="pb-3 font-medium text-xs uppercase tracking-wider text-center">Max</th>
                                         <th class="pb-3 font-medium text-xs uppercase tracking-wider">Created</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {#each superUserSummary.companyStats as company}
-                                        <tr class="border-b border-border/30 hover:bg-muted/30 transition-colors">
-                                            <td class="py-3 font-medium text-foreground">{company.companyName}</td>
+                                        <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                                            <td class="py-3 font-medium text-white">{company.companyName}</td>
                                             <td class="py-3">
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
-                                                    {company.plan === 'enterprise' ? 'bg-chart-4/10 text-chart-4' :
-                                                      company.plan === 'pro' ? 'bg-primary/10 text-primary' :
-                                                      company.plan === 'starter' ? 'bg-chart-2/10 text-chart-2' :
-                                                      'bg-muted text-muted-foreground'}">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium
+                                                    {company.plan === 'enterprise' ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20' :
+                                                      company.plan === 'pro' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' :
+                                                      company.plan === 'starter' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                                                      'bg-slate-700/50 text-slate-400 border border-slate-600'}">
                                                     {company.plan}
                                                 </span>
                                             </td>
                                             <td class="py-3 text-center">
                                                 {#if company.isActive}
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success">
-                                                        <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
+                                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-lg shadow-emerald-400/50"></span>
                                                         Active
                                                     </span>
                                                 {:else}
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-destructive/10 text-destructive">
-                                                        <span class="w-1.5 h-1.5 rounded-full bg-destructive"></span>
+                                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
                                                         Inactive
                                                     </span>
                                                 {/if}
                                             </td>
-                                            <td class="py-3 text-center tabular-nums">{formatNumber(company.userCount)}</td>
-                                            <td class="py-3 text-center tabular-nums">{formatNumber(company.employeeCount)}</td>
-                                            <td class="py-3 text-center tabular-nums">{formatNumber(company.maxEmployees)}</td>
-                                            <td class="py-3 text-muted-foreground">{formatDate(company.createdAt)}</td>
+                                            <td class="py-3 text-center text-slate-300 tabular-nums">{formatNumber(company.userCount)}</td>
+                                            <td class="py-3 text-center text-slate-300 tabular-nums">{formatNumber(company.employeeCount)}</td>
+                                            <td class="py-3 text-slate-400">{formatDate(company.createdAt)}</td>
                                         </tr>
                                     {/each}
                                 </tbody>
                             </table>
                         </div>
                     {:else}
-                        <p class="text-muted-foreground text-center py-8 text-sm">No companies registered yet</p>
+                        <p class="text-slate-500 text-center py-8">No companies registered yet</p>
                     {/if}
                 </Card.Content>
             </Card.Root>
-        {:else if error}
-            <div class="rounded-xl border border-destructive/30 bg-destructive/10 p-4 flex items-start gap-3" role="alert">
-                <div class="flex-1">
-                    <p class="text-sm font-medium text-destructive">{error}</p>
-                </div>
-            </div>
         {/if}
-    {:else if !isAdmin}
-        <ErrorForbidden
-            title="Access Denied"
-            message="You don't have permission to view the admin dashboard."
-        />
-    {:else if isForbidden}
-        <ErrorForbidden
-            title="Access Denied"
-            message="You don't have permission to view dashboard statistics."
-        />
     {:else}
-        {#if error}
-            <div class="rounded-xl border border-destructive/30 bg-destructive/10 p-4 flex items-start gap-3 animate-slide-up" role="alert">
-                <div class="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span class="text-destructive text-xs">!</span>
-                </div>
-                <div class="flex-1">
-                    <p class="text-sm font-medium text-destructive">{error}</p>
-                    <p class="text-xs text-destructive/70 mt-1">Click refresh to retry.</p>
-                </div>
-            </div>
-        {/if}
-
         {#if loading && !summary}
             <div class="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {#each Array(4) as _, i}
-                    <Card.Root class="relative overflow-hidden">
-                        <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <div class="h-4 w-24 skeleton rounded"></div>
-                            <div class="w-8 h-8 rounded-lg skeleton"></div>
-                        </Card.Header>
-                        <Card.Content>
-                            <div class="h-8 w-20 skeleton rounded mb-2"></div>
-                            <div class="h-3 w-32 skeleton rounded"></div>
-                        </Card.Content>
-                    </Card.Root>
+                {#each Array(4) as _}
+                    <div class="stat-card p-5">
+                        <div class="h-4 w-24 bg-slate-700/50 rounded mb-4"></div>
+                        <div class="h-8 w-20 bg-slate-700/50 rounded mb-2"></div>
+                        <div class="h-3 w-32 bg-slate-700/50 rounded"></div>
+                    </div>
                 {/each}
             </div>
         {:else if summary}
-            <!-- Summary Cards -->
             <div class="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <!-- Total Employees Card -->
                 <Card.Root class="stat-card">
-                    <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                            Total Employees
-                        </Card.Title>
-                        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <UsersIcon class="h-4 w-4 text-primary" />
+                    <Card.Content class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Employees</span>
+                            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+                                <UsersIcon class="h-5 w-5 text-cyan-400" />
+                            </div>
                         </div>
-                    </Card.Header>
-                    <Card.Content>
-                        <div class="text-2xl font-bold text-foreground">
+                        <div class="text-3xl font-bold text-white mb-1">
                             {employeeStats ? formatNumber(employeeStats.totalCount || 0) : '-'}
                         </div>
-                        <p class="text-xs text-muted-foreground mt-1.5 flex items-center gap-1.5">
-                            {#if employeeStats}
-                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-success/10 text-success text-[10px] font-medium">
-                                    {formatNumber(employeeStats.totalCount - (employeeStats.statusBreakdown?.resigned || 0))} active
-                                </span>
-                            {:else}
-                                Active employees
-                            {/if}
-                        </p>
+                        {#if employeeStats}
+                            <span class="text-emerald-400 text-sm flex items-center gap-1">
+                                <TrendingUpIcon class="h-3 w-3" />
+                                {formatNumber(employeeStats.totalCount - (employeeStats.statusBreakdown?.resigned || 0))} active
+                            </span>
+                        {:else}
+                            <span class="text-slate-500 text-sm">Active employees</span>
+                        {/if}
                     </Card.Content>
                 </Card.Root>
 
-                <!-- Present Today Card -->
                 <Card.Root class="stat-card">
-                    <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                            Present Today
-                        </Card.Title>
-                        <div class="w-9 h-9 rounded-lg bg-success/10 flex items-center justify-center">
-                            <UserCheckIcon class="h-4 w-4 text-success" />
+                    <Card.Content class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Present Today</span>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
+                                <UserCheckIcon class="h-5 w-5 text-emerald-400" />
+                            </div>
                         </div>
-                    </Card.Header>
-                    <Card.Content>
-                        <div class="text-2xl font-bold text-foreground">
+                        <div class="text-3xl font-bold text-white mb-1">
                             {formatNumber(summary.attendance?.todayPresent || 0)}
                         </div>
-                        <p class="text-xs text-muted-foreground mt-1.5 flex items-center gap-1.5">
-                            {#if summary.attendance}
-                                {@const total = summary.attendance.totalEmployees || 1}
-                                {@const present = summary.attendance.todayPresent || 0}
-                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-success/10 text-success text-[10px] font-medium">
-                                    {((present / total) * 100).toFixed(1)}%
-                                </span>
-                                <span>attendance rate</span>
-                            {:else}
-                                Attendance rate
-                            {/if}
-                        </p>
+                        {#if summary.attendance}
+                            {@const total = summary.attendance.totalEmployees || 1}
+                            {@const present = summary.attendance.todayPresent || 0}
+                            <span class="text-emerald-400 text-sm">
+                                {((present / total) * 100).toFixed(1)}% attendance rate
+                            </span>
+                        {:else}
+                            <span class="text-slate-500 text-sm">Attendance rate</span>
+                        {/if}
                     </Card.Content>
                 </Card.Root>
 
-                <!-- Monthly Payroll Card -->
                 <Card.Root class="stat-card">
-                    <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                            Monthly Payroll
-                        </Card.Title>
-                        <div class="w-9 h-9 rounded-lg bg-info/10 flex items-center justify-center">
-                            <DollarSignIcon class="h-4 w-4 text-info" />
+                    <Card.Content class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Monthly Payroll</span>
+                            <div class="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center border border-violet-500/20">
+                                <DollarSignIcon class="h-5 w-5 text-violet-400" />
+                            </div>
                         </div>
-                    </Card.Header>
-                    <Card.Content>
-                        <div class="text-xl font-bold text-foreground">
+                        <div class="text-2xl font-bold text-white mb-1">
                             {formatCurrency(summary.payroll?.totalNetSalary || 0)}
                         </div>
-                        <p class="text-xs text-muted-foreground mt-1.5 flex items-center gap-1.5">
-                            {#if summary.payroll}
-                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-warning/10 text-warning text-[10px] font-medium">
-                                    {formatNumber(summary.payroll.draftCount || 0)} pending
-                                </span>
-                            {:else}
-                                Pending payouts
-                            {/if}
-                        </p>
+                        {#if summary.payroll}
+                            <span class="text-amber-400 text-sm flex items-center gap-1">
+                                <ClockIcon class="h-3 w-3" />
+                                {formatNumber(summary.payroll.draftCount || 0)} pending
+                            </span>
+                        {:else}
+                            <span class="text-slate-500 text-sm">Pending payouts</span>
+                        {/if}
                     </Card.Content>
                 </Card.Root>
 
-                <!-- Pending Requests Card -->
                 <Card.Root class="stat-card">
-                    <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                            Pending Requests
-                        </Card.Title>
-                        <div class="w-9 h-9 rounded-lg bg-warning/10 flex items-center justify-center relative">
-                            <ClockIcon class="h-4 w-4 text-warning" />
-                            {#if summary.leave?.pendingRequests > 0}
-                                <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-warning text-white text-[9px] font-bold flex items-center justify-center">
-                                    {Math.min(summary.leave.pendingRequests, 9)}
-                                </span>
-                            {/if}
+                    <Card.Content class="p-5">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Pending Requests</span>
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 relative">
+                                <ClockIcon class="h-5 w-5 text-amber-400" />
+                                {#if summary.leave?.pendingRequests > 0}
+                                    <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-amber-400 text-slate-900 text-[10px] font-bold flex items-center justify-center shadow-lg shadow-amber-400/50">
+                                        {Math.min(summary.leave.pendingRequests, 9)}
+                                    </span>
+                                {/if}
+                            </div>
                         </div>
-                    </Card.Header>
-                    <Card.Content>
-                        <div class="text-2xl font-bold text-foreground">
+                        <div class="text-3xl font-bold text-white mb-1">
                             {formatNumber(summary.leave?.pendingRequests || 0)}
                         </div>
-                        <p class="text-xs text-muted-foreground mt-1.5">Leave requests awaiting approval</p>
+                        <p class="text-slate-500 text-sm">Leave requests awaiting approval</p>
                     </Card.Content>
                 </Card.Root>
             </div>
 
-            <!-- Detailed Statistics -->
-            <div class="space-y-8">
-                <!-- Overview Section -->
-                <div class="grid gap-4 md:grid-cols-2">
-                    <!-- Employee Status Breakdown -->
-                    <Card.Root class="stat-card">
-                        <Card.Header>
-                            <Card.Title class="flex items-center gap-2 text-sm font-semibold">
-                                <BriefcaseIcon class="h-4 w-4 text-chart-2" />
-                                Employee Status
-                            </Card.Title>
-                        </Card.Header>
-                        <Card.Content>
-                            {#if employeeStats?.statusBreakdown}
-                                <div class="space-y-3">
-                                    {#each Object.entries(employeeStats.statusBreakdown) as [status, count]}
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-sm text-foreground capitalize">{status}</span>
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-24 h-2 bg-muted rounded-full overflow-hidden">
-                                                    <div 
-                                                        class="h-full bg-primary transition-all duration-500" 
-                                                        style="width: {(count / (employeeStats.totalCount || 1)) * 100}%"
-                                                    ></div>
-                                                </div>
-                                                <span class="text-sm font-medium w-10 text-right tabular-nums">{formatNumber(count)}</span>
-                                            </div>
-                                        </div>
-                                    {/each}
-                                </div>
-                            {:else}
-                                <p class="text-muted-foreground text-sm">No data available</p>
-                            {/if}
-                        </Card.Content>
-                    </Card.Root>
-
-                    <!-- Department Distribution -->
-                    <Card.Root class="stat-card">
-                        <Card.Header>
-                            <Card.Title class="flex items-center gap-2 text-sm font-semibold">
-                                <BuildingIcon class="h-4 w-4 text-chart-3" />
-                                Department Distribution
-                            </Card.Title>
-                        </Card.Header>
-                        <Card.Content>
-                            {#if employeeStats?.departmentStats}
-                                <div class="space-y-3">
-                                    {#each employeeStats.departmentStats.slice(0, 5) as dept}
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-sm text-foreground truncate max-w-[140px]">{dept.departmentName}</span>
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-24 h-2 bg-muted rounded-full overflow-hidden">
-                                                    <div 
-                                                        class="h-full bg-chart-3 transition-all duration-500" 
-                                                        style="width: {(dept.employeeCount / (employeeStats.totalCount || 1)) * 100}%"
-                                                    ></div>
-                                                </div>
-                                                <span class="text-sm font-medium w-10 text-right tabular-nums">{formatNumber(dept.employeeCount)}</span>
-                                            </div>
-                                        </div>
-                                    {/each}
-                                </div>
-                            {:else}
-                                <p class="text-muted-foreground text-sm">No data available</p>
-                            {/if}
-                        </Card.Content>
-                    </Card.Root>
-
-                    <!-- Recent Activities -->
-                    <Card.Root class="md:col-span-2 stat-card">
-                        <Card.Header>
-                            <Card.Title class="flex items-center gap-2 text-sm font-semibold">
-                                <ActivityIcon class="h-4 w-4 text-primary" />
-                                Recent Activities
-                            </Card.Title>
-                        </Card.Header>
-                        <Card.Content>
-                            {#if recentActivities?.activities?.length > 0}
-                                <div class="space-y-2">
-                                    {#each recentActivities.activities.slice(0, 10) as activity}
-                                        <div class="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors">
-                                            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm {getActivityColor(activity.action)}">
-                                                {getActivityIcon(activity.action)}
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-foreground">{activity.description}</p>
-                                                <p class="text-xs text-muted-foreground">
-                                                    By {activity.userName} • {formatDate(activity.timestamp)}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    {/each}
-                                </div>                            {:else}
-                                <p class="text-muted-foreground text-sm">No recent activities</p>
-                            {/if}
-                        </Card.Content>
-                    </Card.Root>
-                </div>
-
-                <!-- Attendance Section -->
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <CalendarIcon class="h-4 w-4 text-primary" />
+            <div class="space-y-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20">
+                        <CalendarIcon class="h-4 w-4 text-cyan-400" />
                     </div>
-                    <h3 class="text-base font-semibold text-foreground">Attendance Statistics</h3>
+                    <h3 class="text-base font-semibold text-white">Attendance Statistics</h3>
                 </div>
 
                 {#if attendanceStats?.summary}
                     <div class="grid gap-4 md:grid-cols-4">
-                        <Card.Root class="stat-card">
-                            <Card.Header class="pb-2">
-                                <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Present</Card.Title>
-                            </Card.Header>
-                            <Card.Content>
-                                <div class="text-2xl font-bold text-success">
-                                    {formatNumber(attendanceStats.summary.totalPresent || 0)}
-                                </div>
-                                <p class="text-xs text-muted-foreground mt-1">
-                                    Avg: {attendanceStats.summary.avgPresent?.toFixed(1) || 0}/day
-                                </p>
-                            </Card.Content>
-                        </Card.Root>
-
-                        <Card.Root class="stat-card">
-                            <Card.Header class="pb-2">
-                                <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Late</Card.Title>
-                            </Card.Header>
-                            <Card.Content>
-                                <div class="text-2xl font-bold text-warning">
-                                    {formatNumber(attendanceStats.summary.totalLate || 0)}
-                                </div>
-                                <p class="text-xs text-muted-foreground mt-1">
-                                    Avg: {attendanceStats.summary.avgLate?.toFixed(1) || 0}/day
-                                </p>
-                            </Card.Content>
-                        </Card.Root>
-
-                        <Card.Root class="stat-card">
-                            <Card.Header class="pb-2">
-                                <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Absent</Card.Title>
-                            </Card.Header>
-                            <Card.Content>
-                                <div class="text-2xl font-bold text-destructive">
-                                    {formatNumber(attendanceStats.summary.totalAbsent || 0)}
-                                </div>
-                            </Card.Content>
-                        </Card.Root>
-
-                        <Card.Root class="stat-card">
-                            <Card.Header class="pb-2">
-                                <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">On Leave</Card.Title>
-                            </Card.Header>
-                            <Card.Content>
-                                <div class="text-2xl font-bold text-chart-4">
-                                    {formatNumber(attendanceStats.summary.totalLeave || 0)}
-                                </div>
-                            </Card.Content>
-                        </Card.Root>
+                        {#each [
+                            { label: 'Total Present', value: attendanceStats.summary.totalPresent || 0, avg: attendanceStats.summary.avgPresent?.toFixed(1), color: 'emerald', icon: UserCheckIcon },
+                            { label: 'Total Late', value: attendanceStats.summary.totalLate || 0, avg: attendanceStats.summary.avgLate?.toFixed(1), color: 'amber', icon: ClockIcon },
+                            { label: 'Total Absent', value: attendanceStats.summary.totalAbsent || 0, avg: null, color: 'rose', icon: MinusIcon },
+                            { label: 'On Leave', value: attendanceStats.summary.totalLeave || 0, avg: null, color: 'violet', icon: CalendarIcon }
+                        ] as stat}
+                            <Card.Root class="stat-card">
+                                <Card.Content class="p-4">
+                                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">{stat.label}</p>
+                                    <div class="text-2xl font-bold text-white mb-1">
+                                        {formatNumber(stat.value)}
+                                    </div>
+                                    {#if stat.avg}
+                                        <p class="text-xs text-slate-500">Avg: {stat.avg}/day</p>
+                                    {/if}
+                                </Card.Content>
+                            </Card.Root>
+                        {/each}
                     </div>
                 {:else}
-                    <Card.Root class="stat-card">
-                        <Card.Content class="py-8 text-center">
-                            <p class="text-muted-foreground text-sm">No attendance data available</p>
-                        </Card.Content>
-                    </Card.Root>
+                    <div class="stat-card p-8 text-center">
+                        <p class="text-slate-500 text-sm">No attendance data available</p>
+                    </div>
                 {/if}
+            </div>
 
-                <!-- Payroll Section -->
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-8 h-8 rounded-lg bg-info/10 flex items-center justify-center">
-                        <DollarSignIcon class="h-4 w-4 text-info" />
-                    </div>
-                    <h3 class="text-base font-semibold text-foreground">Payroll Statistics</h3>
-                </div>
-
-                {#if payrollStats}
-                    <div class="grid gap-4 md:grid-cols-3">
-                        <Card.Root class="stat-card">
-                            <Card.Header class="pb-2">
-                                <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Payroll</Card.Title>
-                            </Card.Header>
-                            <Card.Content>
-                                <div class="text-2xl font-bold text-foreground">
-                                    {formatNumber(payrollStats.totalPayrolls || 0)}
-                                </div>
-                                <p class="text-xs text-muted-foreground mt-1">employees processed</p>
-                            </Card.Content>
-                        </Card.Root>
-
-                        <Card.Root class="stat-card">
-                            <Card.Header class="pb-2">
-                                <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Amount</Card.Title>
-                            </Card.Header>
-                            <Card.Content>
-                                <div class="text-2xl font-bold text-info">
-                                    {formatCurrency(payrollStats.totalAmount || 0)}
-                                </div>
-                            </Card.Content>
-                        </Card.Root>
-
-                        <Card.Root class="stat-card">
-                            <Card.Header class="pb-2">
-                                <Card.Title class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Average Salary</Card.Title>
-                            </Card.Header>
-                            <Card.Content>
-                                <div class="text-2xl font-bold text-foreground">
-                                    {formatCurrency(payrollStats.averageSalary || 0)}
-                                </div>
-                            </Card.Content>
-                        </Card.Root>
-                    </div>
-
-                    <Card.Root class="stat-card">
-                        <Card.Header>
-                            <Card.Title class="text-sm font-semibold">Status Breakdown</Card.Title>
-                        </Card.Header>
-                        <Card.Content>
-                            <div class="grid gap-4 md:grid-cols-3">
-                                <div class="p-4 rounded-lg bg-muted/50 border border-border/50">
-                                    <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Draft</p>
-                                    <p class="text-xl font-bold text-foreground mt-1">{formatNumber(payrollStats.statusBreakdown?.draftCount || 0)}</p>
-                                    <p class="text-sm text-muted-foreground mt-1">{formatCurrency(payrollStats.statusBreakdown?.draftAmount || 0)}</p>
-                                </div>
-                                <div class="p-4 rounded-lg bg-primary/5 border border-primary/20">
-                                    <p class="text-xs font-medium text-primary uppercase tracking-wider">Approved</p>
-                                    <p class="text-xl font-bold text-primary mt-1">{formatNumber(payrollStats.statusBreakdown?.approvedCount || 0)}</p>
-                                    <p class="text-sm text-primary/70 mt-1">{formatCurrency(payrollStats.statusBreakdown?.approvedAmount || 0)}</p>
-                                </div>
-                                <div class="p-4 rounded-lg bg-success/5 border border-success/20">
-                                    <p class="text-xs font-medium text-success uppercase tracking-wider">Paid</p>
-                                    <p class="text-xl font-bold text-success mt-1">{formatNumber(payrollStats.statusBreakdown?.paidCount || 0)}</p>
-                                    <p class="text-sm text-success/70 mt-1">{formatCurrency(payrollStats.statusBreakdown?.paidAmount || 0)}</p>
-                                </div>
-                            </div>
-                        </Card.Content>
-                    </Card.Root>
-
-                    {#if payrollStats.departmentStats?.length > 0}
-                        <Card.Root>
-                            <Card.Header>
-                                <Card.Title>Department Payroll</Card.Title>
-                            </Card.Header>
-                            <Card.Content>
-                                <div class="space-y-3">
-                                    {#each payrollStats.departmentStats as dept}
-                                        <div class="flex items-center justify-between p-3 rounded-lg border">
-                                            <div>
-                                                <p class="font-medium">{dept.departmentName}</p>
-                                                <p class="text-sm text-muted-foreground">{formatNumber(dept.employeeCount)} employees</p>
-                                            </div>
-                                            <div class="text-right">
-                                                <p class="font-bold">{formatCurrency(dept.totalPayroll)}</p>
-                                            </div>
+            <div class="grid gap-6 md:grid-cols-2">
+                <Card.Root class="glass-card">
+                    <Card.Header class="pb-4">
+                        <Card.Title class="text-sm font-semibold text-white flex items-center gap-2">
+                            <ActivityIcon class="h-4 w-4 text-cyan-400" />
+                            Recent Activities
+                        </Card.Title>
+                    </Card.Header>
+                    <Card.Content>
+                        {#if recentActivities?.activities?.length > 0}
+                            <div class="space-y-3">
+                                {#each recentActivities.activities.slice(0, 10) as activity}
+                                    <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/30 hover:bg-slate-800/50 transition-colors">
+                                        <div class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold border {getActivityColor(activity.action)}">
+                                            {getActivityIcon(activity.action)}
                                         </div>
-                                    {/each}
-                                </div>
-                            </Card.Content>
-                        </Card.Root>
-                    {/if}
-                {:else}
-                    <Card.Root>
-                        <Card.Content class="py-8 text-center">
-                            <p class="text-muted-foreground">No payroll data available</p>
-                        </Card.Content>
-                    </Card.Root>
-                {/if}
-
-                <!-- Employees Section -->
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-8 h-8 rounded-lg bg-chart-4/10 flex items-center justify-center">
-                        <UsersIcon class="h-4 w-4 text-chart-4" />
-                    </div>
-                    <h3 class="text-base font-semibold text-foreground">Employee Details</h3>
-                </div>
-
-                {#if employeeStats}
-                    <div class="grid gap-4 md:grid-cols-2">
-                        <Card.Root class="stat-card">
-                            <Card.Header>
-                                <Card.Title class="text-sm font-semibold">Job Level Distribution</Card.Title>
-                            </Card.Header>
-                            <Card.Content>
-                                {#if employeeStats.jobLevelStats?.length > 0}
-                                    <div class="space-y-3">
-                                        {#each employeeStats.jobLevelStats as level}
-                                            <div class="flex items-center justify-between">
-                                                <span class="text-sm text-foreground">{level.level}</span>
-                                                <div class="flex items-center gap-2">
-                                                    <div class="w-24 h-2 bg-muted rounded-full overflow-hidden">
-                                                        <div 
-                                                            class="h-full bg-primary transition-all duration-500" 
-                                                            style="width: {(level.employeeCount / (employeeStats.totalCount || 1)) * 100}%"
-                                                        ></div>
-                                                    </div>
-                                                    <span class="text-sm font-medium w-10 text-right tabular-nums">{formatNumber(level.employeeCount)}</span>
-                                                </div>
-                                            </div>
-                                        {/each}
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-slate-200">{activity.description}</p>
+                                            <p class="text-xs text-slate-500">
+                                                By {activity.userName} • {formatDate(activity.timestamp)}
+                                            </p>
+                                        </div>
                                     </div>
-                                {:else}
-                                    <p class="text-muted-foreground text-sm">No job level data available</p>
-                                {/if}
-                            </Card.Content>
-                        </Card.Root>
+                                {/each}
+                            </div>
+                        {:else}
+                            <p class="text-slate-500 text-sm text-center py-8">No recent activities</p>
+                        {/if}
+                    </Card.Content>
+                </Card.Root>
 
-                        <Card.Root class="stat-card">
-                            <Card.Header>
-                                <Card.Title class="text-sm font-semibold">Recent Hires</Card.Title>
-                            </Card.Header>
-                            <Card.Content>
-                                {#if employeeStats.recentHires?.length > 0}
-                                    <div class="space-y-2">
-                                        {#each employeeStats.recentHires as hire}
-                                            <div class="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors">
-                                                <div class="flex items-center gap-3">
-                                                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                                        <span class="text-xs font-semibold text-primary">{hire.employeeName?.charAt(0) || '?'}</span>
-                                                    </div>
-                                                    <div>
-                                                        <p class="text-sm font-medium text-foreground">{hire.employeeName}</p>
-                                                        <p class="text-xs text-muted-foreground">{hire.position}</p>
-                                                    </div>
-                                                </div>
-                                                <div class="text-right">
-                                                    <p class="text-xs text-muted-foreground">Joined</p>
-                                                    <p class="text-xs font-medium text-foreground">{formatDate(hire.joinDate)}</p>
-                                                </div>
+                <Card.Root class="glass-card">
+                    <Card.Header class="pb-4">
+                        <Card.Title class="text-sm font-semibold text-white flex items-center gap-2">
+                            <BriefcaseIcon class="h-4 w-4 text-emerald-400" />
+                            Employee Status
+                        </Card.Title>
+                    </Card.Header>
+                    <Card.Content>
+                        {#if employeeStats?.statusBreakdown}
+                            <div class="space-y-4">
+                                {#each Object.entries(employeeStats.statusBreakdown) as [status, count]}
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-slate-300 capitalize">{status}</span>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-32 h-2 bg-slate-700 rounded-full overflow-hidden">
+                                                <div 
+                                                    class="h-full bg-cyan-500 transition-all duration-500 shadow-lg shadow-cyan-500/30" 
+                                                    style="width: {(count / (employeeStats.totalCount || 1)) * 100}%"
+                                                ></div>
                                             </div>
-                                        {/each}
+                                            <span class="text-sm font-semibold text-white w-10 text-right tabular-nums">{formatNumber(count)}</span>
+                                        </div>
                                     </div>
-                                {:else}
-                                    <p class="text-muted-foreground text-sm">No recent hires</p>
-                                {/if}
-                            </Card.Content>
-                        </Card.Root>
-                    </div>
-                {:else}
-                    <Card.Root>
-                        <Card.Content class="py-8 text-center">
-                            <p class="text-muted-foreground">No employee data available</p>
-                        </Card.Content>
-                    </Card.Root>
-                {/if}
+                                {/each}
+                            </div>
+                        {:else}
+                            <p class="text-slate-500 text-sm text-center py-8">No data available</p>
+                        {/if}
+                    </Card.Content>
+                </Card.Root>
             </div>
         {/if}
     {/if}
