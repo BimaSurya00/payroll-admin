@@ -114,27 +114,24 @@
   let currentUser = $derived(authState.user || { name: "User", email: "" });
 </script>
 
-<Sidebar.Root bind:ref variant="sidebar" class="bg-slate-900/95 border-r border-slate-700/30 backdrop-blur-xl" {...restProps}>
-  <Sidebar.Header class="h-16 flex items-center px-5 border-b border-slate-700/30">
-    <a href="/dashboard" class="flex items-center gap-3 group">
-      <div class="w-9 h-9 bg-cyan-500 flex items-center justify-center rounded-lg shadow-lg shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-shadow">
-        <svg class="w-5 h-5 text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<Sidebar.Root bind:ref variant="sidebar" class="bg-[#09090b] border-r border-white/[0.06]" {...restProps}>
+  <Sidebar.Header class="h-14 flex items-center px-4 border-b border-white/[0.06]">
+    <a href="/dashboard" class="flex items-center gap-2.5 group">
+      <div class="w-7 h-7 bg-primary rounded flex items-center justify-center">
+        <svg class="w-4 h-4 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
           <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
       </div>
-      <div class="flex flex-col">
-        <span class="text-base font-bold text-white tracking-tight leading-none">HRIS</span>
-        <span class="text-[11px] text-slate-400 font-medium leading-none mt-1">Enterprise</span>
-      </div>
+      <span class="text-sm font-semibold text-white tracking-tight">HRIS</span>
     </a>
   </Sidebar.Header>
   
-  <Sidebar.Content class="px-3 py-4">
+  <Sidebar.Content class="px-2 py-3">
     <NavMain items={navData.navMain} />
   </Sidebar.Content>
   
-  <Sidebar.Footer class="border-t border-slate-700/30 p-3 mt-auto bg-slate-900/50">
+  <Sidebar.Footer class="border-t border-white/[0.06] p-2 mt-auto">
     <NavUser user={currentUser} />
   </Sidebar.Footer>
 </Sidebar.Root>

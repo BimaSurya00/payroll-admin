@@ -83,33 +83,30 @@
 
 <Sidebar.Provider>
   <AppSidebar />
-  <Sidebar.Inset class="bg-slate-950 min-h-screen relative">
-    <!-- Background Glow -->
-    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[120px] pointer-events-none"></div>
-    
-    <header class="flex h-16 shrink-0 items-center gap-3 border-b border-slate-800/60 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-30 px-6">
-      <Sidebar.Trigger class="text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors h-9 w-9" />
-      <Separator orientation="vertical" class="h-5 bg-slate-700" />
+  <Sidebar.Inset class="bg-[#09090b] min-h-screen">
+    <header class="flex h-12 shrink-0 items-center gap-3 border-b border-white/[0.06] bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-30 px-5">
+      <Sidebar.Trigger class="text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04] rounded-md transition-colors h-7 w-7" />
+      <Separator orientation="vertical" class="h-4 bg-zinc-800" />
       <Breadcrumb.Root>
         <Breadcrumb.List>
           {#each breadcrumbs as crumb, i (crumb.href)}
             {#if crumb.isLast}
               <Breadcrumb.Item>
-                <Breadcrumb.Page class="font-semibold text-white text-sm">{crumb.name}</Breadcrumb.Page>
+                <Breadcrumb.Page class="font-medium text-zinc-200 text-[13px]">{crumb.name}</Breadcrumb.Page>
               </Breadcrumb.Item>
             {:else}
               <Breadcrumb.Item class="hidden md:block">
-                <Breadcrumb.Link href={crumb.href} class="text-slate-400 hover:text-cyan-400 transition-colors text-sm">
+                <Breadcrumb.Link href={crumb.href} class="text-zinc-500 hover:text-zinc-300 transition-colors text-[13px]">
                   {crumb.name}
                 </Breadcrumb.Link>
               </Breadcrumb.Item>
-              <Breadcrumb.Separator class="hidden md:block text-slate-600" />
+              <Breadcrumb.Separator class="hidden md:block text-zinc-700" />
             {/if}
           {/each}
         </Breadcrumb.List>
       </Breadcrumb.Root>
     </header>
-    <main class="flex-1 p-6 relative z-10">
+    <main class="flex-1 p-6">
       <slot />
     </main>
   </Sidebar.Inset>

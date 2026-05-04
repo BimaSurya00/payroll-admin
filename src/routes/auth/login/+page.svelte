@@ -54,123 +54,103 @@
 </script>
 
 <svelte:head>
-	<title>Login | HRIS Enterprise</title>
+	<title>Login | HRIS</title>
 </svelte:head>
 
-<div class="flex min-h-[100dvh] items-center justify-center p-4 relative overflow-hidden auth-bg">
-	<!-- Animated Background Elements -->
-	<div class="absolute inset-0 pointer-events-none overflow-hidden">
-		<div class="absolute top-1/4 -left-20 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px] animate-float"></div>
-		<div class="absolute bottom-1/4 -right-20 w-80 h-80 bg-violet-500/10 rounded-full blur-[100px] animate-float" style="animation-delay: 2s;"></div>
-		<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[120px]"></div>
-		<div class="absolute inset-0 bg-grid opacity-30"></div>
-	</div>
-
-	<!-- Login Card -->
-	<Card.Root class="w-full max-w-[420px] glass-card shadow-2xl relative z-10 border-0">
-		<!-- Top Glow Line -->
-		<div class="absolute -top-px left-8 right-8 h-px bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div>
-		
-		<Card.Header class="space-y-6 pt-8 pb-6">
-			<!-- Logo -->
-			<div class="flex items-center justify-center">
-				<div class="w-16 h-16 bg-cyan-500 flex items-center justify-center rounded-2xl shadow-lg shadow-cyan-500/25 animate-pulse-glow">
-					<svg class="w-8 h-8 text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<div class="flex min-h-[100dvh] items-center justify-center p-4 auth-bg">
+	<div class="w-full max-w-[400px]">
+		<div class="text-center mb-8">
+			<div class="flex items-center justify-center mb-6">
+				<div class="w-10 h-10 bg-primary flex items-center justify-center">
+					<svg class="w-5 h-5 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 						<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
 						<polyline points="9 22 9 12 15 12 15 22"/>
 					</svg>
 				</div>
 			</div>
-			
-			<div class="text-center space-y-2">
-				<Card.Title class="text-2xl font-bold text-white tracking-tight">Welcome Back</Card.Title>
-				<Card.Description class="text-slate-400 text-sm">
-					Sign in to access your dashboard
-				</Card.Description>
-			</div>
-		</Card.Header>
+			<h1 class="text-xl font-semibold text-white tracking-tight">Welcome back</h1>
+			<p class="text-sm text-zinc-500 mt-1.5">Sign in to your account to continue</p>
+		</div>
 
-		<Card.Content class="space-y-5 pb-8">
-			<form onsubmit={handleLogin} class="space-y-4">
-				<!-- Error Alert -->
-				{#if error}
-					<div class="rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 flex items-start gap-3" role="alert">
-						<AlertCircleIcon class="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" />
-						<p class="text-sm text-rose-300">{error}</p>
-					</div>
-				{/if}
-
-				<div class="space-y-1.5">
-					<Label for="email" class="text-sm font-medium text-slate-300">Email Address</Label>
-					<div class="relative group">
-						<MailIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
-						<Input
-							id="email"
-							type="email"
-							placeholder="name@company.com"
-							bind:value={email}
-							oninput={clearError}
-							required
-							disabled={loading}
-							class="h-11 pl-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 focus:border-cyan-500 focus:ring-cyan-500/20 rounded-xl"
-						/>
-					</div>
-				</div>
-
-				<div class="space-y-1.5">
-					<div class="flex items-center justify-between">
-						<Label for="password" class="text-sm font-medium text-slate-300">Password</Label>
-						<a href="/auth/forgot-password" class="text-xs text-cyan-400 hover:text-cyan-300 font-medium transition-colors">
-							Forgot password?
-						</a>
-					</div>
-					<div class="relative group">
-						<LockIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
-						<Input
-							id="password"
-							type={showPassword ? "text" : "password"}
-							placeholder="Enter your password"
-							bind:value={password}
-							oninput={clearError}
-							required
-							disabled={loading}
-							class="h-11 pl-10 pr-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-600 focus:border-cyan-500 focus:ring-cyan-500/20 rounded-xl"
-						/>
-						<button
-							type="button"
-							onclick={() => showPassword = !showPassword}
-							class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
-							aria-label={showPassword ? "Hide password" : "Show password"}
-						>
-							{#if showPassword}
-								<EyeOffIcon class="w-4 h-4" />
-							{:else}
-								<EyeIcon class="w-4 h-4" />
-							{/if}
-						</button>
-					</div>
-				</div>
-
-				<Button 
-					type="submit" 
-					class="w-full h-11 text-sm font-semibold mt-2 bg-cyan-500 hover:bg-cyan-400 text-slate-900 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-cyan-500/25"
-					disabled={loading}
-				>
-					{#if loading}
-						<LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
-						Signing in...
-					{:else}
-						Sign In
+		<Card.Root class="surface-card">
+			<Card.Content class="p-6">
+				<form onsubmit={handleLogin} class="space-y-4">
+					{#if error}
+						<div class="flex items-center gap-2.5 p-3 bg-red-500/[0.08] border border-red-500/20 text-red-400 text-sm" role="alert">
+							<AlertCircleIcon class="w-4 h-4 flex-shrink-0" />
+							<span>{error}</span>
+						</div>
 					{/if}
-				</Button>
-			</form>
-		</Card.Content>
-	</Card.Root>
 
-	<!-- Footer -->
-	<div class="absolute bottom-6 left-1/2 -translate-x-1/2 text-center z-10">
-		<p class="text-xs text-slate-600">
-			2024 HRIS Enterprise. All rights reserved.
+					<div class="space-y-1.5">
+						<Label for="email" class="text-sm text-zinc-400">Email</Label>
+						<div class="relative">
+							<MailIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-600" />
+							<Input
+								id="email"
+								type="email"
+								placeholder="name@company.com"
+								bind:value={email}
+								oninput={clearError}
+								required
+								disabled={loading}
+								class="h-10 pl-9 bg-white/[0.04] border-white/[0.08] text-white placeholder:text-zinc-600 focus:border-primary/50 focus:ring-primary/20"
+							/>
+						</div>
+					</div>
+
+					<div class="space-y-1.5">
+						<div class="flex items-center justify-between">
+							<Label for="password" class="text-sm text-zinc-400">Password</Label>
+							<a href="/auth/forgot-password" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+								Forgot password?
+							</a>
+						</div>
+						<div class="relative">
+							<LockIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-600" />
+							<Input
+								id="password"
+								type={showPassword ? "text" : "password"}
+								placeholder="Enter your password"
+								bind:value={password}
+								oninput={clearError}
+								required
+								disabled={loading}
+								class="h-10 pl-9 pr-9 bg-white/[0.04] border-white/[0.08] text-white placeholder:text-zinc-600 focus:border-primary/50 focus:ring-primary/20"
+							/>
+							<button
+								type="button"
+								onclick={() => showPassword = !showPassword}
+								class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors"
+								aria-label={showPassword ? "Hide password" : "Show password"}
+							>
+								{#if showPassword}
+									<EyeOffIcon class="w-4 h-4" />
+								{:else}
+									<EyeIcon class="w-4 h-4" />
+								{/if}
+							</button>
+						</div>
+					</div>
+
+					<Button 
+						type="submit" 
+						class="w-full h-10 text-sm font-medium mt-1 bg-primary hover:bg-primary/90 text-primary-foreground transition-colors"
+						disabled={loading}
+					>
+						{#if loading}
+							<LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
+							Signing in...
+						{:else}
+							Sign in
+						{/if}
+					</Button>
+				</form>
+			</Card.Content>
+		</Card.Root>
+
+		<p class="text-center text-xs text-zinc-600 mt-6">
+			&copy; {new Date().getFullYear()} HRIS. All rights reserved.
 		</p>
 	</div>
 </div>
