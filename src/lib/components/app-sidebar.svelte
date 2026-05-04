@@ -65,16 +65,16 @@
 </script>
 
 <Sidebar.Root bind:ref variant="sidebar" class="bg-sidebar border-r border-sidebar-border" {...restProps}>
-  <Sidebar.Header class="px-4 h-14 flex items-center gap-3">
-    <div class="w-8 h-8 bg-primary rounded-xl flex items-center justify-center shadow-sm">
+  <Sidebar.Header class="px-4 h-14 flex items-center gap-3 border-b border-sidebar-border/50">
+    <div class="w-8 h-8 bg-primary rounded-md flex items-center justify-center shadow-sm">
       <svg class="w-4 h-4 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
         <polyline points="9 22 9 12 15 12 15 22"/>
       </svg>
     </div>
     <a href="/dashboard" class="flex flex-col leading-none">
-      <span class="text-[15px] font-bold text-foreground tracking-tight">HRIS</span>
-      <span class="text-[10px] font-medium text-muted-foreground">Payroll</span>
+      <span class="text-[16px] font-semibold text-foreground tracking-tight">AcmeHR</span>
+      <span class="text-[11px] font-medium text-muted-foreground">Admin Portal</span>
     </a>
   </Sidebar.Header>
 

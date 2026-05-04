@@ -47,7 +47,7 @@
 					<Sidebar.MenuButton
 						{...props}
 						size="lg"
-						class="w-full text-sidebar-foreground hover:bg-accent hover:text-foreground data-[state=open]:bg-accent transition-all duration-150 h-auto py-2.5 rounded-xl"
+						class="w-full text-sidebar-foreground hover:bg-accent hover:text-foreground data-[state=open]:bg-accent transition-all duration-150 h-auto py-2.5 rounded-md"
 					>
 						<Avatar.Root class="size-7 rounded-full">
 							<Avatar.Image src={displayUser?.avatar || displayUser?.profileImage} alt={displayUser?.name} />
@@ -62,7 +62,7 @@
 				{/snippet}
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content
-				class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-xl bg-popover border border-border shadow-card-hover"
+				class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-md bg-popover border border-border shadow-card-hover"
 				side={sidebar.isMobile ? "bottom" : "right"}
 				align="end"
 				sideOffset={6}
@@ -82,11 +82,11 @@
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<a href="/dashboard/profile" class="contents">
-						<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg"><UserIcon class="size-4" /> Profile</DropdownMenu.Item>
+						<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-md"><UserIcon class="size-4" /> Profile</DropdownMenu.Item>
 					</a>
-					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg"><BadgeCheckIcon class="size-4" /> Account</DropdownMenu.Item>
-					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg"><CreditCardIcon class="size-4" /> Billing</DropdownMenu.Item>
-					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg"><BellIcon class="size-4" /> Notifications</DropdownMenu.Item>
+					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-md"><BadgeCheckIcon class="size-4" /> Account</DropdownMenu.Item>
+					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-md"><CreditCardIcon class="size-4" /> Billing</DropdownMenu.Item>
+					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-md"><BellIcon class="size-4" /> Notifications</DropdownMenu.Item>
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
@@ -94,13 +94,13 @@
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
-					<DropdownMenu.Item onclick={handleLogoutAll} disabled={loggingOut} class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg">
+					<DropdownMenu.Item onclick={handleLogoutAll} disabled={loggingOut} class="cursor-pointer text-muted-foreground hover:text-foreground rounded-md">
 						{#if loggingOut}<LoaderIcon class="animate-spin size-4" /> Logging out...{:else}<MonitorIcon class="size-4" /> Log out all devices{/if}
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
-					<DropdownMenu.Item onclick={handleLogout} disabled={loggingOut} class="text-destructive hover:text-destructive cursor-pointer rounded-lg">
+					<DropdownMenu.Item onclick={handleLogout} disabled={loggingOut} class="text-destructive hover:text-destructive cursor-pointer rounded-md">
 						{#if loggingOut}<LoaderIcon class="animate-spin size-4" /> Logging out...{:else}<LogOutIcon class="size-4" /> Log out{/if}
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>

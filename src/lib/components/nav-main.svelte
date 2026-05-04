@@ -27,7 +27,7 @@
 						{#if hasChildren(mainItem)}
 							<Sidebar.MenuButton 
 								tooltipContent={mainItem.title}
-								class="w-full text-sidebar-foreground hover:text-foreground hover:bg-accent data-[active=true]:bg-accent data-[active=true]:text-accent-foreground rounded-lg h-9 transition-all duration-150 group"
+								class="w-full text-sidebar-foreground hover:text-foreground hover:bg-accent data-[active=true]:bg-accent data-[active=true]:text-accent-foreground rounded-md h-9 transition-all duration-150 group"
 							>
 								<div class="flex items-center gap-3">
 									<mainItem.icon class="w-4 h-4 opacity-60 group-data-[active=true]:opacity-100 group-hover:opacity-80" />
@@ -68,7 +68,7 @@
 						{:else}
 							<Sidebar.MenuButton 
 								tooltipContent={mainItem.title}
-								class="w-full text-sidebar-foreground hover:text-foreground hover:bg-accent data-[active=true]:bg-accent data-[active=true]:text-accent-foreground rounded-lg h-9 transition-all duration-150 group"
+								class="w-full text-sidebar-foreground hover:text-foreground hover:bg-accent data-[active=true]:bg-accent data-[active=true]:text-accent-foreground rounded-md h-9 transition-all duration-150 group"
 							>
 								{#snippet child({ props })}
 									<a href={mainItem.url} {...props} class="flex items-center gap-3 w-full">
