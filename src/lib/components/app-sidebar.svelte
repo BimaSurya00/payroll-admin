@@ -178,8 +178,8 @@
   let currentUser = $derived(authState.user || navData.user);
 </script>
 
-<Sidebar.Root bind:ref variant="inset" class="text-white" {...restProps}>
-  <Sidebar.Header class="relative z-10">
+<Sidebar.Root bind:ref variant="inset" class="text-white border-r border-white/10" {...restProps}>
+  <Sidebar.Header class="relative z-10 pb-4">
     <Sidebar.Menu>
       <Sidebar.MenuItem>
         <Sidebar.MenuButton 
@@ -187,11 +187,14 @@
           class="text-white hover:bg-white/10 data-[active=true]:bg-white/20"
         >
           {#snippet child({ props })}
-            <a href="##" {...props}>
+            <a href="/dashboard" {...props}>
               <div
-                class="bg-white/20 backdrop-blur-sm border border-white/30 text-white flex aspect-square size-10 items-center justify-center rounded-xl shadow-lg"
+                class="bg-gradient-to-br from-primary to-chart-4 text-white flex aspect-square size-10 items-center justify-center rounded-xl shadow-lg ring-2 ring-white/20"
               >
-                <span class="text-lg font-bold">H</span>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
               </div>
               <div class="grid flex-1 text-start text-sm leading-tight">
                 <span class="truncate font-bold text-white text-base">HRIS</span>
@@ -206,7 +209,7 @@
   <Sidebar.Content class="relative z-10">
     <NavMain items={navData.navMain} />
   </Sidebar.Content>
-  <Sidebar.Footer class="relative z-10">
+  <Sidebar.Footer class="relative z-10 border-t border-white/10 pt-4">
     <NavUser user={currentUser} />
   </Sidebar.Footer>
 </Sidebar.Root>

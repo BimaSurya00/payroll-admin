@@ -91,10 +91,10 @@
 
 <Sidebar.Provider>
   <AppSidebar />
-  <Sidebar.Inset>
-    <header class="flex h-16 shrink-0 items-center gap-2">
-      <div class="flex items-center gap-2 px-4">
-        <Sidebar.Trigger class="-ms-1" />
+  <Sidebar.Inset class="bg-background">
+    <header class="flex h-16 shrink-0 items-center gap-2 border-b border-border/50 bg-card/50 backdrop-blur-xl sticky top-0 z-30">
+      <div class="flex items-center gap-2 px-4 w-full">
+        <Sidebar.Trigger class="-ms-1 hover:bg-muted/50 rounded-lg transition-colors" />
         <Separator
           orientation="vertical"
           class="me-2 data-[orientation=vertical]:h-4"
@@ -104,11 +104,11 @@
             {#each breadcrumbs as crumb, i (crumb.href)}
               {#if crumb.isLast}
                 <Breadcrumb.Item>
-                  <Breadcrumb.Page>{crumb.name}</Breadcrumb.Page>
+                  <Breadcrumb.Page class="font-medium text-foreground">{crumb.name}</Breadcrumb.Page>
                 </Breadcrumb.Item>
               {:else}
                 <Breadcrumb.Item class="hidden md:block">
-                  <Breadcrumb.Link href={crumb.href}
+                  <Breadcrumb.Link href={crumb.href} class="text-muted-foreground hover:text-foreground transition-colors"
                     >{crumb.name}</Breadcrumb.Link
                   >
                 </Breadcrumb.Item>
@@ -119,6 +119,8 @@
         </Breadcrumb.Root>
       </div>
     </header>
-    <slot />
+    <main class="flex-1">
+      <slot />
+    </main>
   </Sidebar.Inset>
 </Sidebar.Provider>
