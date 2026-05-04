@@ -6,8 +6,8 @@
 
 <td
     class={cn(
-        "p-4 align-middle [&:has([role=checkbox])]:pe-0 [&>[role=checkbox]]:translate-y-[2px]",
-        className,
+        "px-4 py-3.5 align-middle [&:has([role=checkbox])]:pe-0",
+        className
     )}
     {...restProps}
 >

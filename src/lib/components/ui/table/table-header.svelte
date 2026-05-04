@@ -4,6 +4,6 @@
     let { class: className, children, ...restProps } = $props();
 </script>
 
-<thead class={cn("[&_tr]:border-b", className)} {...restProps}>
+<thead class={cn("bg-muted/40 border-b", className)} {...restProps}>
     {@render children?.()}
 </thead>

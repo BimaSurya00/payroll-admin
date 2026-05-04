@@ -6,8 +6,8 @@
 
 <th
     class={cn(
-        "h-10 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pe-0 [&>[role=checkbox]]:translate-y-[2px]",
-        className,
+        "h-11 px-4 text-left align-middle text-[11px] font-semibold uppercase tracking-widest text-muted-foreground [&:has([role=checkbox])]:pe-0",
+        className
     )}
     {...restProps}
 >

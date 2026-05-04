@@ -186,7 +186,7 @@
                             <Table.Row class="group">
                                 <Table.Cell>
                                     <div class="flex items-center gap-3">
-                                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary font-medium text-sm">
+                                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm border border-slate-200 dark:border-slate-700">
                                             {(employee.userName || employee.name || "?").charAt(0)}
                                         </div>
                                         <div>
@@ -198,7 +198,7 @@
                                     {employee.userEmail || employee.email || '-'}
                                 </Table.Cell>
                                 <Table.Cell>
-                                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium {getStatusColor('position', employee.position)}">
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold {getStatusColor('position', employee.position)}">
                                         {employee.position}
                                     </span>
                                 </Table.Cell>
