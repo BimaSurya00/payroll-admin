@@ -65,7 +65,7 @@
 </script>
 
 <Sidebar.Root bind:ref variant="sidebar" class="bg-sidebar border-r border-sidebar-border" {...restProps}>
-  <Sidebar.Header class="px-4 h-14 flex items-center gap-3 border-b border-sidebar-border/50">
+  <Sidebar.Header class="px-4 h-14 flex flex-row items-center gap-3 border-b border-sidebar-border/50">
     <div class="w-8 h-8 bg-primary rounded-md flex items-center justify-center shadow-sm">
       <svg class="w-4 h-4 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>

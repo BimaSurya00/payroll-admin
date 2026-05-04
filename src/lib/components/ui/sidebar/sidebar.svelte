@@ -20,14 +20,13 @@
 {#if collapsible === "none"}
 	<div
 		class={cn(
-			"bg-gradient-to-b from-[#1e3a5f] via-[#1e293b] to-[#0f172a] text-white flex h-full w-(--sidebar-width) flex-col overflow-hidden relative",
+			"bg-sidebar flex h-full w-(--sidebar-width) flex-col overflow-hidden relative",
 			className
 		)}
 		bind:this={ref}
 		{...restProps}
 	>
-		<!-- Decorative gradient overlay -->
-		<div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-chart-4/10 pointer-events-none"></div>
+		<!-- Removed decorative gradient overlay -->
 		<div class="relative z-10 flex flex-col h-full">
 			{@render children?.()}
 		</div>
@@ -41,12 +40,11 @@
 			data-sidebar="sidebar"
 			data-slot="sidebar"
 			data-mobile="true"
-			class="bg-gradient-to-b from-[#1e3a5f] via-[#1e293b] to-[#0f172a] text-white w-(--sidebar-width) p-0 [&>button]:hidden overflow-hidden relative"
+			class="bg-sidebar w-(--sidebar-width) p-0 [&>button]:hidden overflow-hidden relative"
 			style="--sidebar-width: {SIDEBAR_WIDTH_MOBILE};"
 			{side}
 		>
-			<!-- Decorative gradient overlay -->
-			<div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-chart-4/10 pointer-events-none"></div>
+			<!-- Removed decorative gradient overlay -->
 			<Sheet.Header class="sr-only">
 				<Sheet.Title>Sidebar</Sheet.Title>
 				<Sheet.Description>Displays the mobile sidebar.</Sheet.Description>
@@ -96,11 +94,9 @@
 			<div
 				data-sidebar="sidebar"
 				data-slot="sidebar-inner"
-				class="bg-gradient-to-b from-[#1e3a5f] via-[#1e293b] to-[#0f172a] text-white group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col rounded-xl group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm overflow-hidden relative shadow-lg"
+				class="bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm overflow-hidden relative"
 			>
-				<!-- Decorative gradient overlay -->
-				<div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-chart-4/10 pointer-events-none"
-				></div>
+				<!-- Removed decorative gradient overlay -->
 				<!-- Content -->
 				<div class="relative z-10 flex flex-col h-full">
 					{@render children?.()}
