@@ -8,6 +8,7 @@
     import LoaderIcon from "@lucide/svelte/icons/loader";
     import PlayIcon from "@lucide/svelte/icons/play";
     import SquareIcon from "@lucide/svelte/icons/square";
+    import { toast } from "svelte-sonner";
 
     import { overtimeStore } from "$lib/stores/overtime.store.js";
     import { authStore } from "$lib/stores/auth.store.js";
@@ -74,8 +75,9 @@
     async function handleClockIn(id) {
         try {
             await overtimeStore.clockIn(id);
+            toast.success("Berhasil clock in lembur");
         } catch (err) {
-            alert("Gagal clock in: " + err.message);
+            toast.error("Gagal clock in: " + err.message);
         }
     }
 
@@ -83,8 +85,9 @@
     async function handleClockOut(id) {
         try {
             await overtimeStore.clockOut(id);
+            toast.success("Berhasil clock out lembur");
         } catch (err) {
-            alert("Gagal clock out: " + err.message);
+            toast.error("Gagal clock out: " + err.message);
         }
     }
 

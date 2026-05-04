@@ -7,7 +7,7 @@
     import PlusIcon from "@lucide/svelte/icons/plus";
     import LoaderIcon from "@lucide/svelte/icons/loader";
     import ClockIcon from "@lucide/svelte/icons/clock";
-    import Swal from "sweetalert2";
+    import { toast } from "svelte-sonner";
     import { extractValidationErrors } from "$lib/utils.js";
 
     import { overtimeStore } from "$lib/stores/overtime.store.js";
@@ -79,22 +79,12 @@
         e.preventDefault();
 
         if (!formData.employeeId) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal',
-                text: 'Silakan pilih karyawan',
-                confirmButtonColor: '#d33'
-            });
+            toast.error("Silakan pilih karyawan");
             return;
         }
 
         if (formData.reason.length < 10) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validasi Gagal',
-                text: 'Alasan minimal 10 karakter',
-                confirmButtonColor: '#d33'
-            });
+            toast.error("Alasan minimal 10 karakter");
             return;
         }
 
@@ -105,22 +95,12 @@
             await overtimeStore.create(formData);
             open = false;
             resetForm();
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: 'Pengajuan lembur berhasil dibuat.',
-                confirmButtonColor: '#3085d6',
-            });
+            toast.success("Pengajuan lembur berhasil dibuat.");
         } catch (err) {
             const { errorMessage, validationList } = extractValidationErrors(err, "Gagal mengajukan lembur");
             error = err.message || "Gagal mengajukan lembur";
 
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal mengajukan lembur',
-                html: `<p>${errorMessage}</p>${validationList}`,
-                confirmButtonColor: '#d33',
-            });
+            toast.error(errorMessage);
         } finally {
             loading = false;
         }

@@ -7,7 +7,7 @@
     import PencilIcon from "@lucide/svelte/icons/pencil";
     import LoaderIcon from "@lucide/svelte/icons/loader";
     import { formatTime, extractValidationErrors } from "$lib/utils.js";
-    import Swal from "sweetalert2";
+    import { toast } from "svelte-sonner";
 
     import { employeeStore } from "$lib/stores/employee.store.js";
     import { scheduleStore } from "$lib/stores/schedule.store.js";
@@ -109,24 +109,14 @@
 
             open = false;
             
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Employee updated successfully.',
-                confirmButtonColor: '#3085d6',
-            });
+            toast.success("Employee updated successfully.");
         } catch (err) {
             console.error("UPDATE ERROR:", err);
             
             const { errorMessage, validationList } = extractValidationErrors(err, "Failed to update employee");
             error = err.message || "Failed to update employee";
 
-            Swal.fire({
-                icon: 'error',
-                title: 'Failed to update employee',
-                html: `<p>${errorMessage}</p>${validationList}`,
-                confirmButtonColor: '#d33',
-            });
+            toast.error(errorMessage);
         } finally {
             loading = false;
         }

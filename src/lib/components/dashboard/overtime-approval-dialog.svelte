@@ -50,7 +50,7 @@
     }
 </script>
 
-<div class="flex gap-2">
+<div class="flex justify-end gap-2">
     <!-- Approve Button -->
     <Dialog.Root bind:open={openApprove}>
         <Dialog.Trigger>

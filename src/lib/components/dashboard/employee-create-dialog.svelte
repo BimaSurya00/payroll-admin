@@ -7,7 +7,7 @@
     import PlusIcon from "@lucide/svelte/icons/plus";
     import LoaderIcon from "@lucide/svelte/icons/loader";
     import { formatTime, extractValidationErrors } from "$lib/utils.js";
-    import Swal from "sweetalert2";
+    import { toast } from "svelte-sonner";
 
     import { employeeStore } from "$lib/stores/employee.store.js";
     import { scheduleStore } from "$lib/stores/schedule.store.js";
@@ -85,12 +85,7 @@
         error = null;
 
         if (!formData.departmentId) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validation Error',
-                text: 'Department is required',
-                confirmButtonColor: '#d33'
-            });
+            toast.error("Department is required");
             loading = false;
             return;
         }
@@ -104,24 +99,14 @@
             open = false;
             resetForm();
             
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Employee created successfully.',
-                confirmButtonColor: '#3085d6',
-            });
+            toast.success("Employee created successfully.");
         } catch (err) {
             console.error("Create employee error:", err);
             
             const { errorMessage, validationList } = extractValidationErrors(err, "Failed to create employee");
             error = err.message || "Failed to create employee";
 
-            Swal.fire({
-                icon: 'error',
-                title: 'Failed to create employee',
-                html: `<p>${errorMessage}</p>${validationList}`,
-                confirmButtonColor: '#d33',
-            });
+            toast.error(errorMessage);
         } finally {
             loading = false;
         }
