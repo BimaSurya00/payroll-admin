@@ -58,34 +58,34 @@
 </svelte:head>
 
 <div class="flex min-h-[100dvh] items-center justify-center p-4 auth-bg">
-	<div class="w-full max-w-[400px]">
+	<div class="w-full max-w-[420px]">
 		<div class="text-center mb-8">
-			<div class="flex items-center justify-center mb-6">
-				<div class="w-10 h-10 bg-primary flex items-center justify-center">
-					<svg class="w-5 h-5 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+			<div class="flex items-center justify-center mb-5">
+				<div class="w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-md shadow-primary/20">
+					<svg class="w-5.5 h-5.5 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 						<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
 						<polyline points="9 22 9 12 15 12 15 22"/>
 					</svg>
 				</div>
 			</div>
-			<h1 class="text-xl font-semibold text-white tracking-tight">Welcome back</h1>
-			<p class="text-sm text-zinc-500 mt-1.5">Sign in to your account to continue</p>
+			<h1 class="text-2xl font-bold text-foreground tracking-tight">Welcome back</h1>
+			<p class="text-muted-foreground text-sm mt-1.5">Sign in to your account to continue</p>
 		</div>
 
-		<Card.Root class="surface-card">
-			<Card.Content class="p-6">
-				<form onsubmit={handleLogin} class="space-y-4">
+		<Card.Root class="surface-elevated">
+			<Card.Content class="p-6 sm:p-8">
+				<form onsubmit={handleLogin} class="space-y-5">
 					{#if error}
-						<div class="flex items-center gap-2.5 p-3 bg-red-500/[0.08] border border-red-500/20 text-red-400 text-sm" role="alert">
+						<div class="flex items-center gap-2.5 p-3.5 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl" role="alert">
 							<AlertCircleIcon class="w-4 h-4 flex-shrink-0" />
 							<span>{error}</span>
 						</div>
 					{/if}
 
-					<div class="space-y-1.5">
-						<Label for="email" class="text-sm text-zinc-400">Email</Label>
+					<div class="space-y-2">
+						<Label for="email" class="text-sm font-medium text-foreground">Email</Label>
 						<div class="relative">
-							<MailIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-600" />
+							<MailIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 							<Input
 								id="email"
 								type="email"
@@ -94,20 +94,20 @@
 								oninput={clearError}
 								required
 								disabled={loading}
-								class="h-10 pl-9 bg-white/[0.04] border-white/[0.08] text-white placeholder:text-zinc-600 focus:border-primary/50 focus:ring-primary/20"
+								class="h-11 pl-9 bg-white border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
 							/>
 						</div>
 					</div>
 
-					<div class="space-y-1.5">
+					<div class="space-y-2">
 						<div class="flex items-center justify-between">
-							<Label for="password" class="text-sm text-zinc-400">Password</Label>
-							<a href="/auth/forgot-password" class="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+							<Label for="password" class="text-sm font-medium text-foreground">Password</Label>
+							<a href="/auth/forgot-password" class="text-xs text-primary hover:text-primary/80 font-medium transition-colors">
 								Forgot password?
 							</a>
 						</div>
 						<div class="relative">
-							<LockIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-600" />
+							<LockIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 							<Input
 								id="password"
 								type={showPassword ? "text" : "password"}
@@ -116,12 +116,12 @@
 								oninput={clearError}
 								required
 								disabled={loading}
-								class="h-10 pl-9 pr-9 bg-white/[0.04] border-white/[0.08] text-white placeholder:text-zinc-600 focus:border-primary/50 focus:ring-primary/20"
+								class="h-11 pl-9 pr-9 bg-white border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
 							/>
 							<button
 								type="button"
 								onclick={() => showPassword = !showPassword}
-								class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors"
+								class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
 								aria-label={showPassword ? "Hide password" : "Show password"}
 							>
 								{#if showPassword}
@@ -135,7 +135,7 @@
 
 					<Button 
 						type="submit" 
-						class="w-full h-10 text-sm font-medium mt-1 bg-primary hover:bg-primary/90 text-primary-foreground transition-colors"
+						class="w-full h-11 text-sm font-semibold mt-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl transition-all shadow-sm shadow-primary/20"
 						disabled={loading}
 					>
 						{#if loading}
@@ -149,8 +149,8 @@
 			</Card.Content>
 		</Card.Root>
 
-		<p class="text-center text-xs text-zinc-600 mt-6">
-			&copy; {new Date().getFullYear()} HRIS. All rights reserved.
+		<p class="text-center text-sm text-muted-foreground mt-8">
+			&copy; {new Date().getFullYear()} HRIS Payroll. All rights reserved.
 		</p>
 	</div>
 </div>

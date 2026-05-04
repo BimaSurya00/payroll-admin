@@ -83,30 +83,30 @@
 
 <Sidebar.Provider>
   <AppSidebar />
-  <Sidebar.Inset class="bg-[#09090b] min-h-screen">
-    <header class="flex h-12 shrink-0 items-center gap-3 border-b border-white/[0.06] bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-30 px-5">
-      <Sidebar.Trigger class="text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.04] rounded-md transition-colors h-7 w-7" />
-      <Separator orientation="vertical" class="h-4 bg-zinc-800" />
+  <Sidebar.Inset class="bg-[#f8fafc] min-h-screen">
+    <header class="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-white/80 backdrop-blur-md sticky top-0 z-30 px-6">
+      <Sidebar.Trigger class="text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors h-8 w-8" />
+      <Separator orientation="vertical" class="h-4 bg-border" />
       <Breadcrumb.Root>
         <Breadcrumb.List>
           {#each breadcrumbs as crumb, i (crumb.href)}
             {#if crumb.isLast}
               <Breadcrumb.Item>
-                <Breadcrumb.Page class="font-medium text-zinc-200 text-[13px]">{crumb.name}</Breadcrumb.Page>
+                <Breadcrumb.Page class="font-medium text-foreground text-sm">{crumb.name}</Breadcrumb.Page>
               </Breadcrumb.Item>
             {:else}
               <Breadcrumb.Item class="hidden md:block">
-                <Breadcrumb.Link href={crumb.href} class="text-zinc-500 hover:text-zinc-300 transition-colors text-[13px]">
+                <Breadcrumb.Link href={crumb.href} class="text-muted-foreground hover:text-foreground transition-colors text-sm">
                   {crumb.name}
                 </Breadcrumb.Link>
               </Breadcrumb.Item>
-              <Breadcrumb.Separator class="hidden md:block text-zinc-700" />
+              <Breadcrumb.Separator class="hidden md:block text-muted-foreground/40" />
             {/if}
           {/each}
         </Breadcrumb.List>
       </Breadcrumb.Root>
     </header>
-    <main class="flex-1 p-6">
+    <main class="flex-1 p-6 lg:p-8">
       <slot />
     </main>
   </Sidebar.Inset>

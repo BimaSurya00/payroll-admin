@@ -67,81 +67,81 @@
 					<Sidebar.MenuButton
 						{...props}
 						size="lg"
-						class="w-full text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04] data-[state=open]:bg-white/[0.06] transition-colors duration-150 h-auto py-2 rounded-none"
+						class="w-full text-sidebar-foreground hover:bg-accent data-[state=open]:bg-accent transition-all duration-150 h-auto py-2.5 rounded-xl"
 					>
-						<Avatar.Root class="size-7 rounded border border-zinc-700 bg-zinc-800">
+						<Avatar.Root class="size-9 rounded-lg bg-primary/10 border border-primary/20">
 							<Avatar.Image
 								src={displayUser?.avatar || displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="rounded bg-primary text-primary-foreground font-semibold text-xs">
+							<Avatar.Fallback class="rounded-lg bg-primary text-primary-foreground font-bold text-sm">
 								{userInitials}
 							</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-medium text-zinc-200 text-[13px]">{displayUser?.name || "User"}</span>
-							<span class="truncate text-xs text-zinc-500">{displayUser?.email || ""}</span>
+							<span class="truncate font-semibold text-foreground">{displayUser?.name || "User"}</span>
+							<span class="truncate text-xs text-muted-foreground">{displayUser?.email || ""}</span>
 						</div>
-						<ChevronsUpDownIcon class="ms-auto size-3.5 text-zinc-600" />
+						<ChevronsUpDownIcon class="ms-auto size-4 text-muted-foreground" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content
-				class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-lg bg-zinc-900 border border-zinc-800 shadow-xl"
+				class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-xl bg-popover border border-border shadow-elevation-2"
 				side={sidebar.isMobile ? "bottom" : "right"}
 				align="end"
 				sideOffset={4}
 			>
 				<DropdownMenu.Label class="p-0 font-normal">
 					<div class="flex items-center gap-2.5 px-1 py-1.5 text-start text-sm">
-						<Avatar.Root class="size-8 rounded border border-zinc-700 bg-zinc-800">
+						<Avatar.Root class="size-8 rounded-lg border border-border">
 							<Avatar.Image
 								src={displayUser?.avatar || displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="rounded bg-primary text-primary-foreground text-xs font-semibold">
+							<Avatar.Fallback class="rounded-lg bg-primary text-primary-foreground text-xs font-bold">
 								{userInitials}
 							</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-medium text-zinc-200">{displayUser?.name || "User"}</span>
-							<span class="truncate text-xs text-zinc-500">{displayUser?.email || ""}</span>
+							<span class="truncate font-semibold text-foreground">{displayUser?.name || "User"}</span>
+							<span class="truncate text-xs text-muted-foreground">{displayUser?.email || ""}</span>
 						</div>
 					</div>
 				</DropdownMenu.Label>
-				<DropdownMenu.Separator class="bg-zinc-800" />
+				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<a href="/dashboard/profile" class="contents">
-						<DropdownMenu.Item class="cursor-pointer text-zinc-300 hover:text-zinc-100 hover:bg-white/[0.06] focus:bg-white/[0.06] rounded-md">
+						<DropdownMenu.Item class="cursor-pointer text-foreground/80 hover:text-foreground rounded-lg">
 							<UserIcon class="size-4" />
 							Profile
 						</DropdownMenu.Item>
 					</a>
-					<DropdownMenu.Item class="cursor-pointer text-zinc-300 hover:text-zinc-100 hover:bg-white/[0.06] focus:bg-white/[0.06] rounded-md">
+					<DropdownMenu.Item class="cursor-pointer text-foreground/80 hover:text-foreground rounded-lg">
 						<BadgeCheckIcon class="size-4" />
 						Account
 					</DropdownMenu.Item>
-					<DropdownMenu.Item class="cursor-pointer text-zinc-300 hover:text-zinc-100 hover:bg-white/[0.06] focus:bg-white/[0.06] rounded-md">
+					<DropdownMenu.Item class="cursor-pointer text-foreground/80 hover:text-foreground rounded-lg">
 						<CreditCardIcon class="size-4" />
 						Billing
 					</DropdownMenu.Item>
-					<DropdownMenu.Item class="cursor-pointer text-zinc-300 hover:text-zinc-100 hover:bg-white/[0.06] focus:bg-white/[0.06] rounded-md">
+					<DropdownMenu.Item class="cursor-pointer text-foreground/80 hover:text-foreground rounded-lg">
 						<BellIcon class="size-4" />
 						Notifications
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
-				<DropdownMenu.Separator class="bg-zinc-800" />
+				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<DropdownMenu.Item class="cursor-pointer p-0" onclick={(e) => e.preventDefault()}>
-						<ThemeToggle variant="menu" class="rounded-none" />
+						<ThemeToggle variant="menu" />
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
-				<DropdownMenu.Separator class="bg-zinc-800" />
+				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<DropdownMenu.Item
 						onclick={handleLogoutAll}
 						disabled={loggingOut}
-						class="text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06] focus:bg-white/[0.06] cursor-pointer rounded-md"
+						class="cursor-pointer text-foreground/70 hover:text-foreground rounded-lg"
 					>
 						{#if loggingOut}
 							<LoaderIcon class="animate-spin size-4" />
@@ -152,12 +152,12 @@
 						{/if}
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
-				<DropdownMenu.Separator class="bg-zinc-800" />
+				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<DropdownMenu.Item
 						onclick={handleLogout}
 						disabled={loggingOut}
-						class="text-red-400 hover:text-red-300 hover:bg-red-500/[0.08] focus:bg-red-500/[0.08] cursor-pointer rounded-md"
+						class="text-destructive hover:text-destructive cursor-pointer rounded-lg"
 					>
 						{#if loggingOut}
 							<LoaderIcon class="animate-spin size-4" />

@@ -73,47 +73,47 @@
 </svelte:head>
 
 <div class="flex min-h-[100dvh] items-center justify-center p-4 auth-bg">
-	<div class="w-full max-w-[400px]">
+	<div class="w-full max-w-[420px]">
 		<div class="text-center mb-8">
-			<div class="flex items-center justify-center mb-6">
-				<div class="w-10 h-10 bg-primary flex items-center justify-center">
-					<svg class="w-5 h-5 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+			<div class="flex items-center justify-center mb-5">
+				<div class="w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-md shadow-primary/20">
+					<svg class="w-5.5 h-5.5 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 						<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
 						<polyline points="9 22 9 12 15 12 15 22"/>
 					</svg>
 				</div>
 			</div>
-			<h1 class="text-xl font-semibold text-white tracking-tight">Reset password</h1>
-			<p class="text-sm text-zinc-500 mt-1.5">Create a new password for your account</p>
+			<h1 class="text-2xl font-bold text-foreground tracking-tight">Reset password</h1>
+			<p class="text-muted-foreground text-sm mt-1.5">Create a new password for your account</p>
 		</div>
 
-		<Card.Root class="surface-card">
-			<Card.Content class="p-6">
+		<Card.Root class="surface-elevated">
+			<Card.Content class="p-6 sm:p-8">
 				{#if success}
-					<div class="space-y-5 text-center py-2">
-						<div class="mx-auto w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
-							<CheckCircleIcon class="h-5 w-5 text-emerald-400" />
+					<div class="space-y-5 text-center py-4">
+						<div class="mx-auto w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center">
+							<CheckCircleIcon class="h-6 w-6 text-emerald-600" />
 						</div>
-						<div class="space-y-1">
-							<h3 class="text-base font-medium text-white">Password reset</h3>
-							<p class="text-sm text-zinc-500">Your password has been changed successfully. You can now sign in with your new password.</p>
+						<div class="space-y-1.5">
+							<h3 class="text-lg font-semibold text-foreground">Password reset</h3>
+							<p class="text-sm text-muted-foreground">Your password has been changed successfully. You can now sign in with your new password.</p>
 						</div>
-						<Button onclick={goToLogin} class="w-full h-10 text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground transition-colors mt-2">
+						<Button onclick={goToLogin} class="w-full h-11 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl transition-all shadow-sm shadow-primary/20 mt-2">
 							Go to Login
 						</Button>
 					</div>
 				{:else}
 					{#if !token}
-						<div class="text-center py-6">
-							<p class="text-sm text-zinc-500">Invalid or missing reset token.</p>
-							<Button variant="outline" onclick={goToLogin} class="mt-4 h-10 border-white/[0.08] bg-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.04] hover:border-white/[0.12]">Back to Login</Button>
+						<div class="text-center py-8">
+							<p class="text-sm text-muted-foreground">Invalid or missing reset token.</p>
+							<Button variant="outline" onclick={goToLogin} class="mt-4 h-11 border-border bg-white text-foreground hover:bg-accent rounded-xl">Back to Login</Button>
 						</div>
 					{:else}
-						<form onsubmit={handleSubmit} class="space-y-4">
-							<div class="space-y-1.5">
-								<Label for="newPassword" class="text-sm text-zinc-400">New Password</Label>
+						<form onsubmit={handleSubmit} class="space-y-5">
+							<div class="space-y-2">
+								<Label for="newPassword" class="text-sm font-medium text-foreground">New Password</Label>
 								<div class="relative">
-									<LockIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-600" />
+									<LockIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 									<Input
 										id="newPassword"
 										type={showPassword ? "text" : "password"}
@@ -121,24 +121,24 @@
 										bind:value={newPassword}
 										required
 										disabled={loading}
-										class="h-10 pl-9 pr-9 bg-white/[0.04] border-white/[0.08] text-white placeholder:text-zinc-600 focus:border-primary/50 focus:ring-primary/20"
+										class="h-11 pl-9 pr-9 bg-white border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
 									/>
 									<button
 										type="button"
 										onclick={() => showPassword = !showPassword}
-										class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors"
+										class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
 									>
 										{#if showPassword}
-											<EyeOffIcon class="h-4 h-4" />
+											<EyeOffIcon class="w-4 h-4" />
 										{:else}
-											<EyeIcon class="h-4 w-4" />
+											<EyeIcon class="w-4 h-4" />
 										{/if}
 									</button>
 								</div>
 							</div>
 
-							<div class="space-y-1.5">
-								<Label for="confirmPassword" class="text-sm text-zinc-400">Confirm Password</Label>
+							<div class="space-y-2">
+								<Label for="confirmPassword" class="text-sm font-medium text-foreground">Confirm Password</Label>
 								<Input
 									id="confirmPassword"
 									type="password"
@@ -146,11 +146,11 @@
 									bind:value={confirmPassword}
 									required
 									disabled={loading}
-									class="h-10 bg-white/[0.04] border-white/[0.08] text-white placeholder:text-zinc-600 focus:border-primary/50 focus:ring-primary/20"
+									class="h-11 bg-white border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
 								/>
 							</div>
 
-							<Button type="submit" class="w-full h-10 text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground transition-colors" disabled={!token || !newPassword || !confirmPassword || !passwordsMatch() || loading}>
+							<Button type="submit" class="w-full h-11 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl transition-all shadow-sm shadow-primary/20" disabled={!token || !newPassword || !confirmPassword || !passwordsMatch() || loading}>
 								{#if loading}
 									<LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
 									Resetting...
@@ -164,13 +164,13 @@
 			</Card.Content>
 		</Card.Root>
 
-		<div class="text-center mt-6">
+		<div class="text-center mt-8">
 			<button
 				type="button"
 				onclick={goToLogin}
-				class="inline-flex items-center gap-1.5 text-sm text-zinc-600 hover:text-zinc-400 transition-colors"
+				class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium"
 			>
-				<ArrowLeftIcon class="h-3.5 w-3.5" />
+				<ArrowLeftIcon class="h-4 w-4" />
 				Back to Login
 			</button>
 		</div>
