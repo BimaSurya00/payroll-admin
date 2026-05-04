@@ -78,24 +78,24 @@
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{#each Array(4) as _}<div class="stat-card p-6"><div class="h-3.5 w-20 bg-muted rounded mb-4" /><div class="h-8 w-24 bg-muted rounded mb-2" /><div class="h-3 w-28 bg-muted/70 rounded" /></div>{/each}</div>
         {:else if superUserSummary}
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <Card.Root class="stat-card"><Card.Content class="p-6">
-                    <div class="flex items-center justify-between mb-4"><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Companies</span><div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><BuildingIcon class="h-5 w-5 text-primary" /></div></div>
-                    <div class="text-3xl font-bold text-foreground mb-1">{formatNumber(superUserSummary.totalCompanies)}</div>
+                <Card.Root class="stat-card"><Card.Content class="p-5">
+                    <div class="flex items-center justify-between mb-3"><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Companies</span><div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><BuildingIcon class="h-5 w-5 text-primary" /></div></div>
+                    <div class="text-2xl font-bold text-foreground mb-1">{formatNumber(superUserSummary.totalCompanies)}</div>
                     <div class="flex items-center gap-1.5 text-sm"><span class="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-medium"><TrendingUpIcon class="h-3.5 w-3.5" />{formatNumber(superUserSummary.activeCompanies)}</span><span class="text-muted-foreground">active</span></div>
                 </Card.Content></Card.Root>
-                <Card.Root class="stat-card"><Card.Content class="p-6">
-                    <div class="flex items-center justify-between mb-4"><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Users</span><div class="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center"><UsersIcon class="h-5 w-5 text-violet-600 dark:text-violet-400" /></div></div>
-                    <div class="text-3xl font-bold text-foreground mb-1">{formatNumber(superUserSummary.totalUsers)}</div>
+                <Card.Root class="stat-card"><Card.Content class="p-5">
+                    <div class="flex items-center justify-between mb-3"><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Users</span><div class="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center"><UsersIcon class="h-5 w-5 text-violet-600 dark:text-violet-400" /></div></div>
+                    <div class="text-2xl font-bold text-foreground mb-1">{formatNumber(superUserSummary.totalUsers)}</div>
                     <div class="flex gap-2 text-sm"><span class="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-semibold">{formatNumber(superUserSummary.totalAdmins)} admin</span><span class="px-2 py-0.5 rounded-md bg-violet-100 text-violet-700 dark:bg-violet-500/10 dark:text-violet-400 text-xs font-semibold">{formatNumber(superUserSummary.totalSuperUsers)} super</span></div>
                 </Card.Content></Card.Root>
-                <Card.Root class="stat-card"><Card.Content class="p-6">
-                    <div class="flex items-center justify-between mb-4"><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Employees</span><div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center"><UserCheckIcon class="h-5 w-5 text-emerald-600 dark:text-emerald-400" /></div></div>
-                    <div class="text-3xl font-bold text-foreground mb-1">{formatNumber(superUserSummary.totalEmployees)}</div>
+                <Card.Root class="stat-card"><Card.Content class="p-5">
+                    <div class="flex items-center justify-between mb-3"><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Employees</span><div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center"><UserCheckIcon class="h-5 w-5 text-emerald-600 dark:text-emerald-400" /></div></div>
+                    <div class="text-2xl font-bold text-foreground mb-1">{formatNumber(superUserSummary.totalEmployees)}</div>
                     <p class="text-sm text-muted-foreground">Across all companies</p>
                 </Card.Content></Card.Root>
-                <Card.Root class="stat-card"><Card.Content class="p-6">
-                    <div class="flex items-center justify-between mb-4"><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Avg / Company</span><div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center"><ActivityIcon class="h-5 w-5 text-amber-600 dark:text-amber-400" /></div></div>
-                    <div class="text-3xl font-bold text-foreground mb-1">{superUserSummary.totalCompanies > 0 ? formatNumber(Math.round(superUserSummary.totalEmployees / superUserSummary.totalCompanies)) : '0'}</div>
+                <Card.Root class="stat-card"><Card.Content class="p-5">
+                    <div class="flex items-center justify-between mb-3"><span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Avg / Company</span><div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center"><ActivityIcon class="h-5 w-5 text-amber-600 dark:text-amber-400" /></div></div>
+                    <div class="text-2xl font-bold text-foreground mb-1">{superUserSummary.totalCompanies > 0 ? formatNumber(Math.round(superUserSummary.totalEmployees / superUserSummary.totalCompanies)) : '0'}</div>
                     <p class="text-sm text-muted-foreground">Employees per company</p>
                 </Card.Content></Card.Root>
             </div>
@@ -124,24 +124,24 @@
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{#each Array(4) as _}<div class="stat-card p-6"><div class="h-3.5 w-20 bg-muted rounded mb-4" /><div class="h-8 w-24 bg-muted rounded mb-2" /><div class="h-3 w-28 bg-muted/70 rounded" /></div>{/each}</div>
         {:else if summary}
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <Card.Root class="stat-card"><Card.Content class="p-6">
-                    <div class="flex items-center justify-between mb-4"><span class="text-sm font-semibold text-foreground/80">Employees</span><div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><UsersIcon class="h-5 w-5 text-primary" /></div></div>
-                    <div class="text-3xl font-bold text-foreground mb-1">{employeeStats ? formatNumber(employeeStats.totalCount || 0) : '-'}</div>
+                <Card.Root class="stat-card"><Card.Content class="p-5">
+                    <div class="flex items-center justify-between mb-3"><span class="text-sm font-semibold text-foreground/80">Employees</span><div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><UsersIcon class="h-5 w-5 text-primary" /></div></div>
+                    <div class="text-2xl font-bold text-foreground mb-1">{employeeStats ? formatNumber(employeeStats.totalCount || 0) : '-'}</div>
                     {#if employeeStats}<span class="text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-1 font-medium"><TrendingUpIcon class="h-3.5 w-3.5" />{formatNumber(employeeStats.totalCount - (employeeStats.statusBreakdown?.resigned || 0))} active</span>{:else}<span class="text-muted-foreground text-sm">Active employees</span>{/if}
                 </Card.Content></Card.Root>
-                <Card.Root class="stat-card"><Card.Content class="p-6">
-                    <div class="flex items-center justify-between mb-4"><span class="text-sm font-semibold text-foreground/80">Present Today</span><div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center"><UserCheckIcon class="h-5 w-5 text-emerald-600 dark:text-emerald-400" /></div></div>
-                    <div class="text-3xl font-bold text-foreground mb-1">{formatNumber(summary.attendance?.todayPresent || 0)}</div>
+                <Card.Root class="stat-card"><Card.Content class="p-5">
+                    <div class="flex items-center justify-between mb-3"><span class="text-sm font-semibold text-foreground/80">Present Today</span><div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center"><UserCheckIcon class="h-5 w-5 text-emerald-600 dark:text-emerald-400" /></div></div>
+                    <div class="text-2xl font-bold text-foreground mb-1">{formatNumber(summary.attendance?.todayPresent || 0)}</div>
                     {#if summary.attendance}{@const total = summary.attendance.totalEmployees || 1}{@const present = summary.attendance.todayPresent || 0}<span class="text-muted-foreground text-sm">{((present / total) * 100).toFixed(1)}% attendance</span>{:else}<span class="text-muted-foreground text-sm">Attendance rate</span>{/if}
                 </Card.Content></Card.Root>
-                <Card.Root class="stat-card"><Card.Content class="p-6">
-                    <div class="flex items-center justify-between mb-4"><span class="text-sm font-semibold text-foreground/80">Monthly Payroll</span><div class="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center"><DollarSignIcon class="h-5 w-5 text-violet-600 dark:text-violet-400" /></div></div>
+                <Card.Root class="stat-card"><Card.Content class="p-5">
+                    <div class="flex items-center justify-between mb-3"><span class="text-sm font-semibold text-foreground/80">Monthly Payroll</span><div class="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center"><DollarSignIcon class="h-5 w-5 text-violet-600 dark:text-violet-400" /></div></div>
                     <div class="text-2xl font-bold text-foreground mb-1">{formatCurrency(summary.payroll?.totalNetSalary || 0)}</div>
                     {#if summary.payroll}<span class="text-amber-600 dark:text-amber-400 text-sm flex items-center gap-1 font-medium"><ClockIcon class="h-3.5 w-3.5" />{formatNumber(summary.payroll.draftCount || 0)} pending</span>{:else}<span class="text-muted-foreground text-sm">Pending payouts</span>{/if}
                 </Card.Content></Card.Root>
-                <Card.Root class="stat-card"><Card.Content class="p-6">
-                    <div class="flex items-center justify-between mb-4"><span class="text-sm font-semibold text-foreground/80">Pending Requests</span><div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center relative"><ClockIcon class="h-5 w-5 text-amber-600 dark:text-amber-400" />{#if summary.leave?.pendingRequests > 0}<span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1 shadow-card">{Math.min(summary.leave.pendingRequests, 99)}</span>{/if}</div></div>
-                    <div class="text-3xl font-bold text-foreground mb-1">{formatNumber(summary.leave?.pendingRequests || 0)}</div>
+                <Card.Root class="stat-card"><Card.Content class="p-5">
+                    <div class="flex items-center justify-between mb-3"><span class="text-sm font-semibold text-foreground/80">Pending Requests</span><div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center relative"><ClockIcon class="h-5 w-5 text-amber-600 dark:text-amber-400" />{#if summary.leave?.pendingRequests > 0}<span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1 shadow-card">{Math.min(summary.leave.pendingRequests, 99)}</span>{/if}</div></div>
+                    <div class="text-2xl font-bold text-foreground mb-1">{formatNumber(summary.leave?.pendingRequests || 0)}</div>
                     <p class="text-muted-foreground text-sm">Awaiting approval</p>
                 </Card.Content></Card.Root>
             </div>

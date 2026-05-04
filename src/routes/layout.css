@@ -152,13 +152,29 @@
 
 @layer utilities {
   .surface-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); }
-  .surface-elevated { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+  .surface-elevated {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    transition: all 0.3s ease;
+  }
+  .surface-elevated:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    border-color: rgba(37, 99, 235, 0.2);
+  }
 
   .stat-card {
     @apply relative overflow-hidden rounded-lg;
     background: var(--card);
     border: 1px solid var(--border);
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    border-color: rgba(37, 99, 235, 0.2);
   }
   :not(.dark) .stat-card {
     box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
