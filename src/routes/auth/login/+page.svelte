@@ -9,7 +9,6 @@
 	import MailIcon from "@lucide/svelte/icons/mail";
 	import LockIcon from "@lucide/svelte/icons/lock";
 	import AlertCircleIcon from "@lucide/svelte/icons/alert-circle";
-	import SparklesIcon from "@lucide/svelte/icons/sparkles";
 	import EyeIcon from "@lucide/svelte/icons/eye";
 	import EyeOffIcon from "@lucide/svelte/icons/eye-off";
 
@@ -42,10 +41,8 @@
 
 		try {
 			await authStore.login(email, password);
-			// Redirect to dashboard on success
 			goto("/dashboard");
 		} catch (err) {
-			// Error is handled by the store
 			console.error("Login failed:", err.message);
 		}
 	}
@@ -57,102 +54,91 @@
 </script>
 
 <svelte:head>
-	<title>Login | SaaS Payroll</title>
+	<title>Login | HRIS Enterprise</title>
 </svelte:head>
 
-<div class="flex min-h-[100vh] items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-background via-background to-accent/30">
-	<!-- Animated Background -->
-	<div class="absolute inset-0 overflow-hidden pointer-events-none">
-		<!-- Gradient Orbs -->
-		<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[100px] animate-float"></div>
-		<div class="absolute top-1/2 -right-40 w-[500px] h-[500px] bg-chart-4/20 rounded-full blur-[100px] animate-float" style="animation-delay: 2s;"></div>
-		<div class="absolute -bottom-40 left-1/3 w-[400px] h-[400px] bg-chart-2/20 rounded-full blur-[100px] animate-float" style="animation-delay: 4s;"></div>
-		
-		<!-- Grid Pattern -->
-		<div class="absolute inset-0 bg-grid opacity-50"></div>
-		
-		<!-- Particles -->
-		{#each Array(20) as _, i}
-			<div 
-				class="absolute w-1 h-1 bg-primary/40 rounded-full animate-pulse"
-				style="left: {Math.random() * 100}%; top: {Math.random() * 100}%; animation-delay: {Math.random() * 3}s; animation-duration: {2 + Math.random() * 2}s;"
-			></div>
-		{/each}
+<div class="flex min-h-[100dvh] items-center justify-center p-4 relative overflow-hidden auth-bg">
+	<!-- Subtle Background Pattern -->
+	<div class="absolute inset-0 pointer-events-none">
+		<div class="absolute inset-0 bg-grid opacity-30"></div>
+		<div class="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
+		<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-chart-2/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4"></div>
 	</div>
-	
+
 	<!-- Login Card -->
-	<Card.Root class="w-full max-w-md glass-card shadow-2xl relative z-10 animate-scale-in border-0">
-		<div class="absolute -top-px left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-		
-		<Card.Header class="space-y-4 pt-8">
-			<div class="mx-auto w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center mb-2 shadow-glow relative overflow-hidden group animate-pulse-glow">
-				<div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent"></div>
-				<SparklesIcon class="w-8 h-8 text-white relative z-10 group-hover:scale-110 transition-transform duration-300" />
+	<Card.Root class="w-full max-w-[420px] shadow-elevation-3 border-border/60 bg-card/80 backdrop-blur-sm relative z-10">
+		<Card.Header class="space-y-5 pt-8 pb-6">
+			<div class="flex items-center gap-3">
+				<div class="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-xl shadow-md">
+					<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+						<polyline points="9 22 9 12 15 12 15 22"/>
+					</svg>
+				</div>
+				<div>
+					<h1 class="text-xl font-bold text-foreground tracking-tight">HRIS Enterprise</h1>
+					<p class="text-xs text-muted-foreground">Human Resource Information System</p>
+				</div>
 			</div>
-			
-			<div class="text-center space-y-1">
-				<Card.Title class="text-3xl font-bold gradient-text">Welcome Back</Card.Title>
-				<Card.Description class="text-muted-foreground text-base">
-					Enter your credentials to continue
+			<div class="space-y-1">
+				<Card.Title class="text-2xl font-semibold text-foreground">Welcome back</Card.Title>
+				<Card.Description class="text-sm text-muted-foreground">
+					Enter your credentials to access the dashboard
 				</Card.Description>
 			</div>
 		</Card.Header>
-		
-		<Card.Content class="space-y-6">
-			<form onsubmit={handleLogin} class="space-y-5">
+
+		<Card.Content class="space-y-5 pb-8">
+			<form onsubmit={handleLogin} class="space-y-4">
 				<!-- Error Alert -->
 				{#if error}
 					<div
-						class="rounded-xl border border-destructive/30 bg-destructive/10 p-4 flex items-start gap-3 animate-slide-up"
+						class="rounded-lg border border-destructive/20 bg-destructive/5 p-3 flex items-start gap-2.5"
 						role="alert"
 					>
-						<AlertCircleIcon class="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
-						<div class="flex-1">
-							<p class="text-sm font-medium text-destructive">{error}</p>
-						</div>
+						<AlertCircleIcon class="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" />
+						<p class="text-sm text-destructive">{error}</p>
 					</div>
 				{/if}
 
-				<div class="space-y-2">
-					<Label for="email" class="text-sm font-medium flex items-center gap-2">
-						<MailIcon class="w-4 h-4 text-muted-foreground" />
-						Email Address
-					</Label>
-					<Input
-						id="email"
-						type="email"
-						placeholder="name@company.com"
-						bind:value={email}
-						oninput={clearError}
-						required
-						disabled={loading}
-						class="h-12"
-					/>
+				<div class="space-y-1.5">
+					<Label for="email" class="text-sm font-medium text-foreground">Email Address</Label>
+					<div class="relative">
+						<MailIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+						<Input
+							id="email"
+							type="email"
+							placeholder="name@company.com"
+							bind:value={email}
+							oninput={clearError}
+							required
+							disabled={loading}
+							class="h-11 pl-10 bg-background border-input focus-visible:ring-primary/30 focus-visible:ring-2"
+						/>
+					</div>
 				</div>
-				
-				<div class="space-y-2">
+
+				<div class="space-y-1.5">
 					<div class="flex items-center justify-between">
-						<Label for="password" class="text-sm font-medium flex items-center gap-2">
-							<LockIcon class="w-4 h-4 text-muted-foreground" />
-							Password
-						</Label>
+						<Label for="password" class="text-sm font-medium text-foreground">Password</Label>
 						<a
 							href="/auth/forgot-password"
-							class="text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+							class="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
 						>
 							Forgot password?
 						</a>
 					</div>
 					<div class="relative">
+						<LockIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 						<Input
 							id="password"
 							type={showPassword ? "text" : "password"}
-							placeholder="••••••••"
+							placeholder="Enter your password"
 							bind:value={password}
 							oninput={clearError}
 							required
 							disabled={loading}
-							class="h-12 pr-10"
+							class="h-11 pl-10 pr-10 bg-background border-input focus-visible:ring-primary/30 focus-visible:ring-2"
 						/>
 						<button
 							type="button"
@@ -161,21 +147,21 @@
 							aria-label={showPassword ? "Hide password" : "Show password"}
 						>
 							{#if showPassword}
-								<EyeOffIcon class="w-5 h-5" />
+								<EyeOffIcon class="w-4 h-4" />
 							{:else}
-								<EyeIcon class="w-5 h-5" />
+								<EyeIcon class="w-4 h-4" />
 							{/if}
 						</button>
 					</div>
 				</div>
-				
-				<Button 
-					type="submit" 
-					class="w-full h-12 text-base font-semibold mt-2" 
+
+				<Button
+					type="submit"
+					class="w-full h-11 text-sm font-semibold mt-2"
 					disabled={loading}
 				>
 					{#if loading}
-						<LoaderIcon class="h-5 w-5 mr-2 animate-spin" />
+						<LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
 						Signing in...
 					{:else}
 						Sign In
@@ -183,24 +169,10 @@
 				</Button>
 			</form>
 		</Card.Content>
-		
-		<Card.Footer class="flex flex-col gap-4 pb-8">
-			<div class="relative">
-				<div class="absolute inset-0 flex items-center">
-					<span class="w-full border-t"></span>
-				</div>
-				<div class="relative flex justify-center text-xs uppercase">
-					<span class="bg-card px-2 text-muted-foreground">
-						Or continue with
-					</span>
-				</div>
-			</div>
-			
-		</Card.Footer>
 	</Card.Root>
-	
-	<!-- Decorative Elements -->
-	<div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
+
+	<!-- Footer -->
+	<div class="absolute bottom-6 left-1/2 -translate-x-1/2 text-center z-10">
 		<p class="text-xs text-muted-foreground/60">
 			© 2024 HRIS Enterprise. All rights reserved.
 		</p>

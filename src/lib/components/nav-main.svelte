@@ -33,8 +33,8 @@
 </script>
 
 	<Sidebar.Group>
-	<Sidebar.GroupLabel class="text-white/40 font-semibold uppercase tracking-wider text-[10px] px-3 mb-2">Menu</Sidebar.GroupLabel>
-	<Sidebar.Menu class="space-y-0.5">
+	<Sidebar.GroupLabel class="text-white/30 font-semibold uppercase tracking-wider text-[10px] px-3 mb-3">Menu</Sidebar.GroupLabel>
+	<Sidebar.Menu class="space-y-0.5 px-2">
 		{#each items as mainItem (mainItem.title)}
 			<Collapsible.Root open={hasChildren(mainItem) ? true : mainItem.isActive}>
 				{#snippet child({ props })}
@@ -42,16 +42,16 @@
 						{#if hasChildren(mainItem)}
 							<Sidebar.MenuButton 
 								tooltipContent={mainItem.title}
-								class="text-white/70 hover:text-white hover:bg-white/10 data-[active=true]:bg-white/15 data-[active=true]:text-white rounded-lg h-10 transition-colors"
+								class="text-white/60 hover:text-white hover:bg-white/[0.06] data-[active=true]:bg-white/[0.08] data-[active=true]:text-white rounded-lg h-10 transition-all duration-200 group"
 							>
-								<mainItem.icon class="w-[18px] h-[18px]" />
+								<mainItem.icon class="w-[18px] h-[18px] group-data-[active=true]:text-primary transition-colors" />
 								<span class="font-medium text-sm">{mainItem.title}</span>
 							</Sidebar.MenuButton>
 							<Collapsible.Trigger>
 								{#snippet child({ props })}
 									<Sidebar.MenuAction
 										{...props}
-										class="text-white/40 hover:text-white hover:bg-white/10 data-[state=open]:rotate-90 rounded-md transition-all"
+										class="text-white/30 hover:text-white hover:bg-white/[0.06] data-[state=open]:rotate-90 rounded-md transition-all duration-200"
 									>
 										<ChevronRightIcon class="w-3.5 h-3.5" />
 										<span class="sr-only">Toggle</span>
@@ -59,12 +59,12 @@
 								{/snippet}
 							</Collapsible.Trigger>
 							<Collapsible.Content>
-								<Sidebar.MenuSub class="ml-3 mt-1 space-y-0.5 border-l border-white/10 pl-3">
+								<Sidebar.MenuSub class="ml-2 mt-0.5 space-y-0.5 border-l-2 border-white/[0.06] pl-3">
 									{#each mainItem.items as subItem (subItem.title)}
 										<Sidebar.MenuSubItem>
 											<Sidebar.MenuSubButton 
 												href={subItem.url}
-												class="text-white/60 hover:text-white hover:bg-white/10 data-[active=true]:bg-white/15 data-[active=true]:text-white rounded-md h-8 transition-colors"
+												class="text-white/50 hover:text-white hover:bg-white/[0.06] data-[active=true]:bg-white/[0.08] data-[active=true]:text-white rounded-md h-8 transition-all duration-200 relative"
 											>
 												<span class="text-sm flex items-center gap-2">
 													{subItem.title}
@@ -82,11 +82,11 @@
 						{:else}
 							<Sidebar.MenuButton 
 								tooltipContent={mainItem.title}
-								class="text-white/70 hover:text-white hover:bg-white/10 data-[active=true]:bg-white/15 data-[active=true]:text-white rounded-lg h-10 transition-colors"
+								class="text-white/60 hover:text-white hover:bg-white/[0.06] data-[active=true]:bg-white/[0.08] data-[active=true]:text-white rounded-lg h-10 transition-all duration-200 group"
 							>
 								{#snippet child({ props })}
 									<a href={mainItem.url} {...props}>
-										<mainItem.icon class="w-[18px] h-[18px]" />
+										<mainItem.icon class="w-[18px] h-[18px] group-data-[active=true]:text-primary transition-colors" />
 										<span class="font-medium text-sm">{mainItem.title}</span>
 									</a>
 								{/snippet}

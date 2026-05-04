@@ -76,15 +76,15 @@
 					<Sidebar.MenuButton
 						{...props}
 						size="lg"
-						class="text-white/80 hover:text-white hover:bg-white/10 data-[state=open]:bg-white/20 data-[state=open]:text-white"
+						class="text-white/70 hover:text-white hover:bg-white/[0.06] data-[state=open]:bg-white/[0.08] data-[state=open]:text-white transition-all duration-200 h-auto py-2.5"
 					>
-						<Avatar.Root class="size-9 rounded-xl border-2 border-white/30 bg-white/10">
+						<Avatar.Root class="size-9 rounded-lg border border-white/10 bg-white/5">
 							<Avatar.Image
 								src={displayUser?.avatar ||
 									displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="rounded-xl bg-gradient-to-br from-primary to-chart-4 text-white font-semibold"
+							<Avatar.Fallback class="rounded-lg bg-primary text-primary-foreground font-semibold text-sm"
 								>{userInitials}</Avatar.Fallback
 							>
 						</Avatar.Root>
@@ -94,11 +94,11 @@
 							<span class="truncate font-semibold text-white"
 								>{displayUser?.name || "User"}</span
 							>
-							<span class="truncate text-xs text-white/60"
+							<span class="truncate text-xs text-white/40"
 								>{displayUser?.email || ""}</span
 							>
 						</div>
-						<ChevronsUpDownIcon class="ms-auto size-4 text-white/60" />
+						<ChevronsUpDownIcon class="ms-auto size-4 text-white/30" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>

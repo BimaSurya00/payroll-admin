@@ -6,13 +6,12 @@
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
-	import Alert from "$lib/components/shared/alert.svelte";
 	import LoaderIcon from "@lucide/svelte/icons/loader";
 	import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
 	import LockIcon from "@lucide/svelte/icons/lock";
 	import EyeIcon from "@lucide/svelte/icons/eye";
 	import EyeOffIcon from "@lucide/svelte/icons/eye-off";
-	import SparklesIcon from "@lucide/svelte/icons/sparkles";
+	import CheckCircleIcon from "@lucide/svelte/icons/check-circle";
 
 	import { authService } from "$lib/api/services/auth.service.js";
 	import { toast } from "svelte-sonner";
@@ -70,64 +69,73 @@
 </script>
 
 <svelte:head>
-	<title>Reset Password | SaaS Payroll</title>
+	<title>Reset Password | HRIS Enterprise</title>
 </svelte:head>
 
-<div class="flex min-h-[100vh] items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-background via-background to-accent/30">
-	<div class="absolute inset-0 overflow-hidden pointer-events-none">
-		<div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[100px] animate-float"></div>
-		<div class="absolute top-1/2 -right-40 w-[500px] h-[500px] bg-chart-4/20 rounded-full blur-[100px] animate-float" style="animation-delay: 2s;"></div>
-		<div class="absolute -bottom-40 left-1/3 w-[400px] h-[400px] bg-chart-2/20 rounded-full blur-[100px] animate-float" style="animation-delay: 4s;"></div>
-		<div class="absolute inset-0 bg-grid opacity-50"></div>
+<div class="flex min-h-[100dvh] items-center justify-center p-4 relative overflow-hidden auth-bg">
+	<!-- Subtle Background Pattern -->
+	<div class="absolute inset-0 pointer-events-none">
+		<div class="absolute inset-0 bg-grid opacity-30"></div>
+		<div class="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
+		<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-chart-2/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4"></div>
 	</div>
 
-	<Card.Root class="w-full max-w-md glass-card shadow-2xl relative z-10 animate-scale-in border-0">
-		<div class="absolute -top-px left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-
-		<Card.Header class="space-y-4 pt-8">
-			<div class="mx-auto w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center mb-2 shadow-glow relative overflow-hidden group animate-pulse-glow">
-				<div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent"></div>
-				<LockIcon class="w-8 h-8 text-white relative z-10" />
+	<Card.Root class="w-full max-w-[420px] shadow-elevation-3 border-border/60 bg-card/80 backdrop-blur-sm relative z-10">
+		<Card.Header class="space-y-5 pt-8 pb-6">
+			<div class="flex items-center gap-3">
+				<div class="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-xl shadow-md">
+					<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+						<polyline points="9 22 9 12 15 12 15 22"/>
+					</svg>
+				</div>
+				<div>
+					<h1 class="text-xl font-bold text-foreground tracking-tight">HRIS Enterprise</h1>
+					<p class="text-xs text-muted-foreground">Human Resource Information System</p>
+				</div>
 			</div>
-			<div class="text-center space-y-1">
-				<Card.Title class="text-3xl font-bold gradient-text">Reset Password</Card.Title>
-				<Card.Description class="text-muted-foreground">
+			<div class="space-y-1">
+				<Card.Title class="text-2xl font-semibold text-foreground">Reset Password</Card.Title>
+				<Card.Description class="text-sm text-muted-foreground">
 					Enter your new password
 				</Card.Description>
 			</div>
 		</Card.Header>
 
-		<Card.Content class="space-y-4">
+		<Card.Content class="space-y-4 pb-8">
 			{#if success}
-				<div class="space-y-4 text-center py-4">
-					<div class="mx-auto w-16 h-16 rounded-full bg-success/10 flex items-center justify-center">
-						<SparklesIcon class="h-8 w-8 text-success" />
+				<div class="space-y-5 text-center py-2">
+					<div class="mx-auto w-14 h-14 rounded-full bg-success/10 flex items-center justify-center">
+						<CheckCircleIcon class="h-7 w-7 text-success" />
 					</div>
-					<h3 class="text-lg font-semibold">Password Reset!</h3>
-					<p class="text-sm text-muted-foreground">Your password has been changed successfully. You can now login with your new password.</p>
-					<Button onclick={goToLogin} class="w-full mt-4">
+					<div class="space-y-1">
+						<h3 class="text-lg font-semibold text-foreground">Password Reset!</h3>
+						<p class="text-sm text-muted-foreground">Your password has been changed successfully. You can now login with your new password.</p>
+					</div>
+					<Button onclick={goToLogin} class="w-full h-11 text-sm font-semibold mt-2">
 						Go to Login
 					</Button>
 				</div>
 			{:else}
 				{#if !token}
-					<div class="text-center py-4">
+					<div class="text-center py-6">
 						<p class="text-sm text-muted-foreground">Invalid or missing reset token.</p>
-						<Button variant="outline" onclick={goToLogin} class="mt-4">Back to Login</Button>
+						<Button variant="outline" onclick={goToLogin} class="mt-4 h-10">Back to Login</Button>
 					</div>
 				{:else}
 				<form onsubmit={handleSubmit} class="space-y-4">
-					<div class="space-y-2">
-						<Label for="newPassword">New Password</Label>
+					<div class="space-y-1.5">
+						<Label for="newPassword" class="text-sm font-medium text-foreground">New Password</Label>
 						<div class="relative">
+							<LockIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 							<Input
 								id="newPassword"
 								type={showPassword ? "text" : "password"}
-								placeholder="Enter new password (min 8 chars)"
+								placeholder="Minimum 8 characters"
 								bind:value={newPassword}
 								required
 								disabled={loading}
-								class="pr-10"
+								class="h-11 pl-10 pr-10 bg-background border-input focus-visible:ring-primary/30 focus-visible:ring-2"
 							/>
 							<button
 								type="button"
@@ -143,8 +151,8 @@
 						</div>
 					</div>
 
-					<div class="space-y-2">
-						<Label for="confirmPassword">Confirm New Password</Label>
+					<div class="space-y-1.5">
+						<Label for="confirmPassword" class="text-sm font-medium text-foreground">Confirm New Password</Label>
 						<Input
 							id="confirmPassword"
 							type="password"
@@ -152,10 +160,11 @@
 							bind:value={confirmPassword}
 							required
 							disabled={loading}
+							class="h-11 bg-background border-input focus-visible:ring-primary/30 focus-visible:ring-2"
 						/>
 					</div>
 
-					<Button type="submit" class="w-full" disabled={!token || !newPassword || !confirmPassword || !passwordsMatch() || loading}>
+					<Button type="submit" class="w-full h-11 text-sm font-semibold" disabled={!token || !newPassword || !confirmPassword || !passwordsMatch() || loading}>
 						{#if loading}
 							<LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
 							Resetting...
@@ -168,7 +177,7 @@
 			{/if}
 		</Card.Content>
 
-		<Card.Footer class="flex justify-center pb-6">
+		<Card.Footer class="flex justify-center pb-6 pt-0">
 			<button
 				type="button"
 				onclick={goToLogin}
