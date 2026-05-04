@@ -214,7 +214,7 @@
                             <Table.Head>Durasi</Table.Head>
                             <Table.Head>Policy</Table.Head>
                             <Table.Head>Alasan</Table.Head>
-                            <Table.Head class="text-right">Aksi</Table.Head>
+                            <Table.Head class="text-right w-[100px]">Actions</Table.Head>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -314,7 +314,7 @@
                             <Table.Head>Rate</Table.Head>
                             <Table.Head>Alasan</Table.Head>
                             <Table.Head>Status</Table.Head>
-                            <Table.Head class="text-right">Aksi</Table.Head>
+                            <Table.Head class="text-right w-[100px]">Actions</Table.Head>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -356,36 +356,38 @@
                                     </span>
                                 </Table.Cell>
                                 <Table.Cell class="text-right">
-                                    {#if request.status === "PENDING" && isAdmin}
-                                        <OvertimeApprovalDialog {request} />
-                                    {:else if request.status === "APPROVED" && !isAdmin}
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            class="text-success"
-                                            onclick={() =>
-                                                handleClockIn(request.id)}
-                                        >
-                                            <PlayIcon class="h-4 w-4 mr-1" />
-                                            Mulai
-                                        </Button>
-                                    {:else if request.status === "IN_PROGRESS" && !isAdmin}
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            class="text-destructive"
-                                            onclick={() =>
-                                                handleClockOut(request.id)}
-                                        >
-                                            <SquareIcon class="h-4 w-4 mr-1" />
-                                            Selesai
-                                        </Button>
-                                    {:else}
-                                        <span
-                                            class="text-muted-foreground text-xs"
-                                            >-</span
-                                        >
-                                    {/if}
+                                    <div class="flex justify-end gap-2">
+                                        {#if request.status === "PENDING" && isAdmin}
+                                            <OvertimeApprovalDialog {request} />
+                                        {:else if request.status === "APPROVED" && !isAdmin}
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                class="text-success"
+                                                onclick={() =>
+                                                    handleClockIn(request.id)}
+                                            >
+                                                <PlayIcon class="h-4 w-4 mr-1" />
+                                                Mulai
+                                            </Button>
+                                        {:else if request.status === "IN_PROGRESS" && !isAdmin}
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                class="text-destructive"
+                                                onclick={() =>
+                                                    handleClockOut(request.id)}
+                                            >
+                                                <SquareIcon class="h-4 w-4 mr-1" />
+                                                Selesai
+                                            </Button>
+                                        {:else}
+                                            <span
+                                                class="text-muted-foreground text-xs"
+                                                >-</span
+                                            >
+                                        {/if}
+                                    </div>
                                 </Table.Cell>
                             </Table.Row>
                         {/each}

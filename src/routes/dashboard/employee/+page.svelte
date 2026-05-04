@@ -212,7 +212,7 @@
                                     {formatDate(employee.joinDate)}
                                 </Table.Cell>
                                 <Table.Cell class="text-right">
-                                    <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div class="flex items-center justify-end gap-2">
                                         <Button
                                             variant="ghost"
                                             size="icon"
