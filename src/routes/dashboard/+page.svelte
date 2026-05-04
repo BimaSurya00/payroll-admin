@@ -30,8 +30,8 @@
     let isSuperUser = $derived(authState.user?.role === 'SUPER_USER');
     let { summary, attendanceStats, employeeStats, recentActivities, superUserSummary, loading } = $derived(storeState);
 
-    onMount(() => { if (!isSuperUser) dashboardStore.fetchDashboardSummary(); else dashboardStore.fetchSuperUserSummary(); });
-    async function handleRefresh() { if (isSuperUser) await dashboardStore.fetchSuperUserSummary(); else await dashboardStore.fetchDashboardSummary(); }
+    onMount(() => { if (!isSuperUser) dashboardStore.fetchAll(); else dashboardStore.fetchSuperUserSummary(); });
+    async function handleRefresh() { if (isSuperUser) await dashboardStore.fetchSuperUserSummary(); else await dashboardStore.fetchAll(); }
 
     function formatNumber(num) { if (num === null || num === undefined) return '-'; return new Intl.NumberFormat('en-US').format(num); }
     function formatCurrency(amount) { if (amount === null || amount === undefined) return '-'; return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount); }
