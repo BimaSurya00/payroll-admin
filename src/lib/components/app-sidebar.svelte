@@ -115,26 +115,23 @@
 </script>
 
 <Sidebar.Root bind:ref variant="sidebar" class="bg-sidebar border-r border-sidebar-border" {...restProps}>
-  <Sidebar.Header class="px-5 py-5">
+  <Sidebar.Header class="px-5 h-14 flex items-center">
     <a href="/dashboard" class="flex items-center gap-2.5 group">
-      <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
-        <svg class="w-4 h-4 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <div class="w-7 h-7 bg-foreground rounded-md flex items-center justify-center">
+        <svg class="w-3.5 h-3.5 text-background" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
           <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
       </div>
-      <div class="flex flex-col">
-        <span class="text-sm font-bold text-foreground tracking-tight leading-none">HRIS</span>
-        <span class="text-[10px] text-muted-foreground font-medium leading-none mt-0.5">Payroll</span>
-      </div>
+      <span class="text-sm font-semibold text-foreground tracking-tight">HRIS</span>
     </a>
   </Sidebar.Header>
   
-  <Sidebar.Content class="px-3 pb-4">
+  <Sidebar.Content class="px-3 py-5 overflow-y-auto">
     <NavMain items={navData.navMain} />
   </Sidebar.Content>
   
-  <Sidebar.Footer class="border-t border-sidebar-border p-3 mt-auto">
+  <Sidebar.Footer class="border-t border-sidebar-border px-3 py-3">
     <NavUser user={currentUser} />
   </Sidebar.Footer>
 </Sidebar.Root>

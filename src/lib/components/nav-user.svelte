@@ -24,7 +24,7 @@
 		authState = state;
 	});
 
-	let displayUser = $derived(authState.user || user);
+	let displayUser = $derived(authStore.user || user);
 	let userInitials = $derived(
 		displayUser?.name
 			? displayUser.name
@@ -67,22 +67,22 @@
 					<Sidebar.MenuButton
 						{...props}
 						size="lg"
-						class="w-full text-sidebar-foreground hover:bg-accent data-[state=open]:bg-accent transition-all duration-150 h-auto py-2.5 rounded-xl"
+						class="w-full text-sidebar-foreground hover:bg-accent hover:text-foreground data-[state=open]:bg-accent transition-all duration-150 h-auto py-2.5 rounded-lg"
 					>
-						<Avatar.Root class="size-8 rounded-lg border border-border bg-muted">
+						<Avatar.Root class="size-8 rounded-full bg-muted">
 							<Avatar.Image
 								src={displayUser?.avatar || displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="rounded-lg bg-primary text-primary-foreground font-bold text-xs">
+							<Avatar.Fallback class="rounded-full bg-foreground text-background font-semibold text-xs">
 								{userInitials}
 							</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-semibold text-foreground text-[13px]">{displayUser?.name || "User"}</span>
+							<span class="truncate font-medium text-foreground text-[13px]">{displayUser?.name || "User"}</span>
 							<span class="truncate text-[11px] text-muted-foreground">{displayUser?.email || ""}</span>
 						</div>
-						<ChevronsUpDownIcon class="ms-auto size-4 text-muted-foreground/60" />
+						<ChevronsUpDownIcon class="ms-auto size-3.5 text-muted-foreground/60" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>
@@ -94,17 +94,17 @@
 			>
 				<DropdownMenu.Label class="p-0 font-normal">
 					<div class="flex items-center gap-2.5 px-1 py-1.5 text-start text-sm">
-						<Avatar.Root class="size-8 rounded-lg border border-border">
+						<Avatar.Root class="size-8 rounded-full border border-border">
 							<Avatar.Image
 								src={displayUser?.avatar || displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="rounded-lg bg-primary text-primary-foreground text-xs font-bold">
+							<Avatar.Fallback class="rounded-full bg-foreground text-background text-xs font-semibold">
 								{userInitials}
 							</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-semibold text-foreground">{displayUser?.name || "User"}</span>
+							<span class="truncate font-medium text-foreground">{displayUser?.name || "User"}</span>
 							<span class="truncate text-xs text-muted-foreground">{displayUser?.email || ""}</span>
 						</div>
 					</div>
@@ -112,20 +112,20 @@
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<a href="/dashboard/profile" class="contents">
-						<DropdownMenu.Item class="cursor-pointer text-foreground/80 hover:text-foreground rounded-lg">
+						<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg">
 							<UserIcon class="size-4" />
 							Profile
 						</DropdownMenu.Item>
 					</a>
-					<DropdownMenu.Item class="cursor-pointer text-foreground/80 hover:text-foreground rounded-lg">
+					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg">
 						<BadgeCheckIcon class="size-4" />
 						Account
 					</DropdownMenu.Item>
-					<DropdownMenu.Item class="cursor-pointer text-foreground/80 hover:text-foreground rounded-lg">
+					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg">
 						<CreditCardIcon class="size-4" />
 						Billing
 					</DropdownMenu.Item>
-					<DropdownMenu.Item class="cursor-pointer text-foreground/80 hover:text-foreground rounded-lg">
+					<DropdownMenu.Item class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg">
 						<BellIcon class="size-4" />
 						Notifications
 					</DropdownMenu.Item>
