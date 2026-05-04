@@ -7,8 +7,6 @@
 	import MonitorIcon from "@lucide/svelte/icons/monitor";
 	import UserIcon from "@lucide/svelte/icons/user";
 	import LoaderIcon from "@lucide/svelte/icons/loader";
-	import SunIcon from "@lucide/svelte/icons/sun";
-	import MoonIcon from "@lucide/svelte/icons/moon";
 
 	import ThemeToggle from "$lib/components/shared/theme-toggle.svelte";
 	import * as Avatar from "$lib/components/ui/avatar/index.js";
@@ -69,65 +67,65 @@
 					<Sidebar.MenuButton
 						{...props}
 						size="lg"
-						class="text-foreground hover:bg-accent data-[state=open]:bg-accent transition-all duration-150 h-auto py-2"
+						class="text-[#0f172a] hover:bg-[#cbd5e1] data-[state=open]:bg-white data-[state=open]:shadow-sm transition-all duration-150 h-auto py-3 w-full"
 					>
-						<Avatar.Root class="size-8 rounded-md border border-border/60">
+						<Avatar.Root class="size-10 border-2 border-[#cbd5e1] bg-[#e2e8f0]">
 							<Avatar.Image
 								src={displayUser?.avatar || displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="rounded-md bg-primary text-primary-foreground text-xs font-semibold">
+							<Avatar.Fallback class="bg-[#2563eb] text-white font-bold text-sm">
 								{userInitials}
 							</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-semibold text-foreground">{displayUser?.name || "User"}</span>
-							<span class="truncate text-xs text-muted-foreground">{displayUser?.email || ""}</span>
+							<span class="truncate font-bold text-[#0f172a]">{displayUser?.name || "User"}</span>
+							<span class="truncate text-xs text-[#64748b]">{displayUser?.email || ""}</span>
 						</div>
-						<ChevronsUpDownIcon class="ms-auto size-4 text-muted-foreground" />
+						<ChevronsUpDownIcon class="ms-auto size-4 text-[#64748b]" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content
-				class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-lg"
+				class="w-(--bits-dropdown-menu-anchor-width) min-w-56"
 				side={sidebar.isMobile ? "bottom" : "right"}
 				align="end"
 				sideOffset={4}
 			>
 				<DropdownMenu.Label class="p-0 font-normal">
 					<div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-						<Avatar.Root class="size-8 rounded-lg">
+						<Avatar.Root class="size-8 border border-[#cbd5e1]">
 							<Avatar.Image
 								src={displayUser?.avatar || displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="rounded-lg bg-primary text-primary-foreground text-xs font-semibold">
+							<Avatar.Fallback class="bg-[#2563eb] text-white text-xs font-bold">
 								{userInitials}
 							</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-medium">{displayUser?.name || "User"}</span>
-							<span class="truncate text-xs text-muted-foreground">{displayUser?.email || ""}</span>
+							<span class="truncate font-bold text-[#0f172a]">{displayUser?.name || "User"}</span>
+							<span class="truncate text-xs text-[#64748b]">{displayUser?.email || ""}</span>
 						</div>
 					</div>
 				</DropdownMenu.Label>
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<a href="/dashboard/profile" class="contents">
-						<DropdownMenu.Item class="cursor-pointer">
+						<DropdownMenu.Item class="cursor-pointer text-[#334155]">
 							<UserIcon class="size-4" />
 							Profile
 						</DropdownMenu.Item>
 					</a>
-					<DropdownMenu.Item class="cursor-pointer">
+					<DropdownMenu.Item class="cursor-pointer text-[#334155]">
 						<BadgeCheckIcon class="size-4" />
 						Account
 					</DropdownMenu.Item>
-					<DropdownMenu.Item class="cursor-pointer">
+					<DropdownMenu.Item class="cursor-pointer text-[#334155]">
 						<CreditCardIcon class="size-4" />
 						Billing
 					</DropdownMenu.Item>
-					<DropdownMenu.Item class="cursor-pointer">
+					<DropdownMenu.Item class="cursor-pointer text-[#334155]">
 						<BellIcon class="size-4" />
 						Notifications
 					</DropdownMenu.Item>
@@ -135,7 +133,7 @@
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<DropdownMenu.Item class="cursor-pointer p-0" onclick={(e) => e.preventDefault()}>
-						<ThemeToggle variant="menu" class="rounded-sm" />
+						<ThemeToggle variant="menu" />
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator />
@@ -143,7 +141,7 @@
 					<DropdownMenu.Item
 						onclick={handleLogoutAll}
 						disabled={loggingOut}
-						class="text-orange-600 focus:bg-orange-50 dark:focus:bg-orange-950 cursor-pointer"
+						class="text-[#d97706] focus:bg-[#fef3c7] cursor-pointer"
 					>
 						{#if loggingOut}
 							<LoaderIcon class="animate-spin size-4" />
@@ -159,7 +157,7 @@
 					<DropdownMenu.Item
 						onclick={handleLogout}
 						disabled={loggingOut}
-						class="text-destructive focus:bg-destructive/10 cursor-pointer"
+						class="text-[#dc2626] focus:bg-[#fee2e2] cursor-pointer"
 					>
 						{#if loggingOut}
 							<LoaderIcon class="animate-spin size-4" />

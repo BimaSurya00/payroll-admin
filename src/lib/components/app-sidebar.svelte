@@ -114,27 +114,27 @@
   let currentUser = $derived(authState.user || { name: "User", email: "" });
 </script>
 
-<Sidebar.Root bind:ref variant="sidebar" class="sidebar-light border-r" {...restProps}>
-  <Sidebar.Header class="px-4 py-5">
+<Sidebar.Root bind:ref variant="sidebar" class="bg-[#f1f5f9] border-r border-[#cbd5e1] text-[#0f172a]" {...restProps}>
+  <Sidebar.Header class="px-5 py-6 border-b border-[#cbd5e1]">
     <a href="/dashboard" class="flex items-center gap-3">
-      <div class="bg-primary text-primary-foreground flex h-9 w-9 items-center justify-center rounded-lg shadow-sm">
+      <div class="bg-[#2563eb] text-white flex h-10 w-10 items-center justify-center shadow-sm">
         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
           <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
       </div>
       <div class="flex flex-col">
-        <span class="text-sm font-bold text-foreground tracking-tight leading-none">HRIS</span>
-        <span class="text-[10px] text-muted-foreground font-medium leading-tight mt-0.5">Enterprise</span>
+        <span class="text-base font-bold text-[#0f172a] tracking-tight leading-none">HRIS</span>
+        <span class="text-[11px] text-[#64748b] font-medium leading-tight mt-1">Enterprise</span>
       </div>
     </a>
   </Sidebar.Header>
   
-  <Sidebar.Content class="px-3">
+  <Sidebar.Content class="px-3 py-4">
     <NavMain items={navData.navMain} />
   </Sidebar.Content>
   
-  <Sidebar.Footer class="border-t border-border/60 p-3 mt-auto">
+  <Sidebar.Footer class="border-t border-[#cbd5e1] p-4 mt-auto bg-[#e2e8f0]">
     <NavUser user={currentUser} />
   </Sidebar.Footer>
 </Sidebar.Root>

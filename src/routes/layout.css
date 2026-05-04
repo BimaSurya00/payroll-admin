@@ -194,11 +194,7 @@
     border-color: var(--border);
   }
   
-  /* Sidebar Styles */
-  .sidebar-light {
-    background: var(--sidebar);
-    border-right: 1px solid var(--sidebar-border);
-  }
+  /* Sidebar Styles - Now handled by inline Tailwind classes */
   
   /* Auth Background */
   .auth-bg {
