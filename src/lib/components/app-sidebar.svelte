@@ -115,22 +115,22 @@
 </script>
 
 <Sidebar.Root bind:ref variant="sidebar" class="bg-sidebar border-r border-sidebar-border" {...restProps}>
-  <Sidebar.Header class="h-16 flex items-center px-5 border-b border-sidebar-border">
+  <Sidebar.Header class="px-5 py-5">
     <a href="/dashboard" class="flex items-center gap-2.5 group">
-      <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm shadow-primary/20">
-        <svg class="w-4.5 h-4.5 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
+        <svg class="w-4 h-4 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
           <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
       </div>
       <div class="flex flex-col">
-        <span class="text-[15px] font-semibold text-foreground tracking-tight leading-none">HRIS</span>
-        <span class="text-[11px] text-muted-foreground font-medium leading-none mt-0.5">Payroll</span>
+        <span class="text-sm font-bold text-foreground tracking-tight leading-none">HRIS</span>
+        <span class="text-[10px] text-muted-foreground font-medium leading-none mt-0.5">Payroll</span>
       </div>
     </a>
   </Sidebar.Header>
   
-  <Sidebar.Content class="px-3 py-4">
+  <Sidebar.Content class="px-3 pb-4">
     <NavMain items={navData.navMain} />
   </Sidebar.Content>
   

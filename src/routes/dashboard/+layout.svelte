@@ -83,8 +83,8 @@
 
 <Sidebar.Provider>
   <AppSidebar />
-  <Sidebar.Inset class="bg-[#f8fafc] min-h-screen">
-    <header class="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-white/80 backdrop-blur-md sticky top-0 z-30 px-6">
+  <Sidebar.Inset class="bg-background min-h-screen">
+    <header class="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-background/80 backdrop-blur-lg sticky top-0 z-30 px-6 shadow-card">
       <Sidebar.Trigger class="text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors h-8 w-8" />
       <Separator orientation="vertical" class="h-4 bg-border" />
       <Breadcrumb.Root>

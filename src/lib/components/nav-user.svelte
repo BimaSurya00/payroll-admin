@@ -69,25 +69,25 @@
 						size="lg"
 						class="w-full text-sidebar-foreground hover:bg-accent data-[state=open]:bg-accent transition-all duration-150 h-auto py-2.5 rounded-xl"
 					>
-						<Avatar.Root class="size-9 rounded-lg bg-primary/10 border border-primary/20">
+						<Avatar.Root class="size-8 rounded-lg border border-border bg-muted">
 							<Avatar.Image
 								src={displayUser?.avatar || displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="rounded-lg bg-primary text-primary-foreground font-bold text-sm">
+							<Avatar.Fallback class="rounded-lg bg-primary text-primary-foreground font-bold text-xs">
 								{userInitials}
 							</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-semibold text-foreground">{displayUser?.name || "User"}</span>
-							<span class="truncate text-xs text-muted-foreground">{displayUser?.email || ""}</span>
+							<span class="truncate font-semibold text-foreground text-[13px]">{displayUser?.name || "User"}</span>
+							<span class="truncate text-[11px] text-muted-foreground">{displayUser?.email || ""}</span>
 						</div>
-						<ChevronsUpDownIcon class="ms-auto size-4 text-muted-foreground" />
+						<ChevronsUpDownIcon class="ms-auto size-4 text-muted-foreground/60" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content
-				class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-xl bg-popover border border-border shadow-elevation-2"
+				class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-xl bg-popover border border-border shadow-card-hover"
 				side={sidebar.isMobile ? "bottom" : "right"}
 				align="end"
 				sideOffset={4}
@@ -141,7 +141,7 @@
 					<DropdownMenu.Item
 						onclick={handleLogoutAll}
 						disabled={loggingOut}
-						class="cursor-pointer text-foreground/70 hover:text-foreground rounded-lg"
+						class="cursor-pointer text-muted-foreground hover:text-foreground rounded-lg"
 					>
 						{#if loggingOut}
 							<LoaderIcon class="animate-spin size-4" />

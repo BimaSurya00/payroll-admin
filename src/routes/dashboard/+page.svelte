@@ -106,14 +106,14 @@
 
     function getActivityColor(action) {
         switch (action?.toUpperCase()) {
-            case 'CREATE': return 'text-emerald-600 bg-emerald-50 border-emerald-200';
-            case 'UPDATE': return 'text-blue-600 bg-blue-50 border-blue-200';
-            case 'DELETE': return 'text-red-600 bg-red-50 border-red-200';
-            case 'APPROVE': return 'text-emerald-600 bg-emerald-50 border-emerald-200';
-            case 'REJECT': return 'text-amber-600 bg-amber-50 border-amber-200';
-            case 'LOGIN': return 'text-violet-600 bg-violet-50 border-violet-200';
-            case 'LOGOUT': return 'text-slate-500 bg-slate-50 border-slate-200';
-            default: return 'text-slate-600 bg-slate-50 border-slate-200';
+            case 'CREATE': return 'text-emerald-600 bg-emerald-50 border border-emerald-200 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20';
+            case 'UPDATE': return 'text-blue-600 bg-blue-50 border border-blue-200 dark:text-blue-400 dark:bg-blue-500/10 dark:border-blue-500/20';
+            case 'DELETE': return 'text-red-600 bg-red-50 border border-red-200 dark:text-red-400 dark:bg-red-500/10 dark:border-red-500/20';
+            case 'APPROVE': return 'text-emerald-600 bg-emerald-50 border border-emerald-200 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20';
+            case 'REJECT': return 'text-amber-600 bg-amber-50 border border-amber-200 dark:text-amber-400 dark:bg-amber-500/10 dark:border-amber-500/20';
+            case 'LOGIN': return 'text-violet-600 bg-violet-50 border border-violet-200 dark:text-violet-400 dark:bg-violet-500/10 dark:border-violet-500/20';
+            case 'LOGOUT': return 'text-slate-500 bg-slate-50 border border-slate-200 dark:text-slate-400 dark:bg-slate-500/10 dark:border-slate-500/20';
+            default: return 'text-slate-600 bg-slate-50 border border-slate-200 dark:text-slate-400 dark:bg-slate-500/10 dark:border-slate-500/20';
         }
     }
 </script>
@@ -123,12 +123,12 @@
 </svelte:head>
 
 <div class="mb-8">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div class="space-y-1">
-            <div class="flex items-center gap-3">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-3 mb-1">
                 <h1 class="text-2xl font-bold text-foreground tracking-tight">Dashboard</h1>
                 {#if currentCompany}
-                    <span class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium border border-primary/20">
+                    <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold border border-primary/20">
                         <BuildingIcon class="h-3 w-3" />
                         {currentCompany.name}
                     </span>
@@ -143,7 +143,7 @@
             variant="outline" 
             onclick={handleRefresh} 
             disabled={loading}
-            class="rounded-lg px-4 h-9 border-border bg-white text-muted-foreground hover:text-foreground hover:bg-accent transition-colors text-sm shadow-sm"
+            class="rounded-lg px-4 h-9 border-border bg-card text-muted-foreground hover:text-foreground hover:bg-accent hover:border-border transition-all text-sm shadow-card self-start sm:self-auto"
         >
             {#if loading}
                 <LoaderIcon class="h-3.5 w-3.5 mr-2 animate-spin" />
@@ -159,17 +159,17 @@
 <div class="flex flex-1 flex-col gap-6">
     {#if isSuperUser}
         {#if loading && !superUserSummary}
-            <div class="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div class="grid auto-rows-min gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {#each Array(4) as _}
                     <div class="stat-card p-6">
                         <div class="h-3.5 w-20 bg-muted rounded mb-4"></div>
                         <div class="h-8 w-24 bg-muted rounded mb-2"></div>
-                        <div class="h-3 w-28 bg-muted/50 rounded"></div>
+                        <div class="h-3 w-28 bg-muted/70 rounded"></div>
                     </div>
                 {/each}
             </div>
         {:else if superUserSummary}
-            <div class="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div class="grid auto-rows-min gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Card.Root class="stat-card">
                     <Card.Content class="p-6">
                         <div class="flex items-center justify-between mb-4">
@@ -180,7 +180,7 @@
                         </div>
                         <div class="text-3xl font-bold text-foreground mb-1">{formatNumber(superUserSummary.totalCompanies)}</div>
                         <div class="flex items-center gap-1.5 text-sm">
-                            <span class="text-emerald-600 flex items-center gap-1 font-medium">
+                            <span class="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-medium">
                                 <TrendingUpIcon class="h-3.5 w-3.5" />
                                 {formatNumber(superUserSummary.activeCompanies)}
                             </span>
@@ -193,14 +193,14 @@
                     <Card.Content class="p-6">
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Users</span>
-                            <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center">
-                                <UsersIcon class="h-5 w-5 text-violet-600" />
+                            <div class="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center">
+                                <UsersIcon class="h-5 w-5 text-violet-600 dark:text-violet-400" />
                             </div>
                         </div>
                         <div class="text-3xl font-bold text-foreground mb-1">{formatNumber(superUserSummary.totalUsers)}</div>
                         <div class="flex gap-2 text-sm">
                             <span class="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-semibold">{formatNumber(superUserSummary.totalAdmins)} admins</span>
-                            <span class="px-2 py-0.5 rounded-md bg-violet-100 text-violet-700 text-xs font-semibold">{formatNumber(superUserSummary.totalSuperUsers)} super</span>
+                            <span class="px-2 py-0.5 rounded-md bg-violet-100 text-violet-700 dark:bg-violet-500/10 dark:text-violet-400 text-xs font-semibold">{formatNumber(superUserSummary.totalSuperUsers)} super</span>
                         </div>
                     </Card.Content>
                 </Card.Root>
@@ -209,8 +209,8 @@
                     <Card.Content class="p-6">
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Employees</span>
-                            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                                <UserCheckIcon class="h-5 w-5 text-emerald-600" />
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+                                <UserCheckIcon class="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                             </div>
                         </div>
                         <div class="text-3xl font-bold text-foreground mb-1">{formatNumber(superUserSummary.totalEmployees)}</div>
@@ -222,8 +222,8 @@
                     <Card.Content class="p-6">
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Avg per Company</span>
-                            <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-                                <ActivityIcon class="h-5 w-5 text-amber-600" />
+                            <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center">
+                                <ActivityIcon class="h-5 w-5 text-amber-600 dark:text-amber-400" />
                             </div>
                         </div>
                         <div class="text-3xl font-bold text-foreground mb-1">
@@ -234,7 +234,7 @@
                 </Card.Root>
             </div>
 
-            <Card.Root class="surface-elevated">
+            <Card.Root class="surface-elevated p-0">
                 <Card.Header class="pb-4">
                     <Card.Title class="text-base font-semibold text-foreground flex items-center gap-2">
                         <BuildingIcon class="h-5 w-5 text-muted-foreground" />
@@ -261,21 +261,21 @@
                                             <td class="py-3.5 font-medium text-foreground">{company.companyName}</td>
                                             <td class="py-3.5">
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold
-                                                    {company.plan === 'enterprise' ? 'bg-violet-100 text-violet-700' :
+                                                    {company.plan === 'enterprise' ? 'bg-violet-100 text-violet-700 dark:bg-violet-500/10 dark:text-violet-400' :
                                                       company.plan === 'pro' ? 'bg-primary/10 text-primary' :
-                                                      company.plan === 'starter' ? 'bg-emerald-50 text-emerald-700' :
+                                                      company.plan === 'starter' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400' :
                                                       'bg-muted text-muted-foreground'}">
                                                     {company.plan}
                                                 </span>
                                             </td>
                                             <td class="py-3.5 text-center">
                                                 {#if company.isActive}
-                                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-semibold text-emerald-700 bg-emerald-50">
+                                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                                         Active
                                                     </span>
                                                 {:else}
-                                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-semibold text-red-700 bg-red-50">
+                                                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-semibold bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400">
                                                         <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                                                         Inactive
                                                     </span>
@@ -297,17 +297,17 @@
         {/if}
     {:else}
         {#if loading && !summary}
-            <div class="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div class="grid auto-rows-min gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {#each Array(4) as _}
                     <div class="stat-card p-6">
                         <div class="h-3.5 w-20 bg-muted rounded mb-4"></div>
                         <div class="h-8 w-24 bg-muted rounded mb-2"></div>
-                        <div class="h-3 w-28 bg-muted/50 rounded"></div>
+                        <div class="h-3 w-28 bg-muted/70 rounded"></div>
                     </div>
                 {/each}
             </div>
         {:else if summary}
-            <div class="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div class="grid auto-rows-min gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <Card.Root class="stat-card">
                     <Card.Content class="p-6">
                         <div class="flex items-center justify-between mb-4">
@@ -320,7 +320,7 @@
                             {employeeStats ? formatNumber(employeeStats.totalCount || 0) : '-'}
                         </div>
                         {#if employeeStats}
-                            <span class="text-emerald-600 text-sm flex items-center gap-1 font-medium">
+                            <span class="text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-1 font-medium">
                                 <TrendingUpIcon class="h-3.5 w-3.5" />
                                 {formatNumber(employeeStats.totalCount - (employeeStats.statusBreakdown?.resigned || 0))} active
                             </span>
@@ -334,8 +334,8 @@
                     <Card.Content class="p-6">
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Present Today</span>
-                            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                                <UserCheckIcon class="h-5 w-5 text-emerald-600" />
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+                                <UserCheckIcon class="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                             </div>
                         </div>
                         <div class="text-3xl font-bold text-foreground mb-1">
@@ -357,15 +357,15 @@
                     <Card.Content class="p-6">
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Monthly Payroll</span>
-                            <div class="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center">
-                                <DollarSignIcon class="h-5 w-5 text-violet-600" />
+                            <div class="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-500/10 flex items-center justify-center">
+                                <DollarSignIcon class="h-5 w-5 text-violet-600 dark:text-violet-400" />
                             </div>
                         </div>
                         <div class="text-2xl font-bold text-foreground mb-1">
                             {formatCurrency(summary.payroll?.totalNetSalary || 0)}
                         </div>
                         {#if summary.payroll}
-                            <span class="text-amber-600 text-sm flex items-center gap-1 font-medium">
+                            <span class="text-amber-600 dark:text-amber-400 text-sm flex items-center gap-1 font-medium">
                                 <ClockIcon class="h-3.5 w-3.5" />
                                 {formatNumber(summary.payroll.draftCount || 0)} pending
                             </span>
@@ -379,10 +379,10 @@
                     <Card.Content class="p-6">
                         <div class="flex items-center justify-between mb-4">
                             <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Pending Requests</span>
-                            <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center relative">
-                                <ClockIcon class="h-5 w-5 text-amber-600" />
+                            <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center relative">
+                                <ClockIcon class="h-5 w-5 text-amber-600 dark:text-amber-400" />
                                 {#if summary.leave?.pendingRequests > 0}
-                                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1 shadow-sm">
+                                    <span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1 shadow-card">
                                         {Math.min(summary.leave.pendingRequests, 99)}
                                     </span>
                                 {/if}
@@ -403,17 +403,17 @@
                 </div>
 
                 {#if attendanceStats?.summary}
-                    <div class="grid gap-4 md:grid-cols-4">
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         {#each [
-                            { label: 'Total Present', value: attendanceStats.summary.totalPresent || 0, avg: attendanceStats.summary.avgPresent?.toFixed(1), icon: UserCheckIcon, colorClass: 'bg-emerald-50 text-emerald-600' },
-                            { label: 'Total Late', value: attendanceStats.summary.totalLate || 0, avg: attendanceStats.summary.avgLate?.toFixed(1), icon: ClockIcon, colorClass: 'bg-amber-50 text-amber-600' },
-                            { label: 'Total Absent', value: attendanceStats.summary.totalAbsent || 0, avg: null, icon: MinusIcon, colorClass: 'bg-red-50 text-red-600' },
-                            { label: 'On Leave', value: attendanceStats.summary.totalLeave || 0, avg: null, icon: CalendarIcon, colorClass: 'bg-violet-100 text-violet-600' }
+                            { label: 'Total Present', value: attendanceStats.summary.totalPresent || 0, avg: attendanceStats.summary.avgPresent?.toFixed(1), icon: UserCheckIcon, colorClass: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400' },
+                            { label: 'Total Late', value: attendanceStats.summary.totalLate || 0, avg: attendanceStats.summary.avgLate?.toFixed(1), icon: ClockIcon, colorClass: 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400' },
+                            { label: 'Total Absent', value: attendanceStats.summary.totalAbsent || 0, avg: null, icon: MinusIcon, colorClass: 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400' },
+                            { label: 'On Leave', value: attendanceStats.summary.totalLeave || 0, avg: null, icon: CalendarIcon, colorClass: 'bg-violet-100 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400' }
                         ] as stat}
                             <Card.Root class="stat-card">
                                 <Card.Content class="p-5">
                                     <div class="flex items-center gap-3 mb-3">
-                                        <div class="w-8 h-8 rounded-lg {stat.colorClass} flex items-center justify-center">
+                                        <div class="w-9 h-9 rounded-lg {stat.colorClass} flex items-center justify-center">
                                             <stat.icon class="h-4 w-4" />
                                         </div>
                                         <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">{stat.label}</span>
@@ -430,13 +430,13 @@
                     </div>
                 {:else}
                     <div class="surface-card p-12 text-center">
-                        <p class="text-muted-foreground text-sm">No attendance data available</p>
+                        <p class="text-muted-foreground">No attendance data available</p>
                     </div>
                 {/if}
             </div>
 
             <div class="grid gap-4 md:grid-cols-2">
-                <Card.Root class="surface-elevated">
+                <Card.Root class="surface-elevated p-0">
                     <Card.Header class="pb-3">
                         <Card.Title class="text-base font-semibold text-foreground flex items-center gap-2">
                             <ActivityIcon class="h-5 w-5 text-muted-foreground" />
@@ -447,8 +447,8 @@
                         {#if recentActivities?.activities?.length > 0}
                             <div class="space-y-1">
                                 {#each recentActivities.activities.slice(0, 10) as activity}
-                                    <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                                        <div class="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold border {getActivityColor(activity.action)}">
+                                    <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/60 transition-colors">
+                                        <div class="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold {getActivityColor(activity.action)}">
                                             {getActivityIcon(activity.action)}
                                         </div>
                                         <div class="flex-1 min-w-0">
@@ -466,7 +466,7 @@
                     </Card.Content>
                 </Card.Root>
 
-                <Card.Root class="surface-elevated">
+                <Card.Root class="surface-elevated p-0">
                     <Card.Header class="pb-3">
                         <Card.Title class="text-base font-semibold text-foreground flex items-center gap-2">
                             <BriefcaseIcon class="h-5 w-5 text-muted-foreground" />
@@ -475,7 +475,7 @@
                     </Card.Header>
                     <Card.Content>
                         {#if employeeStats?.statusBreakdown}
-                            <div class="space-y-4">
+                            <div class="space-y-5">
                                 {#each Object.entries(employeeStats.statusBreakdown) as [status, count]}
                                     <div class="flex items-center justify-between">
                                         <span class="text-sm text-foreground capitalize">{status}</span>

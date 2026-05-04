@@ -63,25 +63,25 @@
 <div class="flex min-h-[100dvh] items-center justify-center p-4 auth-bg">
 	<div class="w-full max-w-[420px]">
 		<div class="text-center mb-8">
-			<div class="flex items-center justify-center mb-5">
-				<div class="w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-md shadow-primary/20">
-					<svg class="w-5.5 h-5.5 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+			<div class="flex items-center justify-center mb-6">
+				<div class="w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-card">
+					<svg class="w-5 h-5 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 						<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
 						<polyline points="9 22 9 12 15 12 15 22"/>
 					</svg>
 				</div>
 			</div>
-			<h1 class="text-2xl font-bold text-foreground tracking-tight">Forgot password</h1>
+			<h1 class="text-2xl font-bold text-foreground tracking-tight dark:text-white">Forgot password</h1>
 			<p class="text-muted-foreground text-sm mt-1.5">We'll send you a reset link</p>
 		</div>
 
-		<Card.Root class="surface-elevated">
+		<Card.Root class="surface-elevated p-0">
 			<Card.Content class="p-6 sm:p-8">
 				{#if success}
-					<div class="space-y-5">
-						<div class="text-center py-4">
-							<div class="mx-auto w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center mb-4">
-								<CheckCircleIcon class="h-6 w-6 text-emerald-600" />
+					<div class="space-y-6">
+						<div class="text-center py-3">
+							<div class="mx-auto w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center mb-4">
+								<CheckCircleIcon class="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
 							</div>
 							<p class="text-sm font-semibold text-foreground">Check your email</p>
 							<p class="text-sm text-muted-foreground mt-1">
@@ -89,7 +89,7 @@
 							</p>
 						</div>
 						<div class="flex flex-col gap-2.5">
-							<Button onclick={handleResend} variant="outline" class="w-full h-11 border-border bg-white text-foreground hover:bg-accent rounded-xl" disabled={loading}>
+							<Button onclick={handleResend} variant="outline" class="w-full h-11 border-border bg-card text-foreground hover:bg-accent rounded-xl" disabled={loading}>
 								{#if loading}
 									<LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
 									Sending...
@@ -115,12 +115,12 @@
 									bind:value={email}
 									required
 									disabled={loading}
-									class="h-11 pl-9 bg-white border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
+									class="h-11 pl-9 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
 								/>
 							</div>
 						</div>
 
-						<Button type="submit" class="w-full h-11 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl transition-all shadow-sm shadow-primary/20" disabled={!email || loading}>
+						<Button type="submit" class="w-full h-11 text-sm font-semibold bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl transition-all shadow-card" disabled={!email || loading}>
 							{#if loading}
 								<LoaderIcon class="h-4 w-4 mr-2 animate-spin" />
 								Processing...

@@ -60,23 +60,23 @@
 <div class="flex min-h-[100dvh] items-center justify-center p-4 auth-bg">
 	<div class="w-full max-w-[420px]">
 		<div class="text-center mb-8">
-			<div class="flex items-center justify-center mb-5">
-				<div class="w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-md shadow-primary/20">
-					<svg class="w-5.5 h-5.5 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+			<div class="flex items-center justify-center mb-6">
+				<div class="w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-card">
+					<svg class="w-5 h-5 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 						<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
 						<polyline points="9 22 9 12 15 12 15 22"/>
 					</svg>
 				</div>
 			</div>
-			<h1 class="text-2xl font-bold text-foreground tracking-tight">Welcome back</h1>
+			<h1 class="text-2xl font-bold text-foreground tracking-tight dark:text-white">Welcome back</h1>
 			<p class="text-muted-foreground text-sm mt-1.5">Sign in to your account to continue</p>
 		</div>
 
-		<Card.Root class="surface-elevated">
+		<Card.Root class="surface-elevated p-0">
 			<Card.Content class="p-6 sm:p-8">
 				<form onsubmit={handleLogin} class="space-y-5">
 					{#if error}
-						<div class="flex items-center gap-2.5 p-3.5 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl" role="alert">
+						<div class="flex items-center gap-2.5 p-3.5 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-700 dark:text-red-400 text-sm rounded-xl" role="alert">
 							<AlertCircleIcon class="w-4 h-4 flex-shrink-0" />
 							<span>{error}</span>
 						</div>
@@ -94,7 +94,7 @@
 								oninput={clearError}
 								required
 								disabled={loading}
-								class="h-11 pl-9 bg-white border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
+								class="h-11 pl-9 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
 							/>
 						</div>
 					</div>
@@ -116,7 +116,7 @@
 								oninput={clearError}
 								required
 								disabled={loading}
-								class="h-11 pl-9 pr-9 bg-white border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
+								class="h-11 pl-9 pr-9 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20"
 							/>
 							<button
 								type="button"
@@ -135,7 +135,7 @@
 
 					<Button 
 						type="submit" 
-						class="w-full h-11 text-sm font-semibold mt-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl transition-all shadow-sm shadow-primary/20"
+						class="w-full h-11 text-sm font-semibold mt-1 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl transition-all shadow-card"
 						disabled={loading}
 					>
 						{#if loading}
