@@ -58,11 +58,11 @@
     function getRoleColor(role) {
         switch (role) {
             case "SUPER_USER":
-                return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+                return "bg-destructive/10 text-red-800 dark:bg-red-900 dark:text-red-300";
             case "ADMIN":
-                return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
+                return "bg-chart-4/10 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
             default:
-                return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+                return "bg-primary/10 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
         }
     }
 
@@ -96,7 +96,7 @@
         </div>
     {:else if error}
         <div
-            class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+            class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
         >
             <p class="text-sm font-medium">Error: {error}</p>
         </div>

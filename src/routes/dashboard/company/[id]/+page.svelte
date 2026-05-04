@@ -74,9 +74,9 @@
 
 	function getPlanColor(plan) {
 		const colors = {
-			free: 'bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-300',
-			starter: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-			pro: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
+			free: 'bg-muted text-foreground dark:bg-gray-800/50 dark:text-gray-300',
+			starter: 'bg-primary/10 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+			pro: 'bg-chart-4/10 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
 			enterprise: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
 		};
 		return colors[plan] || colors.free;
@@ -106,7 +106,7 @@
 			<span class="ml-2 text-muted-foreground">Loading company...</span>
 		</div>
 	{:else if error}
-		<div class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
+		<div class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
 			<p class="text-sm font-medium">Error: {error}</p>
 		</div>
 	{:else if company}
@@ -124,8 +124,8 @@
 				<Card.Root>
 					<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
 						<Card.Title class="text-sm font-medium text-muted-foreground">Users</Card.Title>
-						<div class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-							<UsersIcon class="h-4 w-4 text-blue-600" />
+						<div class="w-8 h-8 rounded-lg bg-primary/10 dark:bg-blue-900/30 flex items-center justify-center">
+							<UsersIcon class="h-4 w-4 text-primary" />
 						</div>
 					</Card.Header>
 					<Card.Content>
@@ -137,8 +137,8 @@
 				<Card.Root>
 					<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
 						<Card.Title class="text-sm font-medium text-muted-foreground">Employees</Card.Title>
-						<div class="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-							<UserCheckIcon class="h-4 w-4 text-green-600" />
+						<div class="w-8 h-8 rounded-lg bg-success/10 dark:bg-green-900/30 flex items-center justify-center">
+							<UserCheckIcon class="h-4 w-4 text-success" />
 						</div>
 					</Card.Header>
 					<Card.Content>
@@ -150,8 +150,8 @@
 				<Card.Root>
 					<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
 						<Card.Title class="text-sm font-medium text-muted-foreground">Departments</Card.Title>
-						<div class="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-							<BriefcaseIcon class="h-4 w-4 text-purple-600" />
+						<div class="w-8 h-8 rounded-lg bg-chart-4/10 dark:bg-purple-900/30 flex items-center justify-center">
+							<BriefcaseIcon class="h-4 w-4 text-chart-4" />
 						</div>
 					</Card.Header>
 					<Card.Content>
@@ -163,8 +163,8 @@
 				<Card.Root>
 					<Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
 						<Card.Title class="text-sm font-medium text-muted-foreground">Schedules</Card.Title>
-						<div class="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-							<ClockIcon class="h-4 w-4 text-orange-600" />
+						<div class="w-8 h-8 rounded-lg bg-warning/10 dark:bg-orange-900/30 flex items-center justify-center">
+							<ClockIcon class="h-4 w-4 text-warning" />
 						</div>
 					</Card.Header>
 					<Card.Content>
@@ -205,23 +205,23 @@
 								</div>
 							</div>
 							<div class="flex items-center gap-3">
-								<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
+								<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-success/10 dark:bg-green-900/30">
 									{#if company.isActive}
-										<span class="h-3 w-3 rounded-full bg-green-500"></span>
+										<span class="h-3 w-3 rounded-full bg-success/100"></span>
 									{:else}
 										<span class="h-3 w-3 rounded-full bg-gray-400"></span>
 									{/if}
 								</div>
 								<div>
 									<p class="text-sm text-muted-foreground">Status</p>
-									<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium {company.isActive ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-300'}">
+									<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium {company.isActive ? 'bg-success/10 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-muted text-foreground dark:bg-gray-800/50 dark:text-gray-300'}">
 										{company.isActive ? 'Active' : 'Inactive'}
 									</span>
 								</div>
 							</div>
 							<div class="flex items-center gap-3">
-								<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
-									<FingerprintIcon class="h-5 w-5 text-purple-600" />
+								<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-chart-4/10 dark:bg-purple-900/30">
+									<FingerprintIcon class="h-5 w-5 text-chart-4" />
 								</div>
 								<div>
 									<p class="text-sm text-muted-foreground">Plan</p>
@@ -231,8 +231,8 @@
 								</div>
 							</div>
 							<div class="flex items-center gap-3">
-								<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
-									<UsersIcon class="h-5 w-5 text-blue-600" />
+								<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 dark:bg-blue-900/30">
+									<UsersIcon class="h-5 w-5 text-primary" />
 								</div>
 								<div>
 									<p class="text-sm text-muted-foreground">Max Employees</p>
@@ -248,8 +248,8 @@
 						<div class="space-y-3">
 							{#if company.email}
 								<div class="flex items-center gap-3">
-									<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/30">
-										<MailIcon class="h-5 w-5 text-orange-600" />
+									<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10 dark:bg-orange-900/30">
+										<MailIcon class="h-5 w-5 text-warning" />
 									</div>
 									<div>
 										<p class="text-sm text-muted-foreground">Email</p>
@@ -323,8 +323,8 @@
 						<div class="rounded-lg border bg-muted/30 p-4">
 							<div class="grid gap-4 md:grid-cols-3">
 								<div class="flex items-center gap-3">
-									<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
-										<MapPinnedIcon class="h-5 w-5 text-blue-600" />
+									<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 dark:bg-blue-900/30">
+										<MapPinnedIcon class="h-5 w-5 text-primary" />
 									</div>
 									<div>
 										<p class="text-sm text-muted-foreground">Latitude</p>
@@ -332,8 +332,8 @@
 									</div>
 								</div>
 								<div class="flex items-center gap-3">
-									<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
-										<MapPinnedIcon class="h-5 w-5 text-blue-600" />
+									<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 dark:bg-blue-900/30">
+										<MapPinnedIcon class="h-5 w-5 text-primary" />
 									</div>
 									<div>
 										<p class="text-sm text-muted-foreground">Longitude</p>
@@ -341,8 +341,8 @@
 									</div>
 								</div>
 								<div class="flex items-center gap-3">
-									<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
-										<MapPinIcon class="h-5 w-5 text-green-600" />
+									<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-success/10 dark:bg-green-900/30">
+										<MapPinIcon class="h-5 w-5 text-success" />
 									</div>
 									<div>
 										<p class="text-sm text-muted-foreground">Check-in Radius</p>

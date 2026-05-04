@@ -320,7 +320,7 @@
     <!-- Success Message -->
     {#if saveSuccess}
         <div
-            class="rounded-lg border border-green-200 bg-green-50 p-4 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-300"
+            class="rounded-lg border border-success/20 bg-success/10 p-4 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-300"
         >
             <p class="text-sm font-medium">✓ Profile updated successfully!</p>
         </div>
@@ -329,7 +329,7 @@
     <!-- Error Alert -->
     {#if error}
         <div
-            class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+            class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
         >
             <p class="text-sm font-medium">Error: {error}</p>
         </div>
@@ -375,7 +375,7 @@
                             </div>
                             {#if !uploadingImage && user?.profileImage}
                                 <button
-                                    class="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
+                                    class="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-destructive/100 text-white flex items-center justify-center shadow-lg hover:bg-red-600 transition-colors"
                                     onclick={deleteProfileImage}
                                     title="Remove profile picture"
                                 >
@@ -384,7 +384,7 @@
                             {/if}
                             {#if uploadingImage}
                                 <div
-                                    class="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-lg animate-spin"
+                                    class="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-primary/100 text-white flex items-center justify-center shadow-lg animate-spin"
                                 >
                                     <LoaderIcon class="h-4 w-4 animate-spin" />
                                 </div>
@@ -669,7 +669,7 @@
                         <!-- Success Message -->
                         {#if passwordSuccess}
                             <div
-                                class="mt-4 rounded-lg border border-green-200 bg-green-50 p-3 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-300"
+                                class="mt-4 rounded-lg border border-success/20 bg-success/10 p-3 text-green-800 dark:border-green-800 dark:bg-green-900/20 dark:text-green-300"
                             >
                                 <p class="text-sm font-medium">✓ Password changed successfully!</p>
                             </div>
@@ -697,7 +697,7 @@
                             </div>
                             <div>
                                 <p class="text-sm text-muted-foreground">Base Salary</p>
-                                <p class="font-bold text-lg text-blue-600">
+                                <p class="font-bold text-lg text-primary">
                                     {formatCurrency(employee.salaryBase)}
                                 </p>
                             </div>

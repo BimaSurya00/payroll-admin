@@ -79,12 +79,12 @@
     function getShiftBgColor(name) {
         const colors = {
             "Morning Shift": "bg-amber-100 dark:bg-amber-900/30",
-            "Afternoon Shift": "bg-blue-100 dark:bg-blue-900/30",
+            "Afternoon Shift": "bg-primary/10 dark:bg-blue-900/30",
             "Night Shift": "bg-indigo-100 dark:bg-indigo-900/30",
-            "Flexible Hours": "bg-green-100 dark:bg-green-900/30",
+            "Flexible Hours": "bg-success/10 dark:bg-green-900/30",
             "Office Hours": "bg-teal-100 dark:bg-teal-900/30",
         };
-        return colors[name] || "bg-gray-100 dark:bg-gray-900/30";
+        return colors[name] || "bg-muted dark:bg-gray-900/30";
     }
 
 
@@ -119,7 +119,7 @@
         <!-- Regular Error Alert -->
         {#if error && !isForbidden}
             <div
-                class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+                class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
             >
                 <p class="text-sm font-medium">Error: {error}</p>
                 <p class="text-xs mt-1">
@@ -150,7 +150,7 @@
                 <p class="text-sm font-medium text-muted-foreground">
                     Avg Late Tolerance
                 </p>
-                <p class="text-2xl font-bold mt-1 text-blue-600">
+                <p class="text-2xl font-bold mt-1 text-primary">
                     {avgLateTolerance} min
                 </p>
             </div>
@@ -158,7 +158,7 @@
                 <p class="text-sm font-medium text-muted-foreground">
                     Avg Radius
                 </p>
-                <p class="text-2xl font-bold mt-1 text-green-600">
+                <p class="text-2xl font-bold mt-1 text-success">
                     {avgRadius} m
                 </p>
             </div>
@@ -287,10 +287,10 @@
                             <div class="flex gap-4">
                                 <div class="flex items-center gap-2 text-sm">
                                     <div
-                                        class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/30"
+                                        class="flex h-8 w-8 items-center justify-center rounded-full bg-warning/10 dark:bg-orange-900/30"
                                     >
                                         <TimerIcon
-                                            class="h-4 w-4 text-orange-600"
+                                            class="h-4 w-4 text-warning"
                                         />
                                     </div>
                                     <div>

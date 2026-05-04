@@ -73,12 +73,12 @@
 
     function getActivityColor(action) {
         switch (action?.toUpperCase()) {
-            case 'CREATE': return 'text-green-600 bg-green-50';
-            case 'UPDATE': return 'text-blue-600 bg-blue-50';
-            case 'DELETE': return 'text-red-600 bg-red-50';
-            case 'APPROVE': return 'text-green-600 bg-green-50';
-            case 'REJECT': return 'text-orange-600 bg-orange-50';
-            default: return 'text-blue-600 bg-blue-50';
+            case 'CREATE': return 'text-success bg-success/10';
+            case 'UPDATE': return 'text-primary bg-primary/10';
+            case 'DELETE': return 'text-destructive bg-destructive/10';
+            case 'APPROVE': return 'text-success bg-success/10';
+            case 'REJECT': return 'text-warning bg-warning/10';
+            default: return 'text-primary bg-primary/10';
         }
     }
 
@@ -117,10 +117,10 @@
 
     function getEmploymentStatusColor(status) {
         switch (status?.toUpperCase()) {
-            case 'PERMANENT': return 'text-green-600 bg-green-50';
-            case 'CONTRACT': return 'text-blue-600 bg-blue-50';
-            case 'PROBATION': return 'text-orange-600 bg-orange-50';
-            default: return 'text-gray-600 bg-gray-50';
+            case 'PERMANENT': return 'text-success bg-success/10';
+            case 'CONTRACT': return 'text-primary bg-primary/10';
+            case 'PROBATION': return 'text-warning bg-warning/10';
+            default: return 'text-muted-foreground bg-muted';
         }
     }
 
@@ -135,11 +135,11 @@
 
     function getJobLevelColor(level) {
         switch (level?.toUpperCase()) {
-            case 'CEO': return 'text-purple-600 bg-purple-50';
-            case 'MANAGER': return 'text-blue-600 bg-blue-50';
+            case 'CEO': return 'text-chart-4 bg-chart-4/10';
+            case 'MANAGER': return 'text-primary bg-primary/10';
             case 'SUPERVISOR': return 'text-teal-600 bg-teal-50';
-            case 'STAFF': return 'text-gray-600 bg-gray-50';
-            default: return 'text-gray-600 bg-gray-50';
+            case 'STAFF': return 'text-muted-foreground bg-muted';
+            default: return 'text-muted-foreground bg-muted';
         }
     }
 
@@ -181,7 +181,7 @@
         </div>
     {:else if error}
         <div
-            class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+            class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
         >
             <p class="text-sm font-medium">Error: {error}</p>
         </div>
@@ -346,12 +346,12 @@
                     </h3>
                     <div class="grid gap-4 md:grid-cols-2">
                         <div class="flex items-center gap-3">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
-                                <WalletIcon class="h-5 w-5 text-green-600" />
+                            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-success/10 dark:bg-green-900/30">
+                                <WalletIcon class="h-5 w-5 text-success" />
                             </div>
                             <div>
                                 <p class="text-sm text-muted-foreground">Base Salary</p>
-                                <p class="font-medium text-green-600">{formatCurrency(employee.salaryBase)}</p>
+                                <p class="font-medium text-success">{formatCurrency(employee.salaryBase)}</p>
                             </div>
                         </div>
                     </div>

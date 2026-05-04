@@ -76,7 +76,7 @@
         </div>
     {:else if error}
         <div
-            class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+            class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
         >
             <p class="text-sm font-medium">Error: {error}</p>
         </div>
@@ -113,28 +113,28 @@
                     <!-- Time In/Out -->
                     <div class="flex gap-4">
                         <div
-                            class="flex-1 rounded-lg bg-green-100 dark:bg-green-900/30 p-4"
+                            class="flex-1 rounded-lg bg-success/10 dark:bg-green-900/30 p-4"
                         >
                             <div
                                 class="flex items-center gap-2 text-sm text-muted-foreground mb-2"
                             >
-                                <ClockIcon class="h-4 w-4 text-green-600" />
+                                <ClockIcon class="h-4 w-4 text-success" />
                                 <span>Clock In</span>
                             </div>
-                            <p class="text-3xl font-bold text-green-600">
+                            <p class="text-3xl font-bold text-success">
                                 {formatTime(schedule.timeIn)}
                             </p>
                         </div>
                         <div
-                            class="flex-1 rounded-lg bg-red-100 dark:bg-red-900/30 p-4"
+                            class="flex-1 rounded-lg bg-destructive/10 dark:bg-red-900/30 p-4"
                         >
                             <div
                                 class="flex items-center gap-2 text-sm text-muted-foreground mb-2"
                             >
-                                <ClockIcon class="h-4 w-4 text-red-600" />
+                                <ClockIcon class="h-4 w-4 text-destructive" />
                                 <span>Clock Out</span>
                             </div>
-                            <p class="text-3xl font-bold text-red-600">
+                            <p class="text-3xl font-bold text-destructive">
                                 {formatTime(schedule.timeOut)}
                             </p>
                         </div>
@@ -144,9 +144,9 @@
                     <div class="space-y-4">
                         <div class="flex items-center gap-3">
                             <div
-                                class="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/30"
+                                class="flex h-10 w-10 items-center justify-center rounded-lg bg-warning/10 dark:bg-orange-900/30"
                             >
-                                <TimerIcon class="h-5 w-5 text-orange-600" />
+                                <TimerIcon class="h-5 w-5 text-warning" />
                             </div>
                             <div>
                                 <p class="text-sm text-muted-foreground">

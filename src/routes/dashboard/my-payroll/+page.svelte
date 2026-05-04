@@ -83,17 +83,17 @@
     function getStatusConfig(status) {
         const configs = {
             PAID: {
-                color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                color: 'bg-success/10 text-green-800 dark:bg-green-900 dark:text-green-300',
                 icon: '✓',
                 label: 'Paid',
             },
             APPROVED: {
-                color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+                color: 'bg-primary/10 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
                 icon: '●',
                 label: 'Approved',
             },
             DRAFT: {
-                color: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300',
+                color: 'bg-muted text-foreground dark:bg-gray-800 dark:text-gray-300',
                 icon: '○',
                 label: 'Draft',
             },
@@ -121,7 +121,7 @@
     <!-- Error Alert (tampilkan error nyata, bukan employee not found) -->
     {#if error && !error.includes('Employee record not found')}
         <div
-            class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+            class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
         >
             <p class="text-sm font-medium">Error: {error}</p>
             <p class="text-xs mt-1">Click refresh to retry.</p>
@@ -151,10 +151,10 @@
         </div>
         <div class="rounded-lg border bg-card p-4 shadow-sm">
             <div class="flex items-center gap-2">
-                <DollarSignIcon class="h-5 w-5 text-green-600" />
+                <DollarSignIcon class="h-5 w-5 text-success" />
                 <div>
                     <p class="text-sm font-medium text-muted-foreground">Latest Salary</p>
-                    <p class="text-xl font-bold text-green-600">
+                    <p class="text-xl font-bold text-success">
                         {latestPayroll ? formatCurrency(latestPayroll.netSalary) : '-'}
                     </p>
                 </div>
@@ -162,10 +162,10 @@
         </div>
         <div class="rounded-lg border bg-card p-4 shadow-sm">
             <div class="flex items-center gap-2">
-                <DollarSignIcon class="h-5 w-5 text-blue-600" />
+                <DollarSignIcon class="h-5 w-5 text-primary" />
                 <div>
                     <p class="text-sm font-medium text-muted-foreground">Average Salary</p>
-                    <p class="text-xl font-bold text-blue-600">
+                    <p class="text-xl font-bold text-primary">
                         {formatCurrency(avgNetSalary)}
                     </p>
                 </div>
@@ -173,10 +173,10 @@
         </div>
         <div class="rounded-lg border bg-card p-4 shadow-sm">
             <div class="flex items-center gap-2">
-                <DollarSignIcon class="h-5 w-5 text-purple-600" />
+                <DollarSignIcon class="h-5 w-5 text-chart-4" />
                 <div>
                     <p class="text-sm font-medium text-muted-foreground">Total Earned</p>
-                    <p class="text-xl font-bold text-purple-600">
+                    <p class="text-xl font-bold text-chart-4">
                         {formatCurrency(totalNetSalary)}
                     </p>
                 </div>
@@ -257,14 +257,14 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-muted-foreground">Allowances</span>
-                                <span class="font-medium text-green-600">
+                                <span class="font-medium text-success">
                                     +{formatCurrency(storeState.selected.totalAllowance || 0)}
                                 </span>
                             </div>
                             <hr class="border-border" />
                             <div class="flex justify-between text-lg font-bold">
                                 <span>Total Earnings</span>
-                                <span class="text-green-600">
+                                <span class="text-success">
                                     {formatCurrency(
                                         (storeState.selected.baseSalary || 0) +
                                             (storeState.selected.totalAllowance || 0)
@@ -285,7 +285,7 @@
                                       ) as item}
                                         <div class="flex justify-between">
                                             <span class="text-muted-foreground">{item.name}</span>
-                                            <span class="font-medium text-red-600">
+                                            <span class="font-medium text-destructive">
                                                 -{formatCurrency(item.amount)}
                                             </span>
                                         </div>
@@ -294,7 +294,7 @@
                                 <hr class="border-border" />
                                 <div class="flex justify-between text-lg font-bold">
                                     <span>Total Deductions</span>
-                                    <span class="text-red-600">
+                                    <span class="text-destructive">
                                         -{formatCurrency(storeState.selected.totalDeduction || 0)}
                                     </span>
                                 </div>

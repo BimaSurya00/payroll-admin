@@ -141,14 +141,14 @@
 
     function getActivityColor(action) {
         switch (action?.toUpperCase()) {
-            case 'CREATE': return 'text-green-600 bg-green-50';
-            case 'UPDATE': return 'text-blue-600 bg-blue-50';
-            case 'DELETE': return 'text-red-600 bg-red-50';
-            case 'APPROVE': return 'text-green-600 bg-green-50';
-            case 'REJECT': return 'text-orange-600 bg-orange-50';
-            case 'LOGIN': return 'text-purple-600 bg-purple-50';
-            case 'LOGOUT': return 'text-gray-600 bg-gray-50';
-            default: return 'text-blue-600 bg-blue-50';
+            case 'CREATE': return 'text-success bg-success/10';
+            case 'UPDATE': return 'text-primary bg-primary/10';
+            case 'DELETE': return 'text-destructive bg-destructive/10';
+            case 'APPROVE': return 'text-success bg-success/10';
+            case 'REJECT': return 'text-warning bg-warning/10';
+            case 'LOGIN': return 'text-chart-4 bg-chart-4/10';
+            case 'LOGOUT': return 'text-muted-foreground bg-muted';
+            default: return 'text-primary bg-primary/10';
         }
     }
 </script>

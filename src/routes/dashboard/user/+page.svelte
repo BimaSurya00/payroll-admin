@@ -80,13 +80,13 @@
     function getRoleColor(role) {
         switch (role) {
             case "SUPER_USER":
-                return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+                return "bg-destructive/10 text-red-800 dark:bg-red-900 dark:text-red-300";
             case "ADMIN":
-                return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
+                return "bg-chart-4/10 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
             case "USER":
-                return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+                return "bg-primary/10 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
             default:
-                return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+                return "bg-muted text-foreground dark:bg-gray-900 dark:text-gray-300";
         }
     }
 
@@ -126,7 +126,7 @@
         <!-- Regular Error Alert -->
         {#if error && !isForbidden}
             <div
-                class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+                class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
             >
                 <p class="text-sm font-medium">Error: {error}</p>
                 <p class="text-xs mt-1">
@@ -147,7 +147,7 @@
                 <p class="text-sm font-medium text-muted-foreground">
                     Admin/Super User
                 </p>
-                <p class="text-2xl font-bold mt-1 text-purple-600">
+                <p class="text-2xl font-bold mt-1 text-chart-4">
                     {adminCount}
                 </p>
             </div>
@@ -155,7 +155,7 @@
                 <p class="text-sm font-medium text-muted-foreground">
                     Regular Users
                 </p>
-                <p class="text-2xl font-bold mt-1 text-blue-600">
+                <p class="text-2xl font-bold mt-1 text-primary">
                     {userCount}
                 </p>
             </div>
@@ -163,7 +163,7 @@
                 <p class="text-sm font-medium text-muted-foreground">
                     New This Month
                 </p>
-                <p class="text-2xl font-bold mt-1 text-green-600">
+                <p class="text-2xl font-bold mt-1 text-success">
                     {users.filter((u) => {
                         const date = new Date(u.createdAt);
                         const now = new Date();

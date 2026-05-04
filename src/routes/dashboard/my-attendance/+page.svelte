@@ -150,7 +150,7 @@
         </div>
     {:else if error}
         <div
-            class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+            class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
         >
             <p class="text-sm font-medium">Error: {error}</p>
         </div>
@@ -173,10 +173,10 @@
                 <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
                     <Card.Title class="text-sm font-medium text-muted-foreground"
                         >Present</Card.Title>
-                    <CheckCircleIcon class="h-4 w-4 text-green-600" />
+                    <CheckCircleIcon class="h-4 w-4 text-success" />
                 </Card.Header>
                 <Card.Content>
-                    <div class="text-2xl font-bold text-green-600"
+                    <div class="text-2xl font-bold text-success"
                         >{formatNumber(monthlySummary.presentDays || 0)}</div>
                     <p class="text-xs text-muted-foreground">Days attended</p>
                 </Card.Content>
@@ -186,10 +186,10 @@
                 <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
                     <Card.Title class="text-sm font-medium text-muted-foreground"
                         >Late</Card.Title>
-                    <ClockIcon class="h-4 w-4 text-orange-600" />
+                    <ClockIcon class="h-4 w-4 text-warning" />
                 </Card.Header>
                 <Card.Content>
-                    <div class="text-2xl font-bold text-orange-600"
+                    <div class="text-2xl font-bold text-warning"
                         >{formatNumber(monthlySummary.lateDays || 0)}</div>
                     <p class="text-xs text-muted-foreground">Late arrivals</p>
                 </Card.Content>
@@ -199,10 +199,10 @@
                 <Card.Header class="flex flex-row items-center justify-between space-y-0 pb-2">
                     <Card.Title class="text-sm font-medium text-muted-foreground"
                         >Absent</Card.Title>
-                    <AlertCircleIcon class="h-4 w-4 text-red-600" />
+                    <AlertCircleIcon class="h-4 w-4 text-destructive" />
                 </Card.Header>
                 <Card.Content>
-                    <div class="text-2xl font-bold text-red-600"
+                    <div class="text-2xl font-bold text-destructive"
                         >{formatNumber(monthlySummary.absentDays || 0)}</div>
                     <p class="text-xs text-muted-foreground">Days missed</p>
                 </Card.Content>
@@ -217,39 +217,39 @@
                 </Card.Header>
                 <Card.Content>
                     <div class="space-y-4">
-                        <div class="flex justify-between items-center p-3 rounded-lg bg-green-50 dark:bg-green-900/20">
+                        <div class="flex justify-between items-center p-3 rounded-lg bg-success/10 dark:bg-green-900/20">
                             <div class="flex items-center gap-3">
-                                <CheckCircleIcon class="h-5 w-5 text-green-600" />
+                                <CheckCircleIcon class="h-5 w-5 text-success" />
                                 <span>Present (On Time)</span>
                             </div>
-                            <span class="font-bold text-green-600"
+                            <span class="font-bold text-success"
                                 >{formatNumber(monthlySummary.presentDays || 0)}</span>
                         </div>
 
-                        <div class="flex justify-between items-center p-3 rounded-lg bg-orange-50 dark:bg-orange-900/20">
+                        <div class="flex justify-between items-center p-3 rounded-lg bg-warning/10 dark:bg-orange-900/20">
                             <div class="flex items-center gap-3">
-                                <ClockIcon class="h-5 w-5 text-orange-600" />
+                                <ClockIcon class="h-5 w-5 text-warning" />
                                 <span>Late</span>
                             </div>
-                            <span class="font-bold text-orange-600"
+                            <span class="font-bold text-warning"
                                 >{formatNumber(monthlySummary.lateDays || 0)}</span>
                         </div>
 
-                        <div class="flex justify-between items-center p-3 rounded-lg bg-red-50 dark:bg-red-900/20">
+                        <div class="flex justify-between items-center p-3 rounded-lg bg-destructive/10 dark:bg-red-900/20">
                             <div class="flex items-center gap-3">
-                                <AlertCircleIcon class="h-5 w-5 text-red-600" />
+                                <AlertCircleIcon class="h-5 w-5 text-destructive" />
                                 <span>Absent</span>
                             </div>
-                            <span class="font-bold text-red-600"
+                            <span class="font-bold text-destructive"
                                 >{formatNumber(monthlySummary.absentDays || 0)}</span>
                         </div>
 
-                        <div class="flex justify-between items-center p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20">
+                        <div class="flex justify-between items-center p-3 rounded-lg bg-chart-4/10 dark:bg-purple-900/20">
                             <div class="flex items-center gap-3">
-                                <CalendarOffIcon class="h-5 w-5 text-purple-600" />
+                                <CalendarOffIcon class="h-5 w-5 text-chart-4" />
                                 <span>On Leave</span>
                             </div>
-                            <span class="font-bold text-purple-600"
+                            <span class="font-bold text-chart-4"
                                 >{formatNumber(monthlySummary.leaveDays || 0)}</span>
                         </div>
                     </div>
@@ -270,9 +270,9 @@
                                     <span class="text-sm font-medium">Attendance Rate</span>
                                     <span class="text-sm font-bold">{attendanceRate.toFixed(1)}%</span>
                                 </div>
-                                <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="w-full h-4 bg-border rounded-full overflow-hidden">
                                     <div
-                                        class="h-full bg-green-500 transition-all"
+                                        class="h-full bg-success/100 transition-all"
                                         style="width: {Math.min(attendanceRate, 100)}%"
                                     ></div>
                                 </div>
@@ -283,9 +283,9 @@
                                     <span class="text-sm font-medium">Punctuality Rate</span>
                                     <span class="text-sm font-bold">{(100 - lateRate).toFixed(1)}%</span>
                                 </div>
-                                <div class="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="w-full h-4 bg-border rounded-full overflow-hidden">
                                     <div
-                                        class="h-full bg-blue-500 transition-all"
+                                        class="h-full bg-primary/100 transition-all"
                                         style="width: {Math.max(0, 100 - lateRate)}%"
                                     ></div>
                                 </div>

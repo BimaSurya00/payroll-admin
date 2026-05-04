@@ -124,8 +124,8 @@
             <Card.Root>
                 <Card.Content class="p-6">
                     <div class="flex items-center gap-4">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
-                            <FileTextIcon class="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 dark:bg-blue-900/30">
+                            <FileTextIcon class="h-5 w-5 text-primary" />
                         </div>
                         <div>
                             <p class="text-sm font-medium text-muted-foreground">Total Records</p>
@@ -138,12 +138,12 @@
             <Card.Root>
                 <Card.Content class="p-6">
                     <div class="flex items-center gap-4">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-                            <DollarSignIcon class="h-5 w-5 text-green-600 dark:text-green-400" />
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-success/10 dark:bg-green-900/30">
+                            <DollarSignIcon class="h-5 w-5 text-success" />
                         </div>
                         <div>
                             <p class="text-sm font-medium text-muted-foreground">Total Amount</p>
-                            <p class="text-xl font-bold text-green-600">{formatCurrency(totalPayroll)}</p>
+                            <p class="text-xl font-bold text-success">{formatCurrency(totalPayroll)}</p>
                         </div>
                     </div>
                 </Card.Content>
@@ -152,12 +152,12 @@
             <Card.Root>
                 <Card.Content class="p-6">
                     <div class="flex items-center gap-4">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-                            <WalletIcon class="h-5 w-5 text-green-600 dark:text-green-400" />
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-success/10 dark:bg-green-900/30">
+                            <WalletIcon class="h-5 w-5 text-success" />
                         </div>
                         <div>
                             <p class="text-sm font-medium text-muted-foreground">Paid</p>
-                            <p class="text-2xl font-bold text-green-600">{paidCount}</p>
+                            <p class="text-2xl font-bold text-success">{paidCount}</p>
                         </div>
                     </div>
                 </Card.Content>
@@ -254,13 +254,13 @@
                                                 <span class="sr-only">View</span>
                                             </Button>
                                             {#if payroll.status === "DRAFT"}
-                                                <Button variant="ghost" size="icon" class="h-8 w-8 text-blue-600" onclick={() => handleUpdateStatus(payroll.id, "APPROVED")}>
+                                                <Button variant="ghost" size="icon" class="h-8 w-8 text-primary" onclick={() => handleUpdateStatus(payroll.id, "APPROVED")}>
                                                     <SendIcon class="h-4 w-4" />
                                                     <span class="sr-only">Approve</span>
                                                 </Button>
                                             {/if}
                                             {#if payroll.status === "APPROVED"}
-                                                <Button variant="ghost" size="icon" class="h-8 w-8 text-green-600" onclick={() => handleUpdateStatus(payroll.id, "PAID")}>
+                                                <Button variant="ghost" size="icon" class="h-8 w-8 text-success" onclick={() => handleUpdateStatus(payroll.id, "PAID")}>
                                                     <CheckCircleIcon class="h-4 w-4" />
                                                     <span class="sr-only">Mark Paid</span>
                                                 </Button>

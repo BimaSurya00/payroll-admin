@@ -6,42 +6,35 @@
 	import LogOutIcon from "@lucide/svelte/icons/log-out";
 	import MonitorIcon from "@lucide/svelte/icons/monitor";
 	import UserIcon from "@lucide/svelte/icons/user";
-	import SparklesIcon from "@lucide/svelte/icons/sparkles";
 	import LoaderIcon from "@lucide/svelte/icons/loader";
 	import SunIcon from "@lucide/svelte/icons/sun";
 	import MoonIcon from "@lucide/svelte/icons/moon";
 
 	import ThemeToggle from "$lib/components/shared/theme-toggle.svelte";
-
 	import * as Avatar from "$lib/components/ui/avatar/index.js";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
-
 	import { authStore } from "$lib/stores/auth.store.js";
 
 	let { user } = $props();
-
 	const sidebar = useSidebar();
-
 	let loggingOut = $state(false);
 
-	// Get user data from store or fallback to prop
 	let authState = $state({ user: null, isAuthenticated: false });
 	authStore.subscribe((state) => {
 		authState = state;
 	});
 
-	// Use auth store user if available, otherwise use prop
 	let displayUser = $derived(authState.user || user);
 	let userInitials = $derived(
 		displayUser?.name
 			? displayUser.name
-					.split(" ")
-					.map((n) => n[0])
-					.join("")
-					.toUpperCase()
-					.slice(0, 2)
+				.split(" ")
+				.map((n) => n[0])
+				.join("")
+				.toUpperCase()
+				.slice(0, 2)
 			: "U",
 	);
 
@@ -76,29 +69,22 @@
 					<Sidebar.MenuButton
 						{...props}
 						size="lg"
-						class="text-white/70 hover:text-white hover:bg-white/[0.06] data-[state=open]:bg-white/[0.08] data-[state=open]:text-white transition-all duration-200 h-auto py-2.5"
+						class="text-foreground hover:bg-accent data-[state=open]:bg-accent transition-all duration-150 h-auto py-2"
 					>
-						<Avatar.Root class="size-9 rounded-lg border border-white/10 bg-white/5">
+						<Avatar.Root class="size-8 rounded-md border border-border/60">
 							<Avatar.Image
-								src={displayUser?.avatar ||
-									displayUser?.profileImage}
+								src={displayUser?.avatar || displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="rounded-lg bg-primary text-primary-foreground font-semibold text-sm"
-								>{userInitials}</Avatar.Fallback
-							>
+							<Avatar.Fallback class="rounded-md bg-primary text-primary-foreground text-xs font-semibold">
+								{userInitials}
+							</Avatar.Fallback>
 						</Avatar.Root>
-						<div
-							class="grid flex-1 text-start text-sm leading-tight"
-						>
-							<span class="truncate font-semibold text-white"
-								>{displayUser?.name || "User"}</span
-							>
-							<span class="truncate text-xs text-white/40"
-								>{displayUser?.email || ""}</span
-							>
+						<div class="grid flex-1 text-start text-sm leading-tight">
+							<span class="truncate font-semibold text-foreground">{displayUser?.name || "User"}</span>
+							<span class="truncate text-xs text-muted-foreground">{displayUser?.email || ""}</span>
 						</div>
-						<ChevronsUpDownIcon class="ms-auto size-4 text-white/30" />
+						<ChevronsUpDownIcon class="ms-auto size-4 text-muted-foreground" />
 					</Sidebar.MenuButton>
 				{/snippet}
 			</DropdownMenu.Trigger>
@@ -109,97 +95,81 @@
 				sideOffset={4}
 			>
 				<DropdownMenu.Label class="p-0 font-normal">
-					<div
-						class="flex items-center gap-2 px-1 py-1.5 text-start text-sm"
-					>
+					<div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
 						<Avatar.Root class="size-8 rounded-lg">
 							<Avatar.Image
-								src={displayUser?.avatar ||
-									displayUser?.profileImage}
+								src={displayUser?.avatar || displayUser?.profileImage}
 								alt={displayUser?.name}
 							/>
-							<Avatar.Fallback class="rounded-lg"
-								>{userInitials}</Avatar.Fallback
-							>
+							<Avatar.Fallback class="rounded-lg bg-primary text-primary-foreground text-xs font-semibold">
+								{userInitials}
+							</Avatar.Fallback>
 						</Avatar.Root>
-						<div
-							class="grid flex-1 text-start text-sm leading-tight"
-						>
-							<span class="truncate font-medium"
-								>{displayUser?.name || "User"}</span
-							>
-							<span class="truncate text-xs"
-								>{displayUser?.email || ""}</span
-							>
+						<div class="grid flex-1 text-start text-sm leading-tight">
+							<span class="truncate font-medium">{displayUser?.name || "User"}</span>
+							<span class="truncate text-xs text-muted-foreground">{displayUser?.email || ""}</span>
 						</div>
 					</div>
 				</DropdownMenu.Label>
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
-					<DropdownMenu.Item>
-						<SparklesIcon />
-						Upgrade to Pro
+					<a href="/dashboard/profile" class="contents">
+						<DropdownMenu.Item class="cursor-pointer">
+							<UserIcon class="size-4" />
+							Profile
+						</DropdownMenu.Item>
+					</a>
+					<DropdownMenu.Item class="cursor-pointer">
+						<BadgeCheckIcon class="size-4" />
+						Account
+					</DropdownMenu.Item>
+					<DropdownMenu.Item class="cursor-pointer">
+						<CreditCardIcon class="size-4" />
+						Billing
+					</DropdownMenu.Item>
+					<DropdownMenu.Item class="cursor-pointer">
+						<BellIcon class="size-4" />
+						Notifications
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
-					<DropdownMenu.Item>
-						<BadgeCheckIcon />
-						Account
+					<DropdownMenu.Item class="cursor-pointer p-0" onclick={(e) => e.preventDefault()}>
+						<ThemeToggle variant="menu" class="rounded-sm" />
 					</DropdownMenu.Item>
-					<a href="/dashboard/profile" class="contents">
-						<DropdownMenu.Item>
-							<UserIcon />
-							Profile
-						</DropdownMenu.Item>
-					</a>
-					<DropdownMenu.Item>
-						<CreditCardIcon />
-						Billing
+				</DropdownMenu.Group>
+				<DropdownMenu.Separator />
+				<DropdownMenu.Group>
+					<DropdownMenu.Item
+						onclick={handleLogoutAll}
+						disabled={loggingOut}
+						class="text-orange-600 focus:bg-orange-50 dark:focus:bg-orange-950 cursor-pointer"
+					>
+						{#if loggingOut}
+							<LoaderIcon class="animate-spin size-4" />
+							Logging out...
+						{:else}
+							<MonitorIcon class="size-4" />
+							Log out all devices
+						{/if}
 					</DropdownMenu.Item>
-				<DropdownMenu.Item>
-					<BellIcon />
-					Notifications
-				</DropdownMenu.Item>
-			</DropdownMenu.Group>
-			<DropdownMenu.Separator />
-			<DropdownMenu.Group>
-			<DropdownMenu.Item class="cursor-pointer p-0" onclick={(e) => e.preventDefault()}>
-				<ThemeToggle variant="menu" class="rounded-sm" />
-			</DropdownMenu.Item>
-			</DropdownMenu.Group>
-			<DropdownMenu.Separator />
-			<DropdownMenu.Group>
-				<DropdownMenu.Item
-					onclick={handleLogoutAll}
-					disabled={loggingOut}
-					class="text-orange-600 dark:text-orange-400 focus:bg-orange-50 dark:focus:bg-orange-950"
-				>
-					{#if loggingOut}
-						<LoaderIcon class="animate-spin" />
-						Logging out...
-					{:else}
-						<MonitorIcon />
-						Log out all devices
-					{/if}
-				</DropdownMenu.Item>
-			</DropdownMenu.Group>
-			<DropdownMenu.Separator />
-			<DropdownMenu.Group>
-				<DropdownMenu.Item
-					onclick={handleLogout}
-					disabled={loggingOut}
-					class="text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-950"
-				>
-					{#if loggingOut}
-						<LoaderIcon class="animate-spin" />
-						Logging out...
-					{:else}
-						<LogOutIcon />
-						Log out
-					{/if}
-				</DropdownMenu.Item>
-			</DropdownMenu.Group>
+				</DropdownMenu.Group>
+				<DropdownMenu.Separator />
+				<DropdownMenu.Group>
+					<DropdownMenu.Item
+						onclick={handleLogout}
+						disabled={loggingOut}
+						class="text-destructive focus:bg-destructive/10 cursor-pointer"
+					>
+						{#if loggingOut}
+							<LoaderIcon class="animate-spin size-4" />
+							Logging out...
+						{:else}
+							<LogOutIcon class="size-4" />
+							Log out
+						{/if}
+					</DropdownMenu.Item>
+				</DropdownMenu.Group>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</Sidebar.MenuItem>

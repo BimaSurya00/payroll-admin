@@ -170,17 +170,17 @@
 
 	function getPlanBadge(plan) {
 		switch (plan) {
-			case 'enterprise': return 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
-			case 'pro': return 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
-			case 'starter': return 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300';
-			default: return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
+			case 'enterprise': return 'bg-chart-4/10 text-purple-700 dark:bg-purple-900 dark:text-purple-300';
+			case 'pro': return 'bg-primary/10 text-blue-700 dark:bg-blue-900 dark:text-blue-300';
+			case 'starter': return 'bg-success/10 text-green-700 dark:bg-green-900 dark:text-green-300';
+			default: return 'bg-muted text-muted-foreground dark:bg-gray-800 dark:text-gray-300';
 		}
 	}
 
 	function getUsageColor(used, max) {
-		if (max === 0) return 'bg-gray-200';
+		if (max === 0) return 'bg-border';
 		const pct = (used / max) * 100;
-		if (pct >= 90) return 'bg-red-500';
+		if (pct >= 90) return 'bg-destructive/100';
 		if (pct >= 70) return 'bg-yellow-500';
 		return 'bg-primary';
 	}
@@ -280,7 +280,7 @@
 												<span class="font-medium">{company.employeeCount ?? 0}</span>
 												<span class="text-xs text-muted-foreground">/ {company.maxEmployees ?? 25}</span>
 											</div>
-											<div class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+											<div class="w-full h-2 bg-border dark:bg-gray-700 rounded-full overflow-hidden">
 												<div
 													class="h-full rounded-full transition-all {getUsageColor(company.employeeCount ?? 0, company.maxEmployees ?? 25)}"
 													style="width: {Math.min(((company.employeeCount ?? 0) / (company.maxEmployees || 25)) * 100, 100)}%"

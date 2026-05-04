@@ -107,13 +107,13 @@
             PENDING:
                 "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
             APPROVED:
-                "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+                "bg-primary/10 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
             IN_PROGRESS:
-                "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+                "bg-chart-4/10 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
             COMPLETED:
-                "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                "bg-success/10 text-green-800 dark:bg-green-900 dark:text-green-300",
             REJECTED:
-                "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+                "bg-destructive/10 text-red-800 dark:bg-red-900 dark:text-red-300",
         };
         return colors[status] || colors.PENDING;
     }
@@ -145,7 +145,7 @@
     <!-- Error Alert -->
     {#if error}
         <div
-            class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+            class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
         >
             <p class="text-sm font-medium">Error: {error}</p>
             <p class="text-xs mt-1">
@@ -176,7 +176,7 @@
             <p class="text-sm font-medium text-muted-foreground">
                 Disetujui (Belum Dikerjakan)
             </p>
-            <p class="text-2xl font-bold mt-1 text-blue-600">{approvedCount}</p>
+            <p class="text-2xl font-bold mt-1 text-primary">{approvedCount}</p>
         </div>
         <div class="rounded-lg border bg-card p-4 shadow-sm">
             <p class="text-sm font-medium text-muted-foreground">
@@ -359,7 +359,7 @@
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            class="text-green-600"
+                                            class="text-success"
                                             onclick={() =>
                                                 handleClockIn(request.id)}
                                         >
@@ -370,7 +370,7 @@
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            class="text-red-600"
+                                            class="text-destructive"
                                             onclick={() =>
                                                 handleClockOut(request.id)}
                                         >

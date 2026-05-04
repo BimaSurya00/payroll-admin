@@ -138,9 +138,9 @@
     function getStatusColor(status) {
         const colors = {
             PENDING: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-            APPROVED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-            REJECTED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
-            CANCELLED: "bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-300",
+            APPROVED: "bg-success/10 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+            REJECTED: "bg-destructive/10 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+            CANCELLED: "bg-muted text-foreground dark:bg-gray-800/50 dark:text-gray-300",
         };
         return colors[status] || colors.PENDING;
     }
@@ -207,26 +207,26 @@
             <div class="rounded-lg border bg-card p-4 shadow-sm">
                 <div class="flex items-center justify-between">
                     <p class="text-sm font-medium text-muted-foreground">Disetujui</p>
-                    <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-                        <CheckCircleIcon class="h-4 w-4 text-green-600" />
+                    <div class="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center">
+                        <CheckCircleIcon class="h-4 w-4 text-success" />
                     </div>
                 </div>
-                <p class="text-2xl font-bold mt-2 text-green-600">{approvedCount}</p>
+                <p class="text-2xl font-bold mt-2 text-success">{approvedCount}</p>
             </div>
             <div class="rounded-lg border bg-card p-4 shadow-sm">
                 <div class="flex items-center justify-between">
                     <p class="text-sm font-medium text-muted-foreground">Ditolak</p>
-                    <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
-                        <XCircleIcon class="h-4 w-4 text-red-600" />
+                    <div class="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center">
+                        <XCircleIcon class="h-4 w-4 text-destructive" />
                     </div>
                 </div>
-                <p class="text-2xl font-bold mt-2 text-red-600">{rejectedCount}</p>
+                <p class="text-2xl font-bold mt-2 text-destructive">{rejectedCount}</p>
             </div>
             <div class="rounded-lg border bg-card p-4 shadow-sm">
                 <div class="flex items-center justify-between">
                     <p class="text-sm font-medium text-muted-foreground">Total Pengajuan</p>
-                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                        <CalendarOffIcon class="h-4 w-4 text-blue-600" />
+                    <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <CalendarOffIcon class="h-4 w-4 text-primary" />
                     </div>
                 </div>
                 <p class="text-2xl font-bold mt-2">{totalRequests}</p>

@@ -105,15 +105,15 @@
 
 	function getActionColor(action) {
 		const colors = {
-			CREATE: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-			UPDATE: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-			DELETE: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-			APPROVE: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
-			REJECT: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-			LOGIN: 'bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-300',
-			LOGOUT: 'bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-300',
+			CREATE: 'bg-success/10 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+			UPDATE: 'bg-primary/10 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+			DELETE: 'bg-destructive/10 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+			APPROVE: 'bg-chart-4/10 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
+			REJECT: 'bg-warning/10 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
+			LOGIN: 'bg-muted text-foreground dark:bg-gray-800/50 dark:text-gray-300',
+			LOGOUT: 'bg-muted text-foreground dark:bg-gray-800/50 dark:text-gray-300',
 		};
-		return colors[action] || 'bg-gray-100 text-gray-800 dark:bg-gray-800/50 dark:text-gray-300';
+		return colors[action] || 'bg-muted text-foreground dark:bg-gray-800/50 dark:text-gray-300';
 	}
 
 	function getResourceTypeIcon(type) {
@@ -305,10 +305,10 @@
 										{#if log.oldValues || log.newValues}
 											<div class="mt-2 text-xs">
 												{#if log.oldValues}
-													<span class="text-red-600">Old: {JSON.stringify(log.oldValues).substring(0, 50)}...</span>
+													<span class="text-destructive">Old: {JSON.stringify(log.oldValues).substring(0, 50)}...</span>
 												{/if}
 												{#if log.newValues}
-													<span class="text-green-600 ml-2">New: {JSON.stringify(log.newValues).substring(0, 50)}...</span>
+													<span class="text-success ml-2">New: {JSON.stringify(log.newValues).substring(0, 50)}...</span>
 												{/if}
 											</div>
 										{/if}

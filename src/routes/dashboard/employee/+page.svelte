@@ -90,8 +90,8 @@
         <Card.Root>
             <Card.Content class="p-6">
                 <div class="flex items-center gap-4">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
-                        <UsersIcon class="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 dark:bg-blue-900/30">
+                        <UsersIcon class="h-5 w-5 text-primary" />
                     </div>
                     <div>
                         <p class="text-sm font-medium text-muted-foreground">Total Employees</p>
@@ -104,12 +104,12 @@
         <Card.Root>
             <Card.Content class="p-6">
                 <div class="flex items-center gap-4">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-                        <DollarSignIcon class="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-success/10 dark:bg-green-900/30">
+                        <DollarSignIcon class="h-5 w-5 text-success" />
                     </div>
                     <div>
                         <p class="text-sm font-medium text-muted-foreground">Total Salary</p>
-                        <p class="text-xl font-bold text-green-600">{formatCurrency(totalSalary)}</p>
+                        <p class="text-xl font-bold text-success">{formatCurrency(totalSalary)}</p>
                     </div>
                 </div>
             </Card.Content>
@@ -118,12 +118,12 @@
         <Card.Root>
             <Card.Content class="p-6">
                 <div class="flex items-center gap-4">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
-                        <DollarSignIcon class="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-chart-4/10 dark:bg-purple-900/30">
+                        <DollarSignIcon class="h-5 w-5 text-chart-4" />
                     </div>
                     <div>
                         <p class="text-sm font-medium text-muted-foreground">Average Salary</p>
-                        <p class="text-xl font-bold text-purple-600">{formatCurrency(avgSalary)}</p>
+                        <p class="text-xl font-bold text-chart-4">{formatCurrency(avgSalary)}</p>
                     </div>
                 </div>
             </Card.Content>

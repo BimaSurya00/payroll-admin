@@ -83,19 +83,19 @@
     function getStatusConfig(status) {
         const configs = {
             DRAFT: {
-                color: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300",
+                color: "bg-muted text-foreground dark:bg-gray-900 dark:text-gray-300",
                 label: "Draft",
             },
             APPROVED: {
-                color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+                color: "bg-primary/10 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
                 label: "Approved",
             },
             PAID: {
-                color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                color: "bg-success/10 text-green-800 dark:bg-green-900 dark:text-green-300",
                 label: "Paid",
             },
             REJECTED: {
-                color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+                color: "bg-destructive/10 text-red-800 dark:bg-red-900 dark:text-red-300",
                 label: "Rejected",
             },
         };
@@ -122,7 +122,7 @@
         </div>
     {:else if error}
         <div
-            class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+            class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
         >
             <p class="text-sm font-medium">Error: {error}</p>
         </div>
@@ -185,12 +185,12 @@
                 <div class="grid gap-6 md:grid-cols-2">
                     <div class="space-y-4">
                         <div
-                            class="rounded-lg bg-green-100 dark:bg-green-900/30 p-6"
+                            class="rounded-lg bg-success/10 dark:bg-green-900/30 p-6"
                         >
                             <p class="text-sm text-muted-foreground mb-1">
                                 Net Salary
                             </p>
-                            <p class="text-3xl font-bold text-green-600">
+                            <p class="text-3xl font-bold text-success">
                                 {formatCurrency(payroll.netSalary)}
                             </p>
                         </div>

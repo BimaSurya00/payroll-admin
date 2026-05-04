@@ -114,9 +114,9 @@
     }
 
     function getPresentRateColor(rate) {
-        if (rate >= 95) return 'text-green-600';
+        if (rate >= 95) return 'text-success';
         if (rate >= 85) return 'text-yellow-600';
-        return 'text-red-600';
+        return 'text-destructive';
     }
 
     let summary = $derived(reportData?.summary || null);
@@ -152,7 +152,7 @@
         <!-- Regular Error Alert -->
         {#if error}
             <div
-                class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+                class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
             >
                 <p class="text-sm font-medium">Error: {error}</p>
             </div>
@@ -254,8 +254,8 @@
                 </Card.Header>
                 <Card.Content>
                     <div class="flex items-center gap-1">
-                        <TrendingUpIcon class="h-4 w-4 text-orange-600" />
-                        <p class="text-2xl font-bold text-orange-600">{summary?.totalLate || 0}</p>
+                        <TrendingUpIcon class="h-4 w-4 text-warning" />
+                        <p class="text-2xl font-bold text-warning">{summary?.totalLate || 0}</p>
                     </div>
                 </Card.Content>
             </Card.Root>
@@ -268,8 +268,8 @@
                 </Card.Header>
                 <Card.Content>
                     <div class="flex items-center gap-1">
-                        <TrendingDownIcon class="h-4 w-4 text-red-600" />
-                        <p class="text-2xl font-bold text-red-600">{summary?.totalAbsent || 0}</p>
+                        <TrendingDownIcon class="h-4 w-4 text-destructive" />
+                        <p class="text-2xl font-bold text-destructive">{summary?.totalAbsent || 0}</p>
                     </div>
                 </Card.Content>
             </Card.Root>
@@ -328,17 +328,17 @@
                                         <span class="font-medium">{record.totalDays}</span>
                                     </Table.Cell>
                                     <Table.Cell class="text-center">
-                                        <span class="text-green-600 font-semibold">
+                                        <span class="text-success font-semibold">
                                             {record.totalPresent}
                                         </span>
                                     </Table.Cell>
                                     <Table.Cell class="text-center">
-                                        <span class="text-orange-600 font-semibold">
+                                        <span class="text-warning font-semibold">
                                             {record.totalLate}
                                         </span>
                                     </Table.Cell>
                                     <Table.Cell class="text-center">
-                                        <span class="text-red-600 font-semibold">
+                                        <span class="text-destructive font-semibold">
                                             {record.totalAbsent}
                                         </span>
                                     </Table.Cell>

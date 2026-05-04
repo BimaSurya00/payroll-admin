@@ -100,7 +100,7 @@
     function getStatusConfig(status) {
         const configs = {
             PRESENT: {
-                color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+                color: "bg-success/10 text-green-800 dark:bg-green-900 dark:text-green-300",
                 label: "Present",
                 icon: "✓",
             },
@@ -110,17 +110,17 @@
                 icon: "⏰",
             },
             ABSENT: {
-                color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+                color: "bg-destructive/10 text-red-800 dark:bg-red-900 dark:text-red-300",
                 label: "Absent",
                 icon: "✕",
             },
             EARLY_LEAVE: {
-                color: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
+                color: "bg-warning/10 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
                 label: "Early Leave",
                 icon: "↩",
             },
             ON_LEAVE: {
-                color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+                color: "bg-primary/10 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
                 label: "On Leave",
                 icon: "📅",
             },
@@ -204,7 +204,7 @@
         <!-- Regular Error Alert -->
         {#if error && !isForbidden}
             <div
-                class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+                class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
             >
                 <p class="text-sm font-medium">Error: {error}</p>
                 <p class="text-xs mt-1">
@@ -309,15 +309,15 @@
             <div class="rounded-lg border bg-card p-4 shadow-sm">
                 <div class="flex items-center gap-2">
                     <div
-                        class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30"
+                        class="flex h-8 w-8 items-center justify-center rounded-full bg-success/10 dark:bg-green-900/30"
                     >
-                        <span class="text-green-600">✓</span>
+                        <span class="text-success">✓</span>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-muted-foreground">
                             Present
                         </p>
-                        <p class="text-2xl font-bold text-green-600">
+                        <p class="text-2xl font-bold text-success">
                             {presentCount}
                         </p>
                     </div>
@@ -343,15 +343,15 @@
             <div class="rounded-lg border bg-card p-4 shadow-sm">
                 <div class="flex items-center gap-2">
                     <div
-                        class="flex h-8 w-8 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30"
+                        class="flex h-8 w-8 items-center justify-center rounded-full bg-destructive/10 dark:bg-red-900/30"
                     >
-                        <span class="text-red-600">✕</span>
+                        <span class="text-destructive">✕</span>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-muted-foreground">
                             Absent
                         </p>
-                        <p class="text-2xl font-bold text-red-600">
+                        <p class="text-2xl font-bold text-destructive">
                             {absentCount}
                         </p>
                     </div>
@@ -360,15 +360,15 @@
             <div class="rounded-lg border bg-card p-4 shadow-sm">
                 <div class="flex items-center gap-2">
                     <div
-                        class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30"
+                        class="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-blue-900/30"
                     >
-                        <span class="text-blue-600">📅</span>
+                        <span class="text-primary">📅</span>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-muted-foreground">
                             On Leave
                         </p>
-                        <p class="text-2xl font-bold text-blue-600">
+                        <p class="text-2xl font-bold text-primary">
                             {onLeaveCount}
                         </p>
                     </div>
@@ -435,7 +435,7 @@
                                                 class="flex items-center gap-1.5"
                                             >
                                                 <ClockIcon
-                                                    class="h-3.5 text-green-600"
+                                                    class="h-3.5 text-success"
                                                 />
                                                 <span class="font-medium"
                                                     >{formatTime(attendance.clockInTime)}</span
@@ -453,7 +453,7 @@
                                                 class="flex items-center gap-1.5"
                                             >
                                                 <ClockIcon
-                                                    class="h-3.5 text-red-600"
+                                                    class="h-3.5 text-destructive"
                                                 />
                                                 <span class="font-medium"
                                                     >{formatTime(attendance.clockOutTime)}</span

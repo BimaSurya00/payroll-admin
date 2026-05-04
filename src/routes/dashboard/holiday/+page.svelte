@@ -121,7 +121,7 @@
         <!-- Regular Error Alert -->
         {#if error && !isForbidden}
             <div
-                class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
+                class="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-red-800 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300"
             >
                 <p class="text-sm font-medium">Error: {error}</p>
                 <p class="text-xs mt-1">Click refresh to retry.</p>
@@ -136,15 +136,15 @@
             </div>
             <div class="rounded-lg border bg-card p-4 shadow-sm">
                 <p class="text-sm font-medium text-muted-foreground">Recurring</p>
-                <p class="text-2xl font-bold mt-1 text-blue-600">{recurringCount}</p>
+                <p class="text-2xl font-bold mt-1 text-primary">{recurringCount}</p>
             </div>
             <div class="rounded-lg border bg-card p-4 shadow-sm">
                 <p class="text-sm font-medium text-muted-foreground">Upcoming</p>
-                <p class="text-2xl font-bold mt-1 text-green-600">{upcomingCount}</p>
+                <p class="text-2xl font-bold mt-1 text-success">{upcomingCount}</p>
             </div>
             <div class="rounded-lg border bg-card p-4 shadow-sm">
                 <p class="text-sm font-medium text-muted-foreground">Selected Year</p>
-                <p class="text-2xl font-bold mt-1 text-purple-600">{selectedYear}</p>
+                <p class="text-2xl font-bold mt-1 text-chart-4">{selectedYear}</p>
             </div>
         </div>
 
@@ -217,13 +217,13 @@
                                     <Table.Cell>
                                         {#if holiday.isRecurring}
                                             <span
-                                                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+                                                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-primary/10 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
                                             >
                                                 Recurring
                                             </span>
                                         {:else}
                                             <span
-                                                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+                                                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-muted text-foreground dark:bg-gray-800 dark:text-gray-300"
                                             >
                                                 One-time
                                             </span>

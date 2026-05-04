@@ -8,14 +8,12 @@
   import { ROUTE_NAMES, getRouteLabel } from "$lib/utils/constants.js";
   import { authStore } from "$lib/stores/auth.store.js";
 
-  // SUPER_USER only routes
   const superUserOnlyRoutes = [
     '/dashboard/company',
     '/dashboard/user',
     '/dashboard/audit',
   ];
 
-  // ADMIN only routes (SUPER_USER should not access)
   const adminOnlyRoutes = [
     '/dashboard/department',
     '/dashboard/employee',
@@ -38,17 +36,13 @@
     return adminOnlyRoutes.some(route => pathname.startsWith(route));
   }
 
-  // Subscribe to auth store
   let authState = $state({ user: null });
   authStore.subscribe((state) => {
     authState = state;
   });
 
-  // Check if user is SUPER_USER
   let isSuperUser = $derived(authState.user?.role === 'SUPER_USER');
 
-  // Redirect if ADMIN tries to access SUPER_USER only routes
-  // Redirect if SUPER_USER tries to access ADMIN only routes
   $effect(() => {
     if (!isSuperUser && isSuperUserOnlyRoute($page.url.pathname)) {
       goto('/dashboard');
@@ -58,7 +52,6 @@
     }
   });
 
-  // Generate breadcrumb items from current path
   function getBreadcrumbs(pathname) {
     const segments = pathname.split("/").filter(Boolean);
     const breadcrumbs = [];
@@ -68,7 +61,6 @@
       const segment = segments[i];
       currentPath += "/" + segment;
 
-      // Skip UUID-like segments (detail pages)
       if (segment.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
         continue;
       }
@@ -91,35 +83,30 @@
 
 <Sidebar.Provider>
   <AppSidebar />
-  <Sidebar.Inset class="bg-background">
-    <header class="flex h-16 shrink-0 items-center gap-2 border-b border-border/50 bg-card/50 backdrop-blur-xl sticky top-0 z-30">
-      <div class="flex items-center gap-2 px-4 w-full">
-        <Sidebar.Trigger class="-ms-1 hover:bg-muted/50 rounded-lg transition-colors" />
-        <Separator
-          orientation="vertical"
-          class="me-2 data-[orientation=vertical]:h-4"
-        />
-        <Breadcrumb.Root>
-          <Breadcrumb.List>
-            {#each breadcrumbs as crumb, i (crumb.href)}
-              {#if crumb.isLast}
-                <Breadcrumb.Item>
-                  <Breadcrumb.Page class="font-medium text-foreground">{crumb.name}</Breadcrumb.Page>
-                </Breadcrumb.Item>
-              {:else}
-                <Breadcrumb.Item class="hidden md:block">
-                  <Breadcrumb.Link href={crumb.href} class="text-muted-foreground hover:text-foreground transition-colors"
-                    >{crumb.name}</Breadcrumb.Link
-                  >
-                </Breadcrumb.Item>
-                <Breadcrumb.Separator class="hidden md:block" />
-              {/if}
-            {/each}
-          </Breadcrumb.List>
-        </Breadcrumb.Root>
-      </div>
+  <Sidebar.Inset class="bg-background min-h-screen">
+    <header class="flex h-14 shrink-0 items-center gap-2 border-b border-border/60 bg-card/50 backdrop-blur-sm sticky top-0 z-30 px-4">
+      <Sidebar.Trigger class="-ms-1 hover:bg-accent rounded-md transition-colors h-8 w-8" />
+      <Separator orientation="vertical" class="h-4" />
+      <Breadcrumb.Root>
+        <Breadcrumb.List>
+          {#each breadcrumbs as crumb, i (crumb.href)}
+            {#if crumb.isLast}
+              <Breadcrumb.Item>
+                <Breadcrumb.Page class="font-medium text-foreground text-sm">{crumb.name}</Breadcrumb.Page>
+              </Breadcrumb.Item>
+            {:else}
+              <Breadcrumb.Item class="hidden md:block">
+                <Breadcrumb.Link href={crumb.href} class="text-muted-foreground hover:text-foreground transition-colors text-sm">
+                  {crumb.name}
+                </Breadcrumb.Link>
+              </Breadcrumb.Item>
+              <Breadcrumb.Separator class="hidden md:block" />
+            {/if}
+          {/each}
+        </Breadcrumb.List>
+      </Breadcrumb.Root>
     </header>
-    <main class="flex-1">
+    <main class="flex-1 p-6">
       <slot />
     </main>
   </Sidebar.Inset>
